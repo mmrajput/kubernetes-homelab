@@ -424,28 +424,28 @@ This project showcases practical experience with:
 
 Detailed technical blog posts documenting the entire journey:
 
-1. **[Installing Proxmox VE on Beelink SER5 Pro](https://github.com/mmrajput/blog/blob/main/kubernetes/01-proxmox-installation-beelink.md)**  
+1. **[Installing Proxmox VE on Beelink SER5 Pro](https://github.com/mmrajput/blog/blob/main/kubernetes/homelab-01/01-proxmox-installation.md)**  
    *Setting up the hypervisor foundation*
 
-2. **[Creating Ubuntu VMs with Cloud-Init](https://github.com/mmrajput/blog/blob/main/kubernetes/02-vm-creation-ubuntu-template.md)** *(Coming Soon)*  
+2. **[Creating Ubuntu VMs with Cloud-Init](https://github.com/mmrajput/blog/blob/main/kubernetes/homelab-01/02-vm-creation-ubuntu-template.md)** *(Coming Soon)*  
    *Automated VM provisioning and templating*
 
-3. **[Deploying Multi-Node Kubernetes with kubeadm](https://github.com/mmrajput/blog/blob/main/kubernetes/03-kubernetes-cluster-kubeadm.md)** *(Coming Soon)*  
+3. **[Deploying Multi-Node Kubernetes with kubeadm](https://github.com/mmrajput/blog/blob/main/kubernetes/homelab-01/03-kubernetes-cluster-kubeadm.md)** *(Coming Soon)*  
    *Cluster bootstrapping and configuration*
 
-4. **[Understanding Kubernetes Networking with Calico](https://github.com/mmrajput/blog/blob/main/kubernetes/04-kubernetes-networking-calico.md)** *(Coming Soon)*  
+4. **[Understanding Kubernetes Networking with Calico](https://github.com/mmrajput/blog/blob/main/kubernetes/homelab-01/04-kubernetes-networking-calico.md)** *(Coming Soon)*  
    *CNI plugins and network policies*
 
-5. **[Monitoring Kubernetes: Prometheus & Grafana](https://github.com/mmrajput/blog/blob/main/kubernetes/05-monitoring-prometheus-grafana.md)** *(Coming Soon)*  
+5. **[Monitoring Kubernetes: Prometheus & Grafana](https://github.com/mmrajput/blog/blob/main/kubernetes/homelab-01/05-monitoring-prometheus-grafana.md)** *(Coming Soon)*  
    *Building observability into your cluster*
 
-6. **[GitOps with ArgoCD](https://github.com/mmrajput/blog/blob/main/kubernetes/06-gitops-argocd.md)** *(Coming Soon)*  
+6. **[GitOps with ArgoCD](https://github.com/mmrajput/blog/blob/main/kubernetes/homelab-01/06-gitops-argocd.md)** *(Coming Soon)*  
    *Declarative, automated deployments*
 
-7. **[Kubernetes Security Hardening](https://github.com/mmrajput/blog/blob/main/kubernetes/07-kubernetes-security-hardening.md)** *(Coming Soon)*  
+7. **[Kubernetes Security Hardening](https://github.com/mmrajput/blog/blob/main/kubernetes/homelab-01/07-kubernetes-security-hardening.md)** *(Coming Soon)*  
    *Production-ready security practices*
 
-8. **[CKA Exam Preparation Guide](https://github.com/mmrajput/blog/blob/main/kubernetes/08-cka-exam-preparation-guide.md)** *(Coming Soon)*  
+8. **[CKA Exam Preparation Guide](https://github.com/mmrajput/blog/blob/main/kubernetes/homelab-01/08-cka-exam-preparation-guide.md)** *(Coming Soon)*  
    *Study strategies and practice scenarios*
 
 📖 **[View All Blog Posts](https://github.com/mmrajput/blog)**
