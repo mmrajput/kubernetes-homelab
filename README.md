@@ -78,7 +78,7 @@ Unlike managed Kubernetes services (EKS, GKE, AKS), this homelab provides:
 ┌───────▼────────┐  ┌───────▼──────┐  ┌─────────▼──────┐
 │  k8s-master-1  │  │ k8s-worker-1 │  │ k8s-worker-2   │
 │  Ubuntu 24.04  │  │ Ubuntu 24.04 │  │ Ubuntu 24.04   │
-│  4GB | 2vCPU   │  │ 6GB | 4vCPU  │  │ 6GB | 4vCPU    │
+│  8GB | 4vCPU   │  │ 10GB | 4vCPU │  │ 10GB | 4vCPU   │
 └────────────────┘  └──────────────┘  └────────────────┘
         │                   │                   │
         └───────────────────┼───────────────────┘
@@ -199,29 +199,24 @@ Cost:       ~€6-10/month electricity (Germany)
 
 ```yaml
 Proxmox Host:
-  Reserved:     8GB RAM, 4 CPU cores
-  Available:    24GB RAM, 12 CPU cores
+  Reserved:     2GB RAM, 4 CPU cores
+  Available:    30GB RAM, 12 CPU cores
 
 Virtual Machines:
-  k8s-master-1:
-    RAM:        4GB
+  k8s-master-1: (Control Plane)
+    RAM:        8GB
     vCPU:       2
-    Disk:       40GB
+    Disk:       50GB
     
   k8s-worker-1:
-    RAM:        6GB
+    RAM:        10GB
     vCPU:       4
-    Disk:       60GB
+    Disk:       100GB
     
   k8s-worker-2:
-    RAM:        6GB
+    RAM:        10GB
     vCPU:       4
-    Disk:       60GB
-    
-  k8s-worker-3: (optional)
-    RAM:        6GB
-    vCPU:       4
-    Disk:       60GB
+    Disk:       100GB
 ```
 
 ---
@@ -249,9 +244,9 @@ cd kubernetes-homelab-01
 ```bash
 # Create Ubuntu Server VMs using cloud-init
 cd proxmox/scripts
-./create-vm.sh k8s-master-1 4096 2 40
-./create-vm.sh k8s-worker-1 6144 4 60
-./create-vm.sh k8s-worker-2 6144 4 60
+./create-vm.sh k8s-cp-01 4096 2 40
+./create-vm.sh k8s-worker-01 6144 4 60
+./create-vm.sh k8s-worker-02 6144 4 60
 
 # Configure networking and SSH
 ./configure-networking.sh
