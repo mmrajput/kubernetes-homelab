@@ -179,48 +179,63 @@ Internet
 ![Beelink SER5 Pro](resources/images/beelink-ser5-pro.jpg)
 *My homelab server - Beelink SER5 Pro mini PC*
 
-```yaml
-CPU:        AMD Ryzen 7 5800H
-  Cores:    8 cores, 16 threads
-  Speed:    3.2 GHz base, 4.4 GHz boost
-  
-Memory:     32GB DDR4 RAM
-  Speed:    3200 MHz
+**CPU: AMD Ryzen 5 5500U**
+- 6 cores / 12 threads (SMT enabled)
+- Base: 2.1 GHz, Boost: 4.0 GHz
+- TDP: 15W (power-efficient mobile processor)
 
-Storage:    500GB NVMe SSD
-  Type:     PCIe Gen3 x4
+**Memory: 32GB DDR4 RAM**
+- Usable: 27GiB (28GB) after iGPU reservation
+- Speed: 3200 MHz
+- ~5GB reserved for integrated graphics
+- Swap: 8GB configured for overcommitment safety
 
-Network:    
-  Ethernet: 1Gbps (Realtek)
-  WiFi:     WiFi 6 (802.11ax) - not used for Proxmox
+**Storage: 500GB NVMe SSD (476GB usable)**
+- Type: PCIe Gen3 x4
+- LVM Volume Group: 475.94 GB total
+  - `pve-root`: 94GB (OS and Proxmox)
+  - `local-lvm`: ~366GB (thin-provisioned VM storage)
+  - Free space: 16GB (headroom for snapshots/metadata)
 
-Power:      ~25-35W average consumption
-Cost:       ~€6-10/month electricity (Germany)
-```
+**Network:**
+- Ethernet: 1Gbps (Realtek) - Primary hypervisor connection
+- WiFi: WiFi 6 (802.11ax) - Not used (bridge incompatibility)
+
+**Power Consumption:**
+- Average: ~25-35W under homelab workload
+- Monthly cost: ~€6-10 (Germany, 0.30€/kWh estimate)
+
+---
 
 ### Resource Allocation
-
-```yaml
-Proxmox Host:
-  Reserved:     2GB RAM, 4 CPU cores
-  Available:    30GB RAM, 12 CPU cores
-
-Virtual Machines:
-  k8s-master-1: (Control Plane)
-    RAM:        8GB
-    vCPU:       2
-    Disk:       50GB
-    
-  k8s-worker-1:
-    RAM:        10GB
-    vCPU:       4
-    Disk:       100GB
-    
-  k8s-worker-2:
-    RAM:        10GB
-    vCPU:       4
-    Disk:       100GB
 ```
+┌─────────────────┬──────┬─────────┬──────────┬────────────────┐
+│ Component       │ vCPU │ RAM     │ Disk     │ Notes          │
+├─────────────────┼──────┼─────────┼──────────┼────────────────┤
+│ k8s-cp-01       │  3   │  6GB    │  50GB    │ Control plane  │
+│ k8s-worker-01   │  3   │  7GB    │ 100GB    │ App workloads  │
+│ k8s-worker-02   │  3   │  7GB    │ 100GB    │ App workloads  │
+├─────────────────┼──────┼─────────┼──────────┼────────────────┤
+│ VM TOTAL        │  9   │ 20GB    │ 250GB    │ K8s cluster    │
+│ Proxmox Reserve │  3   │  7GB    │ 210GB    │ Host overhead  │
+├─────────────────┼──────┼─────────┼──────────┼────────────────┤
+│ SYSTEM TOTAL    │ 12   │ 27GB    │ 460GB    │ All services   │
+│ HARDWARE TOTAL  │ 12   │ 27GB    │ 476GB    │ Physical caps  │
+├─────────────────┼──────┼─────────┼──────────┼────────────────┤
+│ UTILIZATION     │100%  │100%     │  97%     │ Fully allocated│
+└─────────────────┴──────┴─────────┴──────────┴────────────────┘
+```
+
+**Allocation Philosophy:**
+- 100% hardware utilization is intentional for homelab learning
+- Simulates production resource constraints and cost optimization
+- No expansion headroom without VM resizing or hardware upgrade
+- Teaches resource quotas, limits, and scheduling pressure hands-on
+
+**Expansion Options (if needed):**
+1. **Vertical scaling**: Reduce worker RAM (7GB → 5GB) to free capacity
+2. **Workload optimization**: Disable observability stack when not needed
+3. **Hardware upgrade**: Add RAM module (32GB → 64GB, ~€80-120)
 
 ---
 
