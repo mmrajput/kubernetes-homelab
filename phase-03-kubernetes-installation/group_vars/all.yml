@@ -3,8 +3,8 @@
 
 ---
 # Kubernetes Version
-kubernetes_version: "{{ k8s_version }}"
-kubernetes_version_rhel_package: "{{ k8s_version_rhel_package }}"
+kubernetes_version: "1.29"
+kubernetes_version_rhel_package: "1.29.0"
 
 # Container Runtime
 container_runtime: "containerd"
@@ -51,5 +51,5 @@ kubelet_config_dir: "/var/lib/kubelet"
 containerd_config_dir: "/etc/containerd"
 
 # User configuration (non-root user for kubectl access)
-kubernetes_user: "{{ k8s_user }}"
-kubernetes_user_home: "{{ k8s_user_home }}"
+kubernetes_user: "mahmood"
+kubernetes_user_home: "/home/mahmood"
