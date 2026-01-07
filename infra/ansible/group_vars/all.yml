@@ -1,6 +1,4 @@
 # Kubernetes Cluster Configuration Variables
-# Phase 3: Kubernetes Installation
-
 ---
 # Kubernetes Version
 kubernetes_version: "1.29"

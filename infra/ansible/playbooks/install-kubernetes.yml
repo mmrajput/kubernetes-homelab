@@ -1,7 +1,6 @@
 ---
 # =============================================================================
 # Kubernetes Cluster Installation Playbook
-# Phase 3: Install production-grade Kubernetes cluster using kubeadm
 # 
 # CKA Exam Domain: Cluster Architecture, Installation & Configuration (25%)
 # =============================================================================
@@ -148,12 +147,20 @@
       args:
         creates: /etc/containerd/config.toml
 
-    - name: Configure containerd to use systemd cgroup driver
-      lineinfile:
-        path: /etc/containerd/config.toml
-        regexp: '^\s+SystemdCgroup = false'
-        line: '            SystemdCgroup = true'
-        state: present
+    - name: Create containerd configuration with systemd cgroup
+      copy:
+        content: |
+          version = 2
+          [plugins]
+            [plugins."io.containerd.grpc.v1.cri"]
+              [plugins."io.containerd.grpc.v1.cri".containerd]
+                [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+                  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+                    runtime_type = "io.containerd.runc.v2"
+                    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+                      SystemdCgroup = true
+        dest: /etc/containerd/config.toml
+        mode: '0644'
       notify: Restart containerd
 
     - name: Enable and start containerd service
