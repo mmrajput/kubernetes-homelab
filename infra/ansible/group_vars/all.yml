@@ -1,53 +1,178 @@
 # Kubernetes Cluster Configuration Variables
+# 
+# This file contains all configurable parameters for the Kubernetes cluster
+# installation playbook. Variables are organized by category for clarity.
+#
+# Last Updated: 2026-01-07
+# Cluster: kubernetes-homelab-01
 ---
-# Kubernetes Version
-kubernetes_version: "1.29"
-kubernetes_version_rhel_package: "1.29.0"
 
-# Container Runtime
+# =============================================================================
+# KUBERNETES VERSION
+# =============================================================================
+# Major.minor version for repository (e.g., "1.31")
+# Check latest stable: https://kubernetes.io/releases/
+kubernetes_version: "1.31"
+
+# Full version for CKA exam alignment
+# Exam currently uses 1.31.x - update when exam version changes
+kubernetes_version_rhel_package: "1.31.0"
+
+# =============================================================================
+# CONTAINER RUNTIME
+# =============================================================================
+# Container runtime: containerd (CRI-compatible)
+# Docker deprecated in Kubernetes 1.20+
 container_runtime: "containerd"
 
-# Network Configuration
-pod_network_cidr: "10.244.0.0/16" # Why we are using this ip range? Because this is the default range used by Calico and Flannel CNI plugins for pod networking.
-service_cidr: "10.96.0.0/12" # Why we are using this ip range?  Because this is the default range used by Kubernetes for services.
+# Containerd version (leave unset to use latest from repository)
+# Only pin if you need specific version for testing
+# containerd_version: "1.7.12-1"
 
-# Control Plane Configuration
-control_plane_endpoint: "192.168.178.34:6443" # Why port 6443? Because this is the default port used by Kubernetes API server.
+# =============================================================================
+# NETWORK CONFIGURATION
+# =============================================================================
+# Pod Network CIDR (must match CNI plugin configuration)
+# Calico default: 10.244.0.0/16
+# Flannel default: 10.244.0.0/16
+# Why /16? Supports 65,536 pod IPs across cluster
+pod_network_cidr: "10.244.0.0/16"
+
+# Service Network CIDR (Kubernetes internal service IPs)
+# Default: 10.96.0.0/12 (supports 1,048,576 service IPs)
+# Must NOT overlap with pod_network_cidr or node network
+service_cidr: "10.96.0.0/12"
+
+# Control Plane Endpoint (API Server address)
+# Format: IP:PORT or FQDN:PORT
+# Port 6443: Default Kubernetes API server port
+# Single control plane: Use control plane node IP
+# HA setup: Use load balancer IP/FQDN
+control_plane_endpoint: "192.168.178.34:6443"
+
+# API Server Advertise Address (control plane node IP)
+# Used by kubeadm to configure API server certificate
 apiserver_advertise_address: "192.168.178.34"
 
-# CNI Plugin
+# =============================================================================
+# CNI PLUGIN (Container Network Interface)
+# =============================================================================
+# CNI Plugin: calico
+# Why Calico?
+# - Industry standard for production Kubernetes
+# - Supports NetworkPolicy for pod-level security
+# - Better performance than Flannel
+# - Required knowledge for CKA exam
 cni_plugin: "calico"
-calico_version: "v3.27.0"
+
+# Calico version (check latest: https://github.com/projectcalico/calico/releases)
+# Current stable: v3.29.1 (January 2026)
+# Note: Use v3.28+ for Kubernetes 1.31 compatibility
+calico_version: "v3.29.1"
+
+# Calico manifest URL (fetched during playbook execution)
 calico_manifest_url: "https://raw.githubusercontent.com/projectcalico/calico/{{ calico_version }}/manifests/calico.yaml"
 
-# Package versions (apt)
-containerd_version: "1.7.12-1"
+# Alternative CNI plugins (for future experimentation)
+# flannel_manifest_url: "https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml"
+# cilium_version: "1.15.0"  # Advanced: requires Helm installation
 
-# System configuration
-swap_disable: true  # Why disable swap? Because Kubernetes requires swap to be disabled for proper functioning.
+# =============================================================================
+# SYSTEM CONFIGURATION
+# =============================================================================
+# Swap must be disabled for kubelet to function correctly
+# Why? Kubernetes requires deterministic memory allocation for pods
+# If swap is enabled, pod performance becomes unpredictable
+swap_disable: true
 
-# Kernel modules required for Kubernetes
+# Kernel modules required for container networking
 kernel_modules:
-  - overlay     # What is overlay? It is a kernel module that allows for overlay filesystems, which are used by container runtimes.
-  - br_netfilter # What is br_netfilter? It is a kernel module that allows for network bridge filtering, which is required for Kubernetes networking.
+  - overlay       # OverlayFS: Container image layers
+  - br_netfilter  # Bridge netfilter: iptables rules on network bridges
 
 # Sysctl parameters for Kubernetes networking
+# These enable proper packet forwarding for pod networking
 sysctl_config:
-  net.bridge.bridge-nf-call-iptables: 1
-  net.bridge.bridge-nf-call-ip6tables: 1
-  net.ipv4.ip_forward: 1
+  net.bridge.bridge-nf-call-iptables: 1   # Allow iptables to see bridged traffic
+  net.bridge.bridge-nf-call-ip6tables: 1  # IPv6 support (future-proofing)
+  net.ipv4.ip_forward: 1                  # Enable IP forwarding for pod-to-pod communication
 
-# Kubeadm configuration
+# =============================================================================
+# KUBEADM CONFIGURATION
+# =============================================================================
+# Extra arguments for kubeadm init (control plane initialization)
+# Example: "--upload-certs" for HA control plane setup
 kubeadm_init_extra_args: ""
+
+# Extra arguments for kubeadm join (worker node joining)
+# Example: "--node-labels=workload=production"
 kubeadm_join_extra_args: ""
 
-# Directory paths
+# =============================================================================
+# DIRECTORY PATHS
+# =============================================================================
+# Kubernetes configuration directories (standard locations)
 kubernetes_config_dir: "/etc/kubernetes"
-kubernetes_manifest_dir: "/etc/kubernetes/manifests"
-kubernetes_pki_dir: "/etc/kubernetes/pki"
-kubelet_config_dir: "/var/lib/kubelet"
-containerd_config_dir: "/etc/containerd"
+kubernetes_manifest_dir: "/etc/kubernetes/manifests"  # Static pod definitions
+kubernetes_pki_dir: "/etc/kubernetes/pki"             # Cluster certificates
+kubelet_config_dir: "/var/lib/kubelet"                # Kubelet runtime data
+containerd_config_dir: "/etc/containerd"              # Containerd configuration
 
-# User configuration (non-root user for kubectl access)
+# =============================================================================
+# USER CONFIGURATION
+# =============================================================================
+# Non-root user for kubectl access
+# This user will have cluster admin access via ~/.kube/config
 kubernetes_user: "mahmood"
 kubernetes_user_home: "/home/mahmood"
+
+# =============================================================================
+# ADVANCED CONFIGURATION (Optional)
+# =============================================================================
+# Uncomment and customize as needed for advanced scenarios
+
+# High Availability (requires 3+ control plane nodes)
+# ha_enabled: false
+# load_balancer_ip: "192.168.178.40"
+# load_balancer_port: 6443
+
+# Certificate SANs (Subject Alternative Names)
+# Useful if accessing API server via different IPs/hostnames
+# apiserver_cert_extra_sans:
+#   - "k8s-api.home.lab"
+#   - "192.168.178.100"
+
+# Feature Gates (enable experimental Kubernetes features)
+# feature_gates: ""
+
+# Audit Logging (enterprise security requirement)
+# audit_policy_file: "/etc/kubernetes/audit-policy.yaml"
+# audit_log_path: "/var/log/kubernetes/audit.log"
+
+# Pod Security Standards (PSS) - replaces PSP in K8s 1.25+
+# pod_security_standard: "baseline"  # Options: privileged, baseline, restricted
+
+# =============================================================================
+# CLUSTER METADATA (for documentation)
+# =============================================================================
+cluster_name: "kubernetes-homelab-01"
+cluster_domain: "cluster.local"
+cluster_dns_ip: "10.96.0.10"  # First IP in service_cidr range
+
+# =============================================================================
+# MAINTENANCE NOTES
+# =============================================================================
+# When upgrading Kubernetes:
+# 1. Update kubernetes_version (e.g., "1.31" -> "1.32")
+# 2. Check Calico compatibility: https://docs.tigera.io/calico/latest/getting-started/kubernetes/requirements
+# 3. Update calico_version if needed
+# 4. Test on fresh cluster before upgrading production
+#
+# When adding CNI features:
+# - NetworkPolicy requires Calico (or Cilium/Weave)
+# - Flannel does NOT support NetworkPolicy
+#
+# When troubleshooting:
+# - Check /var/log/pods/ for container logs
+# - Use 'journalctl -u kubelet' for kubelet logs
+# - Verify /etc/containerd/config.toml has SystemdCgroup = true

@@ -2,21 +2,12 @@
 # =============================================================================
 # Kubernetes Cluster Installation Playbook
 # 
-# CKA Exam Domain: Cluster Architecture, Installation & Configuration (25%)
-# =============================================================================
-#
-# This playbook installs Kubernetes following CKA exam standards:
-# - kubeadm for cluster bootstrapping
-# - containerd as container runtime
-# - Calico CNI for pod networking
-#
-# Architecture:
-# - 1x Control Plane node (k8s-cp-01)
-# - 2x Worker nodes (k8s-worker-01, k8s-worker-02)
-#
-# Usage:
-#   ansible-playbook -i inventory.ini install-kubernetes.yml
-#
+# Fixes applied:
+# 1. Minimal working containerd configuration (SystemdCgroup = true)
+# 2. Better Calico installation with proper wait logic
+# 3. Increased timeouts and retries for reliability
+# 
+# Tested: January 7, 2026
 # =============================================================================
 
 - name: "Pre-flight Checks and System Preparation (All Nodes)"
@@ -27,10 +18,16 @@
     - all
   tasks:
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Swap must be disabled for kubelet to work
-    # Why? Kubelet requires deterministic memory allocation for pods
-    # =========================================================================
+    - name: Install required system packages for Kubernetes
+      apt:
+        name:
+          - conntrack      # Required by kube-proxy
+          - socat          # Required for kubectl port-forward
+          - ebtables       # Required for iptables
+          - ipset          # Required for kube-proxy
+        state: present
+        update_cache: yes
+
     - name: Disable swap immediately
       command: swapoff -a
       when: ansible_swaptotal_mb > 0
@@ -48,11 +45,6 @@
       changed_when: false
       failed_when: swap_status.stdout != ""
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Kernel modules required for container networking
-    # - overlay: OverlayFS for container image layers
-    # - br_netfilter: Bridge netfilter for iptables rules on bridges
-    # =========================================================================
     - name: Load kernel modules for containerd
       modprobe:
         name: "{{ item }}"
@@ -68,11 +60,6 @@
         dest: /etc/modules-load.d/k8s.conf
         mode: '0644'
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Sysctl parameters for Kubernetes networking
-    # - net.bridge.bridge-nf-call-iptables: Allow iptables to see bridged traffic
-    # - net.ipv4.ip_forward: Enable IP forwarding for pod-to-pod communication
-    # =========================================================================
     - name: Configure sysctl parameters for Kubernetes
       sysctl:
         name: "{{ item.key }}"
@@ -97,12 +84,6 @@
     - all
   tasks:
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Why containerd?
-    # - Docker deprecated in Kubernetes 1.20+
-    # - containerd is the industry standard CRI (Container Runtime Interface)
-    # - Used by all major cloud providers (EKS, GKE, AKS)
-    # =========================================================================
     - name: Install containerd dependencies
       apt:
         name:
@@ -113,11 +94,18 @@
           - lsb-release
         state: present
 
+    - name: Create keyrings directory for Docker GPG key
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
     - name: Add Docker GPG key (containerd is from Docker repo)
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-        keyring: /etc/apt/keyrings/docker.gpg
+      shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+        gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      args:
+        creates: /etc/apt/keyrings/docker.gpg
 
     - name: Add Docker repository (for containerd)
       apt_repository:
@@ -132,25 +120,20 @@
         update_cache: yes
 
     # =========================================================================
-    # CKA EXAM KNOWLEDGE: containerd configuration
-    # Default config uses cgroup driver 'cgroupfs', but kubelet expects 'systemd'
-    # We must configure containerd to use systemd cgroup driver
+    # CRITICAL FIX: Minimal working containerd configuration
+    # This is the configuration proven to work during manual installation
     # =========================================================================
     - name: Create containerd config directory
       file:
-        path: "{{ containerd_config_dir }}"
+        path: /etc/containerd
         state: directory
         mode: '0755'
 
-    - name: Generate default containerd configuration
-      shell: containerd config default > /etc/containerd/config.toml
-      args:
-        creates: /etc/containerd/config.toml
-
-    - name: Create containerd configuration with systemd cgroup
+    - name: Create minimal working containerd configuration
       copy:
         content: |
           version = 2
+          
           [plugins]
             [plugins."io.containerd.grpc.v1.cri"]
               [plugins."io.containerd.grpc.v1.cri".containerd]
@@ -168,6 +151,13 @@
         name: containerd
         enabled: yes
         state: started
+
+    - name: Flush handlers to restart containerd now
+      meta: flush_handlers
+
+    - name: Wait for containerd to be ready
+      wait_for:
+        timeout: 10
 
     - name: Verify containerd is running
       command: systemctl is-active containerd
@@ -191,12 +181,6 @@
     - all
   tasks:
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Three core Kubernetes packages
-    # - kubeadm: Tool to bootstrap the cluster
-    # - kubelet: Node agent that runs on every node
-    # - kubectl: CLI tool to interact with cluster (optional on workers)
-    # =========================================================================
     - name: Install required packages for Kubernetes repository
       apt:
         name:
@@ -234,11 +218,6 @@
         state: present
         update_cache: yes
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Why hold packages?
-    # Prevents accidental upgrades via 'apt upgrade'
-    # Kubernetes upgrades must be controlled (control plane first, then workers)
-    # =========================================================================
     - name: Hold Kubernetes packages (prevent automatic upgrades)
       dpkg_selections:
         name: "{{ item }}"
@@ -263,37 +242,11 @@
     - all
   tasks:
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Check if cluster already initialized
-    # Prevents re-running 'kubeadm init' which would fail
-    # /etc/kubernetes/admin.conf only exists after successful init
-    # =========================================================================
     - name: Check if Kubernetes is already initialized
       stat:
         path: /etc/kubernetes/admin.conf
       register: kubeadm_init_stat
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: kubeadm init breakdown
-    # 
-    # What happens during 'kubeadm init':
-    # 1. Preflight checks (swap, ports, etc.)
-    # 2. Generate CA certificates → /etc/kubernetes/pki/
-    # 3. Generate kubeconfig files → /etc/kubernetes/*.conf
-    # 4. Generate static pod manifests → /etc/kubernetes/manifests/
-    #    - kube-apiserver.yaml
-    #    - kube-controller-manager.yaml
-    #    - kube-scheduler.yaml
-    #    - etcd.yaml
-    # 5. Wait for control plane pods to start
-    # 6. Create bootstrap token (for worker nodes to join)
-    # 7. Install CoreDNS and kube-proxy addons
-    #
-    # Flags explained:
-    # --pod-network-cidr: CIDR for pod IPs (must match CNI plugin)
-    # --service-cidr: CIDR for service IPs
-    # --apiserver-advertise-address: IP for API server (control plane node IP)
-    # =========================================================================
     - name: Initialize Kubernetes control plane with kubeadm
       command: >
         kubeadm init
@@ -309,13 +262,6 @@
         var: kubeadm_init_output.stdout_lines
       when: kubeadm_init_output is defined and kubeadm_init_output.stdout_lines is defined
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: kubeconfig files
-    # - admin.conf: Full cluster admin access (use this for kubectl)
-    # - kubelet.conf: Kubelet uses this to authenticate to API server
-    # - controller-manager.conf: Controller manager authentication
-    # - scheduler.conf: Scheduler authentication
-    # =========================================================================
     - name: Create .kube directory for non-root user
       file:
         path: "{{ kubernetes_user_home }}/.kube"
@@ -333,11 +279,6 @@
         mode: '0600'
         remote_src: yes
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Bootstrap token management
-    # Tokens expire after 24 hours by default
-    # Use 'kubeadm token create --print-join-command' to generate new token
-    # =========================================================================
     - name: Generate kubeadm join command for workers
       command: kubeadm token create --print-join-command
       register: kubeadm_join_command
@@ -365,19 +306,8 @@
     - all
   tasks:
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Why do we need CNI?
-    # - CNI (Container Network Interface) enables pod-to-pod communication
-    # - Without CNI, pods cannot get IP addresses
-    # - Calico provides pod networking + NetworkPolicy enforcement
-    #
-    # Why install CNI after kubeadm init?
-    # - Control plane pods (API server, etc.) use host networking
-    # - They don't need CNI to start
-    # - But CoreDNS pods need CNI to get IPs (they'll be Pending without it)
-    # =========================================================================
     - name: Check if Calico is already installed
-      command: kubectl get pods -n kube-system -l k8s-app=calico-node
+      command: kubectl get daemonset calico-node -n kube-system
       register: calico_check
       changed_when: false
       failed_when: false
@@ -389,12 +319,6 @@
         mode: '0644'
       when: calico_check.rc != 0
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Calico CIDR configuration
-    # Calico default CIDR is 192.168.0.0/16
-    # We're using 10.244.0.0/16, so we must modify the manifest
-    # Look for CALICO_IPV4POOL_CIDR in the manifest
-    # =========================================================================
     - name: Configure Calico to use correct pod CIDR
       replace:
         path: /tmp/calico.yaml
@@ -404,14 +328,42 @@
 
     - name: Apply Calico manifest
       command: kubectl apply -f /tmp/calico.yaml
+      register: calico_apply
       when: calico_check.rc != 0
 
-    - name: Wait for Calico pods to be ready (this may take 2-3 minutes)
-      command: kubectl wait --for=condition=ready pod -l k8s-app=calico-node -n kube-system --timeout=300s
+    - name: Display Calico apply output
+      debug:
+        var: calico_apply.stdout_lines
+      when: calico_apply is defined and calico_apply.stdout_lines is defined
+
+    # =========================================================================
+    # FIX: Wait for DaemonSet to be created before waiting for pods
+    # This prevents the "no resources found" error
+    # =========================================================================
+    - name: Wait for Calico DaemonSet to be created
+      command: kubectl get daemonset calico-node -n kube-system
+      register: calico_ds
+      until: calico_ds.rc == 0
+      retries: 12
+      delay: 5
+      when: calico_check.rc != 0
+
+    - name: Display DaemonSet status
+      debug:
+        msg: "Calico DaemonSet created, waiting for pods to start..."
+      when: calico_check.rc != 0
+
+    # =========================================================================
+    # FIX: Increased retries and delay for pod readiness
+    # Some networks/systems take longer to pull images and start pods
+    # =========================================================================
+    - name: Wait for Calico pods to be ready (this may take 3-5 minutes)
+      command: kubectl wait --for=condition=ready pod -l k8s-app=calico-node -n kube-system --timeout=180s
       register: calico_ready
-      retries: 3
-      delay: 10
+      retries: 5
+      delay: 20
       until: calico_ready.rc == 0
+      when: calico_check.rc != 0
 
     - name: Verify Calico installation
       command: kubectl get pods -n kube-system -l k8s-app=calico-node
@@ -421,6 +373,15 @@
     - name: Display Calico pods status
       debug:
         var: calico_pods.stdout_lines
+
+    - name: Verify control plane node is Ready
+      command: kubectl get nodes
+      register: control_plane_node
+      changed_when: false
+
+    - name: Display control plane node status
+      debug:
+        var: control_plane_node.stdout_lines
 
 
 # =============================================================================
@@ -432,10 +393,6 @@
     - all
   tasks:
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Check if node already joined
-    # /etc/kubernetes/kubelet.conf only exists after successful join
-    # =========================================================================
     - name: Check if node is already part of cluster
       stat:
         path: /etc/kubernetes/kubelet.conf
@@ -448,23 +405,6 @@
         mode: '0700'
       when: not kubelet_conf_stat.stat.exists
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: kubeadm join breakdown
-    #
-    # What happens during 'kubeadm join':
-    # 1. Connect to API server using bootstrap token
-    # 2. Download cluster CA certificate
-    # 3. Verify CA using discovery-token-ca-cert-hash
-    # 4. Generate kubelet client certificate
-    # 5. Create kubelet.conf
-    # 6. Start kubelet service
-    # 7. Kubelet registers node with cluster
-    #
-    # The join command format:
-    # kubeadm join <control-plane-ip>:6443 \
-    #   --token <token> \
-    #   --discovery-token-ca-cert-hash sha256:<hash>
-    # =========================================================================
     - name: Join worker node to cluster
       command: bash /tmp/kubeadm-join-command.sh
       register: kubeadm_join_output
@@ -481,6 +421,12 @@
         state: started
         enabled: yes
 
+    # Wait a bit for kubelet to register with API server
+    - name: Wait for kubelet to register with cluster
+      pause:
+        seconds: 15
+      when: not kubelet_conf_stat.stat.exists
+
 
 # =============================================================================
 - name: "Verify Cluster Installation"
@@ -492,11 +438,11 @@
     - all
   tasks:
 
-    - name: Wait for all nodes to be Ready (may take 1-2 minutes)
-      command: kubectl wait --for=condition=ready nodes --all --timeout=300s
+    - name: Wait for all nodes to be Ready (may take 2-3 minutes)
+      command: kubectl wait --for=condition=ready nodes --all --timeout=180s
       register: nodes_ready
-      retries: 3
-      delay: 10
+      retries: 5
+      delay: 15
       until: nodes_ready.rc == 0
 
     - name: Get cluster nodes
@@ -507,6 +453,13 @@
     - name: Display cluster nodes
       debug:
         var: cluster_nodes.stdout_lines
+
+    - name: Wait for all Calico pods to be running on all nodes
+      command: kubectl wait --for=condition=ready pod -l k8s-app=calico-node -n kube-system --timeout=180s --all
+      register: all_calico_ready
+      retries: 3
+      delay: 10
+      until: all_calico_ready.rc == 0
 
     - name: Get all pods in kube-system namespace
       command: kubectl get pods -n kube-system -o wide
@@ -532,12 +485,16 @@
       changed_when: false
       failed_when: non_running_pods.stdout != ""
 
-    # =========================================================================
-    # CKA EXAM KNOWLEDGE: Component health checks
-    # - Control plane components run as static pods
-    # - Check /etc/kubernetes/manifests/ to see pod definitions
-    # - Use 'kubectl logs' to debug component issues
-    # =========================================================================
+    - name: Count total nodes
+      shell: kubectl get nodes --no-headers | wc -l
+      register: node_count
+      changed_when: false
+
+    - name: Count Ready nodes
+      shell: kubectl get nodes --no-headers | grep -c " Ready"
+      register: ready_node_count
+      changed_when: false
+
     - name: Final health check summary
       debug:
         msg:
@@ -548,14 +505,19 @@
           - "Cluster endpoint: https://{{ apiserver_advertise_address }}:6443"
           - "Pod network CIDR: {{ pod_network_cidr }}"
           - "Service CIDR: {{ service_cidr }}"
-          - "CNI plugin: {{ cni_plugin }}"
+          - "CNI plugin: {{ cni_plugin }} {{ calico_version }}"
+          - "Kubernetes version: {{ kubernetes_version }}"
+          - ""
+          - "Nodes: {{ node_count.stdout }} total, {{ ready_node_count.stdout }} Ready"
           - ""
           - "To access cluster from your local machine:"
           - "  scp {{ kubernetes_user }}@{{ apiserver_advertise_address }}:~/.kube/config ~/.kube/config"
           - ""
           - "Next steps:"
-          - "  1. kubectl get nodes"
+          - "  1. kubectl get nodes -o wide"
           - "  2. kubectl get pods -A"
-          - "  3. Deploy test application"
+          - "  3. Deploy test application:"
+          - "     kubectl create deployment nginx-test --image=nginx --replicas=3"
+          - "     kubectl get pods -o wide"
           - ""
           - "=========================================="
