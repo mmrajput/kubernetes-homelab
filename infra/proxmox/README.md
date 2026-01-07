@@ -1,4 +1,4 @@
-# Proxmox VE Foundation Setup
+# Phase 1: Proxmox Foundation Setup
 
 ## Overview
 
