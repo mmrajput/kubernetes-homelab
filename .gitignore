@@ -1,0 +1,43 @@
+# Sensitive files
+*.key
+*.pem
+*kubeconfig*
+*admin.conf
+secrets/
+.env
+id_rsa*
+id_ed25519*
+
+# Ansible
+# Don't commit actual node IPs in inventory (use inventory.example)
+inventory.ini
+*.retry
+.ansible/
+*.log
+
+# Terraform (future)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+*.tmp
+/tmp/kubeadm-join-command.sh
+
+# Logs
+*.log
+
+# Docs
+phase-timeline.md
