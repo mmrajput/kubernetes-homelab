@@ -10,7 +10,7 @@ This directory contains automation scripts for creating Kubernetes cluster VMs u
 - ✅ **Consistency:** All VMs start from identical base configuration
 - ✅ **Speed:** Clone VMs in seconds vs. manual installation in minutes
 - ✅ **Automation:** Cloud-init handles OS configuration declaratively
-- ✅ **Reproducibility:** Rebuild entire cluster with three scripts
+- ✅ **Reproducibility:** Rebuild entire cluster with four scripts
 
 **Traditional vs. Template Approach:**
 
@@ -81,7 +81,7 @@ Image: Ubuntu 24.04 LTS (Noble Numbat)
 
 **What it does:**
 - Clones Template 9000 to VM 1001
-- Configures 8GB RAM, 4 vCPUs, 50GB disk
+- Configures 6GB RAM, 3 vCPUs, 50GB disk
 - Sets static IP: 192.168.178.34
 - Injects SSH key via cloud-init
 - Waits for cloud-init completion
@@ -135,17 +135,17 @@ ping -c 3 google.com       # Test internet connectivity
 
 **What it does:**
 - Clones Template 9000 to VMs 2001-2002 (or more)
-- Configures 10GB RAM, 4 vCPUs, 100GB disk per worker
+- Configures 7GB RAM, 3 vCPUs, 100GB disk per worker
 - Sets static IPs: 192.168.178.35-36
 - Creates all workers in parallel
 
 **Configuration:**
-Edit the `VMS` array to add/remove workers:
+Edit the `WORKERS` array to add/remove workers:
 ```bash
-declare -A VMS=(
-  ["2001"]="k8s-worker-01|192.168.178.35|4|10240|100"
-  ["2002"]="k8s-worker-02|192.168.178.36|4|10240|100"
-  # Add more: ["2003"]="k8s-worker-03|192.168.178.37|4|10240|100"
+declare -A WORKERS=(
+  ["2001"]="k8s-worker-01|192.168.178.35|3|7168|100"
+  ["2002"]="k8s-worker-02|192.168.178.36|3|7168|100"
+  # Add more: ["2003"]="k8s-worker-03|192.168.178.37|3|7168|100"
 )
 ```
 
@@ -157,6 +157,45 @@ declare -A VMS=(
 # Workers are created in parallel
 # Wait ~90 seconds for all to complete
 ```
+
+### 4. `destroy-cluster.sh`
+**Purpose:** Safely destroy Kubernetes cluster VMs with confirmation prompts
+
+**What it does:**
+- Provides interactive menu for selective or complete destruction
+- Backs up VM configurations before deletion
+- Gracefully shuts down VMs before destroying
+- Supports command-line arguments for automation
+
+**When to use:**
+- Cluster rebuild testing
+- Resource cleanup
+- Starting fresh after experimentation
+- Disaster recovery practice
+
+**Usage:**
+```bash
+# Interactive mode (recommended)
+./destroy-cluster.sh
+
+# Destroy all cluster VMs
+./destroy-cluster.sh --all
+
+# Destroy only workers (keep control plane)
+./destroy-cluster.sh --workers-only
+
+# Destroy control plane only
+./destroy-cluster.sh --control-plane
+
+# Quick destroy without prompts (use carefully!)
+./destroy-cluster.sh --all --force
+```
+
+**Safety features:**
+- Multiple confirmation prompts (unless `--force`)
+- Automatic VM config backup to `/root/vm-backups/`
+- Graceful shutdown with timeout fallback
+- Template preserved by default
 
 ## Cloud-Init Configuration
 
@@ -251,14 +290,14 @@ Static IPs for predictable cluster networking:
 | Node | VM ID | vCPUs | RAM | Disk | IP Address |
 |------|-------|-------|-----|------|------------|
 | Template | 9000 | 2 | 2GB | 10GB | N/A (template) |
-| k8s-cp-01 | 1001 | 4 | 8GB | 50GB | 192.168.178.34 |
-| k8s-worker-01 | 2001 | 4 | 10GB | 100GB | 192.168.178.35 |
-| k8s-worker-02 | 2002 | 4 | 10GB | 100GB | 192.168.178.36 |
-| **Total Used** | - | **12** | **28GB** | **250GB** | - |
+| k8s-cp-01 | 1001 | 3 | 6GB | 50GB | 192.168.178.34 |
+| k8s-worker-01 | 2001 | 3 | 7GB | 100GB | 192.168.178.35 |
+| k8s-worker-02 | 2002 | 3 | 7GB | 100GB | 192.168.178.36 |
+| **Total Used** | - | **9** | **20GB** | **250GB** | - |
 
 **Available headroom (Beelink SER5 Pro):**
-- CPU: 16 threads total, 12 allocated (4 threads reserved for Proxmox)
-- RAM: 27GB usable, 28GB allocated (⚠️ at capacity, monitor closely)
+- CPU: 12 threads total, 9 allocated (3 threads reserved for Proxmox)
+- RAM: 27GB usable, 20GB allocated (7GB free buffer)
 - Disk: 450GB usable, 250GB allocated (200GB free for logs/data)
 
 ## Troubleshooting
@@ -345,13 +384,11 @@ qm start 1001
 
 ## Disaster Recovery: Rebuild Entire Cluster
 
-**Complete cluster rebuild in under 5 minutes:**
+**Complete cluster rebuild in under 10 minutes:**
 
 ```bash
-# Step 1: Destroy all VMs (if they exist)
-qm destroy 1001 --purge || true  # Control plane
-qm destroy 2001 --purge || true  # Worker 1
-qm destroy 2002 --purge || true  # Worker 2
+# Step 1: Destroy all VMs using automation script
+./destroy-cluster.sh --all
 
 # Step 2: Recreate from scripts
 ./create-k8s-controlplane.sh
@@ -367,6 +404,13 @@ ansible-playbook -i inventory.ini playbooks/install-kubernetes.yml
 # Total time: ~10 minutes for full cluster rebuild
 ```
 
+**Manual VM destruction (if destroy-cluster.sh unavailable):**
+```bash
+qm stop 1001 && qm destroy 1001 --purge  # Control plane
+qm stop 2001 && qm destroy 2001 --purge  # Worker 1
+qm stop 2002 && qm destroy 2002 --purge  # Worker 2
+```
+
 ## Best Practices
 
 **✅ DO:**
@@ -375,6 +419,7 @@ ansible-playbook -i inventory.ini playbooks/install-kubernetes.yml
 - Verify checksums before creating templates
 - Document any custom cloud-init configurations
 - Test scripts in sequence on fresh Proxmox install
+- Use destroy-cluster.sh for safe VM cleanup
 
 **❌ DON'T:**
 - Don't modify running VMs manually (treat as immutable)
@@ -382,6 +427,7 @@ ansible-playbook -i inventory.ini playbooks/install-kubernetes.yml
 - Don't skip checksum verification (security risk)
 - Don't clone running VMs (stop them first)
 - Don't forget to copy SSH keys before running scripts
+- Don't use `qm destroy` directly (use destroy-cluster.sh instead)
 
 ## Adapting for Your Environment
 
@@ -395,23 +441,74 @@ BASE_IP="10.0.1"  # In create-k8s-workers.sh
 **Different resource allocation:**
 ```bash
 # Edit create-k8s-controlplane.sh:
-VM_MEMORY=16384  # 16GB RAM
-VM_CORES=8       # 8 vCPUs
+VM_MEMORY=8192   # 8GB RAM
+VM_CORES=4       # 4 vCPUs
 
 # Edit create-k8s-workers.sh:
-VMS["2001"]="k8s-worker-01|10.0.1.35|8|16384|200"
-#                                    ^   ^    ^
-#                                    |   |    └─ Disk (GB)
-#                                    |   └────── RAM (MB)
-#                                    └────────── vCPUs
+WORKERS["2001"]="k8s-worker-01|10.0.1.35|4|10240|200"
+#                                        ^   ^     ^
+#                                        |   |     └─ Disk (GB)
+#                                        |   └─────── RAM (MB)
+#                                        └───────────── vCPUs
+```
+
+**Add more workers:**
+```bash
+# Edit create-k8s-workers.sh:
+declare -A WORKERS=(
+  ["2001"]="k8s-worker-01|192.168.178.35|3|7168|100"
+  ["2002"]="k8s-worker-02|192.168.178.36|3|7168|100"
+  ["2003"]="k8s-worker-03|192.168.178.37|3|7168|100"  # Add this
+  ["2004"]="k8s-worker-04|192.168.178.38|3|7168|100"  # And this
+)
+
+# Also update destroy-cluster.sh:
+WORKER_IDS=(2001 2002 2003 2004)  # Add new VM IDs
+```
+
+## Complete Workflow Example
+
+**First-time setup:**
+```bash
+# 1. Create template (once)
+./create-template.sh
+
+# 2. Create cluster VMs
+./create-k8s-controlplane.sh
+./create-k8s-workers.sh
+
+# 3. Verify all VMs are accessible
+ssh mahmood@192.168.178.34 'hostname'  # k8s-cp-01
+ssh mahmood@192.168.178.35 'hostname'  # k8s-worker-01
+ssh mahmood@192.168.178.36 'hostname'  # k8s-worker-02
+
+# 4. Install Kubernetes
+cd ../../ansible
+ansible-playbook -i inventory.ini playbooks/install-kubernetes.yml
+```
+
+**Rebuild cluster for testing:**
+```bash
+# 1. Destroy existing cluster
+./destroy-cluster.sh --all
+
+# 2. Recreate (template still exists)
+./create-k8s-controlplane.sh
+./create-k8s-workers.sh
+
+# 3. Reinstall Kubernetes
+cd ../../ansible
+ansible-playbook -i inventory.ini playbooks/install-kubernetes.yml
+
+# Total time: ~5 minutes
 ```
 
 ## Next Steps
 
 After VMs are created and verified:
 
-1. ✅ **Install Kubernetes:** `cd ../../ansible && ansible-playbook ...`
-2. ✅ **Configure kubectl:** `scp mahmood@192.168.178.34:~/.kube/config ~/.kube/`
+1. ✅ **Install Kubernetes:** `cd ../../ansible && ansible-playbook -i inventory.ini playbooks/install-kubernetes.yml`
+2. ✅ **Configure kubectl:** `scp mahmood@192.168.178.34:~/.kube/config ~/.kube/config`
 3. ✅ **Deploy platform services:** See `../../../platform/` directory
 4. ✅ **Setup monitoring:** See `../../../observability/` directory
 
