@@ -38,6 +38,17 @@ Traditional Manual Method:              Template Method:
 Total: ~30 min per VM                  Total: ~1 min per VM
 ```
 
+## Directory Structure
+
+```
+infra/proxmox/vm-templates/
+├── README.md                           # Overview of template system
+├── create-template.sh                  # Step 1: Create Ubuntu cloud-init template
+├── create-k8s-controlplane.sh          # Step 2: Create control plane from template
+├── create-k8s-workers.sh               # Step 3: Create workers (you already have this)
+└── destroy-cluster.sh                  # Bonus: Clean slate rebuild
+```
+
 ## Scripts
 
 ### 1. `create-template.sh`
