@@ -1,3 +1,5 @@
+# Phase 2: VM Creation & Configuration
+
 # VM Template and Provisioning Scripts
 
 ## Overview
