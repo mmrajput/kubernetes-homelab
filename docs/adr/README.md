@@ -11,3 +11,8 @@ Each ADR follows this structure:
 - **Alternatives Considered**: What else was evaluated
 
 ## Index
+- [ADR-001: Homelab Hardware Selection](#TODO)
+- [ADR-002: Proxmox VE Setup](#TODO)
+- [ADR-003: Kubernetes Cluster Architecture](#TODO)
+- [ADR-004: Devcontainer.md](ADR-004-devcontainer.md)
+- [ADR-005: GitOps Implementation](#Upcoming)

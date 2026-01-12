@@ -1,0 +1,55 @@
+{
+  "name": "Homelab Infrastructure Manager",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "USERNAME": "${localEnv:CONTAINER_USERNAME:rajput}",
+      "USER_UID": "${localEnv:CONTAINER_USER_UID:1000}",
+      "USER_GID": "${localEnv:CONTAINER_USER_GID:1000}"
+    }
+  },
+  
+  // Configure tool-specific properties
+  "customizations": {
+    "vscode": {
+      "extensions": [],
+      "settings": {}
+    }
+  },
+
+  // Mount kubeconfig, SSH keys, and git config from WSL
+  "mounts": [
+    // Kubeconfig - read-only to prevent accidental modification
+    "source=${localEnv:HOME}/.kube,target=/home/${localEnv:CONTAINER_USERNAME:rajput}/.kube,readonly,type=bind",
+    
+    // SSH keys - read-only for security
+    "source=${localEnv:HOME}/.ssh,target=/home/${localEnv:CONTAINER_USERNAME:rajput}/.ssh,readonly,type=bind",
+    
+    // Git configuration
+    "source=${localEnv:HOME}/.gitconfig,target=/home/${localEnv:CONTAINER_USERNAME:rajput}/.gitconfig,readonly,type=bind",
+    
+    // Tool configurations (writable) - k9s, argocd, etc.
+    "source=${localWorkspaceFolder}/.config,target=/home/${localEnv:CONTAINER_USERNAME:rajput}/.config,type=bind"
+  ],
+
+  // Use host network to access Kubernetes cluster on local network
+  "runArgs": [
+    "--network=host",
+    "--hostname=${localEnv:CONTAINER_HOSTNAME:homelab-devcontainer}"
+  ],
+
+  // Set environment variables
+  "containerEnv": {
+    "KUBECONFIG": "/home/${localEnv:CONTAINER_USERNAME:rajput}/.kube/config",
+    "EDITOR": "vim"
+  },
+
+  // Run post-creation script
+  "postCreateCommand": "bash /home/${localEnv:CONTAINER_USERNAME:rajput}/.devcontainer/post-create.sh",
+
+  // Default user
+  "remoteUser": "${localEnv:CONTAINER_USERNAME:rajput}",
+
+  // Features to install (none needed - we install everything via Dockerfile)
+  "features": {}
+}
