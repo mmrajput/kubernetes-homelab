@@ -1,0 +1,13 @@
+# <type>(<scope>): <subject>
+
+# CKA Objective Mapping:
+# Refs: CKA-
+
+# --- Homelab Specific Scopes ---
+# Infrastructure: proxmox, ansible, vm
+# Cluster: k8s, cluster, node, kubeadm
+# Network: calico, ingress, metallb
+# Storage: local-path, longhorn, pvc
+# GitOps: argocd, helm
+# Observability: prometheus, grafana, loki
+# Platform: cert-manager, backup, velero
