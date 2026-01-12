@@ -133,30 +133,60 @@ RUN pip3 install --no-cache-dir --break-system-packages \
 # Enable bash completion for kubectl
 RUN kubectl completion bash > /etc/bash_completion.d/kubectl
 
-# Install Starship prompt
-RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes
-
 # Switch to user
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
-# Create necessary directories
-RUN mkdir -p /home/${USERNAME}/.config
+# Create .devcontainer directory for post-create script
 RUN mkdir -p /home/${USERNAME}/.devcontainer
-
-# Copy Starship config
-COPY --chown=${USERNAME}:${USERNAME} config/starship.toml /home/${USERNAME}/.config/starship.toml
 
 # Copy post-create script
 COPY --chown=${USERNAME}:${USERNAME} post-create.sh /home/${USERNAME}/.devcontainer/post-create.sh
 RUN chmod +x /home/${USERNAME}/.devcontainer/post-create.sh
 
-# Set up shell environment with Starship
+# Set up shell environment - Basic configuration
 RUN echo 'source <(kubectl completion bash)' >> ~/.bashrc \
     && echo 'alias k=kubectl' >> ~/.bashrc \
     && echo 'complete -o default -F __start_kubectl k' >> ~/.bashrc \
-    && echo 'export EDITOR=vim' >> ~/.bashrc \
-    && echo 'eval "$(starship init bash)"' >> ~/.bashrc
+    && echo 'export EDITOR=vim' >> ~/.bashrc
+
+# Set up custom colorful prompt
+RUN cat >> ~/.bashrc << 'PROMPT_EOF'
+
+# Custom Prompt Configuration
+parse_git_branch() {
+    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+parse_k8s_context() {
+    if [ -f ~/.kube/config ]; then
+        ctx=$(kubectl config current-context 2>/dev/null)
+        echo "⎈ ${ctx##*@}"
+    fi
+}
+
+# Colors
+PURPLE='\[\033[0;35m\]'
+CYAN='\[\033[0;36m\]'
+YELLOW='\[\033[1;33m\]'
+BLUE='\[\033[0;34m\]'
+GREEN='\[\033[0;32m\]'
+RED='\[\033[0;31m\]'
+WHITE='\[\033[0;37m\]'
+RESET='\[\033[0m\]'
+
+# Two-line prompt
+PS1="${PURPLE}┌─[${CYAN}\u${WHITE}@${CYAN}\h${PURPLE}]─[${YELLOW}\w${PURPLE}]"
+PS1="${PS1}${BLUE}\$(parse_k8s_context)${PURPLE}\$(parse_git_branch)${RESET}\n"
+PS1="${PS1}${PURPLE}└─"
+if [ $? -eq 0 ]; then
+    PS1="${PS1}${GREEN}\$${RESET} "
+else
+    PS1="${PS1}${RED}\$${RESET} "
+fi
+
+export PS1
+PROMPT_EOF
 
 # Default command
 CMD ["/bin/bash"]

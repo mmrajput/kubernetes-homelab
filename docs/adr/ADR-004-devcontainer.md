@@ -1,7 +1,7 @@
 # ADR-004: DevContainer for Homelab Infrastructure Management
 
 **Status:** Accepted  
-**Date:** 2025-01-11  
+**Date:** 2026-01-11  
 **Author:** Mahmood  
 **Context:** CKA Certification Preparation & Homelab Management
 
