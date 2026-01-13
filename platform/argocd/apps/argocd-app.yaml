@@ -8,9 +8,7 @@ metadata:
 spec:
   project: default
   
-  # Multi-source: Helm chart + values from Git
   sources:
-    # Source 1: Helm chart
     - repoURL: https://argoproj.github.io/argo-helm
       chart: argo-cd
       targetRevision: 9.3.0
@@ -18,7 +16,6 @@ spec:
         valueFiles:
           - $values/platform/argocd/install/values.yaml
     
-    # Source 2: Our Git repo (for values file)
     - repoURL: https://github.com/mmrajput/kubernetes-homelab-01
       targetRevision: HEAD
       ref: values
@@ -28,6 +25,8 @@ spec:
     namespace: platform
   
   syncPolicy:
+    automated:
+      prune: false      # Don't auto-delete (safety)
+      selfHeal: true    # Auto-revert manual changes
     syncOptions:
       - CreateNamespace=true
-    # Manual sync for ArgoCD (safety first)
