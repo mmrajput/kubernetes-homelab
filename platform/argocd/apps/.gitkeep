@@ -1,0 +1,2 @@
+# This file ensures the apps/ directory exists in Git
+# Root app watches this directory for child Application manifests
