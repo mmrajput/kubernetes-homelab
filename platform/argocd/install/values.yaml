@@ -1,0 +1,37 @@
+# ArgoCD Helm Values for Homelab
+# Chart: argo-cd v9.3.0
+# App: ArgoCD v3.2.3
+
+global:
+  domain: argocd.homelab.local
+
+# Server configuration
+server:
+  # We'll create Ingress manually (better control)
+  ingress:
+    enabled: false
+  
+  # Insecure mode (no TLS) - fine for homelab
+  extraArgs:
+    - --insecure
+
+# Redis - no persistence needed (cache only)
+redis:
+  enabled: true
+
+# Repo server - no persistence needed (clones Git repos)
+repoServer:
+  volumes: []
+
+# Application controller
+controller:
+  metrics:
+    enabled: true
+
+# Notifications controller (disabled for now)
+notifications:
+  enabled: false
+
+# Dex (SSO) - disabled for now (using admin account)
+dex:
+  enabled: false
