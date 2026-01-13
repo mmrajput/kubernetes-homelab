@@ -5,41 +5,57 @@
 global:
   domain: argocd.homelab.local
 
-# Server configuration
 server:
-  # We'll create Ingress manually (better control)
   ingress:
     enabled: false
   
-  # Insecure mode (no TLS) - fine for homelab
   extraArgs:
     - --insecure
+  
+  # Resource limits for homelab
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
-# Redis - no persistence needed (cache only)
 redis:
   enabled: true
 
-# Repo server - no persistence needed (clones Git repos)
 repoServer:
   volumes: []
+  
+  # Resource limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
-# Application controller
 controller:
   metrics:
     enabled: true
+  
+  # Resource limits
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  
+  # Sync every 2 minutes (faster for learning)
+  args:
+    app-resync: "120"
 
-# Notifications controller (disabled for now)
 notifications:
   enabled: false
 
-# Dex (SSO) - disabled for now (using admin account)
 dex:
   enabled: false
-
-# Test change: Add custom labels
-server:
-  extraArgs:
-    - --insecure
-  podLabels:
-    gitops-test: "true"
-    managed-by: "argocd"
+EOF
