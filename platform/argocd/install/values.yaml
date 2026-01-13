@@ -12,7 +12,6 @@ server:
   extraArgs:
     - --insecure
   
-  # Resource limits for homelab
   resources:
     limits:
       cpu: 500m
@@ -27,7 +26,6 @@ redis:
 repoServer:
   volumes: []
   
-  # Resource limits
   resources:
     limits:
       cpu: 500m
@@ -40,7 +38,6 @@ controller:
   metrics:
     enabled: true
   
-  # Resource limits
   resources:
     limits:
       cpu: 1000m
@@ -49,13 +46,12 @@ controller:
       cpu: 250m
       memory: 512Mi
   
-  # Sync every 2 minutes (faster for learning)
-  args:
-    app-resync: "120"
+  # Sync every 2 minutes
+  extraArgs:
+    - --app-resync=120
 
 notifications:
   enabled: false
 
 dex:
   enabled: false
-EOF
