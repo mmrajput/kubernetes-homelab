@@ -1,0 +1,29 @@
+# nginx-ingress Helm Values for Homelab
+# Chart: ingress-nginx
+
+controller:
+  # NodePort service (no LoadBalancer in homelab)
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30080
+      https: 30443
+  
+  # Set as default IngressClass
+  ingressClassResource:
+    default: true
+  
+  # Resource limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Metrics for Prometheus (Phase 5)
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false  # Enable when Prometheus installed
