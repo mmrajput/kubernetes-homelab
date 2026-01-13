@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app
+  namespace: platform
+  # Finalizers ensure proper cleanup
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  
+  # Source: Where to find child Application manifests
+  source:
+    repoURL: https://github.com/mmrajput/kubernetes-homelab-01
+    targetRevision: HEAD
+    path: platform/argocd/apps
+    directory:
+      recurse: false  # Don't look in subdirectories
+  
+  # Destination: Where to create Application resources
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: platform
+  
+  # Sync policy: How to handle changes
+  syncPolicy:
+    automated:
+      prune: true      # Delete apps removed from Git
+      selfHeal: true   # Revert manual changes
+    syncOptions:
+      - CreateNamespace=true
