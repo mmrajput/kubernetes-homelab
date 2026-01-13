@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: platform
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  
+  # Multi-source: Helm chart + values from Git
+  sources:
+    # Source 1: Helm chart
+    - repoURL: https://argoproj.github.io/argo-helm
+      chart: argo-cd
+      targetRevision: 9.3.0
+      helm:
+        valueFiles:
+          - $values/platform/argocd/install/values.yaml
+    
+    # Source 2: Our Git repo (for values file)
+    - repoURL: https://github.com/mmrajput/kubernetes-homelab-01
+      targetRevision: HEAD
+      ref: values
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: platform
+  
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    # Manual sync for ArgoCD (safety first)
