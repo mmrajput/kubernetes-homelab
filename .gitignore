@@ -7,6 +7,7 @@ secrets/
 .env
 id_rsa*
 id_ed25519*
+.config/
 
 # Ansible
 # Don't commit actual node IPs in inventory (use inventory.example)
@@ -41,3 +42,4 @@ tmp/
 
 # Docs
 phase-timeline.md
+.config/
