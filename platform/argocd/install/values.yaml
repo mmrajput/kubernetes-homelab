@@ -35,3 +35,11 @@ notifications:
 # Dex (SSO) - disabled for now (using admin account)
 dex:
   enabled: false
+
+# Test change: Add custom labels
+server:
+  extraArgs:
+    - --insecure
+  podLabels:
+    gitops-test: "true"
+    managed-by: "argocd"
