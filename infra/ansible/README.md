@@ -115,7 +115,7 @@ ansible_ssh_private_key_file=~/.ssh/id_ed25519_homelab
 
 ```bash
 # From your workstation (where Ansible is installed)
-cd ~/kubernetes-homelab-01/infra/ansible
+cd ~/kubernetes-homelab/infra/ansible
 
 # Test ping module
 ansible -i inventory.ini all -m ping
@@ -454,7 +454,7 @@ kubectl get networkpolicies -A
 
 ```bash
 # 1. Destroy existing cluster VMs
-cd ~/kubernetes-homelab-01/infra/proxmox/vm-templates
+cd ~/kubernetes-homelab/infra/proxmox/vm-templates
 ./destroy-cluster.sh --all
 
 # 2. Recreate VMs from template
@@ -465,7 +465,7 @@ cd ~/kubernetes-homelab-01/infra/proxmox/vm-templates
 # ~90 seconds
 
 # 4. Reinstall Kubernetes
-cd ~/kubernetes-homelab-01/infra/ansible
+cd ~/kubernetes-homelab/infra/ansible
 ansible-playbook -i inventory.ini playbooks/install-kubernetes.yml
 
 # 5. Verify cluster

@@ -99,7 +99,7 @@ This repository contains a fully operational Kubernetes platform running on bare
 ## 📁 Repository Structure
 
 ```
-kubernetes-homelab-01/
+kubernetes-homelab/
 ├── .config/                    # Tool configurations (k9s, helm)
 ├── .devcontainer/              # Isolated development environment
 ├── apps/                       # Application deployments
@@ -216,8 +216,8 @@ This homelab implements patterns used in production environments:
 ### Clone and Setup
 
 ```bash
-git clone https://github.com/mmrajput/kubernetes-homelab-01.git
-cd kubernetes-homelab-01
+git clone https://github.com/mmrajput/kubernetes-homelab.git
+cd kubernetes-homelab
 
 # Open in VS Code with DevContainer
 code .
@@ -269,8 +269,8 @@ open http://argocd.homelab.local:30080
 
 This is a personal portfolio project demonstrating platform engineering skills. Feedback and suggestions are welcome:
 
-- 🐛 [Report an issue](https://github.com/mmrajput/kubernetes-homelab-01/issues)
-- 💡 [Suggest an improvement](https://github.com/mmrajput/kubernetes-homelab-01/issues)
+- 🐛 [Report an issue](https://github.com/mmrajput/kubernetes-homelab/issues)
+- 💡 [Suggest an improvement](https://github.com/mmrajput/kubernetes-homelab/issues)
 - ⭐ Star this repo if you find it useful
 
 ---

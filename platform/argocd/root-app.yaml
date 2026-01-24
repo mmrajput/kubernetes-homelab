@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/mmrajput/kubernetes-homelab-01
+    repoURL: https://github.com/mmrajput/kubernetes-homelab
     targetRevision: HEAD
     path: platform/argocd/apps
     directory:

@@ -68,7 +68,7 @@ ls -la ~/.gitconfig
 ### 1. Clone/Navigate to Your Project
 
 ```bash
-cd ~/kubernetes-homelab-01  # Or wherever you keep this project
+cd ~/kubernetes-homelab  # Or wherever you keep this project
 ```
 
 ### 2. Build the DevContainer
@@ -110,7 +110,7 @@ k9s
 
 ```bash
 # Navigate to project
-cd ~/kubernetes-homelab-01
+cd ~/kubernetes-homelab
 
 # Enter the container (starts if not running)
 ./scripts/dev-shell.sh
@@ -202,7 +202,7 @@ devcontainer up --workspace-folder .
 - **SSH Keys**: `~/.ssh/` (mounted from WSL, read-only)
 - **Git Config**: `~/.gitconfig` (mounted from WSL, read-only)
 - **Tool Configs**: `~/.config/` (writable, persists in `.config/` directory)
-- **Working Directory**: `/workspaces/kubernetes-homelab-01`
+- **Working Directory**: `/workspaces/kubernetes-homelab`
 
 ### In WSL
 

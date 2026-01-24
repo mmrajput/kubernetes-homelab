@@ -4,7 +4,7 @@
 # installation playbook. Variables are organized by category for clarity.
 #
 # Last Updated: 2026-01-07
-# Cluster: kubernetes-homelab-01
+# Cluster: kubernetes-homelab
 ---
 
 # =============================================================================
@@ -155,7 +155,7 @@ kubernetes_user_home: "/home/mahmood"
 # =============================================================================
 # CLUSTER METADATA (for documentation)
 # =============================================================================
-cluster_name: "kubernetes-homelab-01"
+cluster_name: "kubernetes-homelab"
 cluster_domain: "cluster.local"
 cluster_dns_ip: "10.96.0.10"  # First IP in service_cidr range
 
