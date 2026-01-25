@@ -17,3 +17,4 @@ Each ADR follows this structure:
 - [ADR-004: CNI Selection](ADR-004-cni-selection.md)
 - [ADR-005: Devcontainer](ADR-005-devcontainer.md)
 - [ADR-006: GitOps Tool Selection](ADR-006-gitops-tool.md)
+- [ADR-007: Ingress Strategy](ADR-007-ingress-strategy.md)
