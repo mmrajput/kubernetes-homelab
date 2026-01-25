@@ -19,3 +19,4 @@ Each ADR follows this structure:
 - [ADR-006: GitOps Tool Selection](ADR-006-gitops-tool.md)
 - [ADR-007: Ingress Strategy](ADR-007-ingress-strategy.md)
 - [ADR-008: App-of-Apps Pattern](ADR-008-app-of-app-pattern.md)
+- [ADR-009: Storage Strategy](ADR-009-storage-strategy.md)
