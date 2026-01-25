@@ -18,3 +18,4 @@ Each ADR follows this structure:
 - [ADR-005: Devcontainer](ADR-005-devcontainer.md)
 - [ADR-006: GitOps Tool Selection](ADR-006-gitops-tool.md)
 - [ADR-007: Ingress Strategy](ADR-007-ingress-strategy.md)
+- [ADR-008: App-of-Apps Pattern](ADR-008-app-of-app-pattern.md)
