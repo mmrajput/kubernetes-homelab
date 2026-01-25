@@ -1,5 +1,3 @@
-# Phase 2: VM Creation & Configuration
-
 # VM Template and Provisioning Scripts
 
 ## Overview
@@ -47,7 +45,7 @@ infra/proxmox/vm-templates/
 ├── README.md                           # Overview of template system
 ├── create-template.sh                  # Step 1: Create Ubuntu cloud-init template
 ├── create-k8s-controlplane.sh          # Step 2: Create control plane from template
-├── create-k8s-workers.sh               # Step 3: Create workers (you already have this)
+├── create-k8s-workers.sh               # Step 3: Create workers
 └── destroy-cluster.sh                  # Bonus: Clean slate rebuild
 ```
 
@@ -298,21 +296,6 @@ Static IPs for predictable cluster networking:
 - ✅ Easier troubleshooting (IP = hostname mapping)
 - ✅ Direct Ansible inventory configuration
 
-## Resource Allocation Summary
-
-| Node | VM ID | vCPUs | RAM | Disk | IP Address |
-|------|-------|-------|-----|------|------------|
-| Template | 9000 | 2 | 2GB | 10GB | N/A (template) |
-| k8s-cp-01 | 1001 | 3 | 6GB | 50GB | 192.168.178.34 |
-| k8s-worker-01 | 2001 | 3 | 7GB | 100GB | 192.168.178.35 |
-| k8s-worker-02 | 2002 | 3 | 7GB | 100GB | 192.168.178.36 |
-| **Total Used** | - | **9** | **20GB** | **250GB** | - |
-
-**Available headroom (Beelink SER5 Pro):**
-- CPU: 12 threads total, 9 allocated (3 threads reserved for Proxmox)
-- RAM: 27GB usable, 20GB allocated (7GB free buffer)
-- Disk: 450GB usable, 250GB allocated (200GB free for logs/data)
-
 ## Troubleshooting
 
 ### Template creation fails: "Image checksum mismatch"
@@ -522,17 +505,9 @@ After VMs are created and verified:
 
 1. ✅ **Install Kubernetes:** `cd ../../ansible && ansible-playbook -i inventory.ini playbooks/install-kubernetes.yml`
 2. ✅ **Configure kubectl:** `scp mahmood@192.168.178.34:~/.kube/config ~/.kube/config`
-3. ✅ **Deploy platform services:** See `../../../platform/` directory
-4. ✅ **Setup monitoring:** See `../../../observability/` directory
 
 ## References
 
 - [Ubuntu Cloud Images](https://cloud-images.ubuntu.com/)
 - [Proxmox Cloud-Init Support](https://pve.proxmox.com/wiki/Cloud-Init_Support)
 - [Cloud-Init Documentation](https://cloudinit.readthedocs.io/)
-
-## Related Documentation
-
-- [Proxmox Setup](../README.md) - Hypervisor installation and configuration
-- [Ansible Automation](../../ansible/README.md) - Kubernetes installation playbooks
-- [Architecture Overview](../../../docs/architecture.md) - Complete homelab design

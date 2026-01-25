@@ -172,6 +172,7 @@ tar -czf /root/pve-config-$(date +%F).tar.gz /etc/pve/
 
 ## Related Documentation
 
+- [Installing Proxmox VE on Beelink SER5 Pro](../../docs/guides/proxmox-installation.md)
 - [VM Templates](vm-templates/README.md) — Automated VM provisioning
 - [Ansible Automation](../ansible/README.md) — Kubernetes installation
 - [Network Topology](../../docs/architecture/network-topology.md) — Network design

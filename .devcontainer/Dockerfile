@@ -35,6 +35,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     tar \
     gzip \
+    tree \ 
     ca-certificates \
     gnupg \
     lsb-release \

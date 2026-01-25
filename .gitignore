@@ -41,5 +41,6 @@ tmp/
 *.log
 
 # Docs
+todos.md
 phase-timeline.md
 .config/
