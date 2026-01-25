@@ -13,6 +13,6 @@ Each ADR follows this structure:
 ## Index
 - [ADR-001: Homelab Hardware Selection](ADR-001-hardware-selection.md)
 - [ADR-002: Hypervisor Selection](ADR-002-hypervisor-selection.md)
-- [ADR-003: Kubernetes Cluster Architecture](#TODO)
+- [ADR-003: Kubernetes Distribution Selection](ADR-003-kubernetes-distribution.md)
 - [ADR-004: Devcontainer.md](ADR-004-devcontainer.md)
 - [ADR-005: GitOps Implementation](#Upcoming)
