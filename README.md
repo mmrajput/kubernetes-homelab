@@ -104,23 +104,28 @@ kubernetes-homelab/
 ├── .devcontainer/              # Isolated development environment
 ├── apps/                       # Application deployments
 │   └── hello-world/            # Test application
+│
 ├── docs/
 │   ├── adr/                    # Architecture Decision Records
 │   ├── architecture/           # Design documentation
 │   ├── guides/                 # Setup and operational guides
 │   └── runbooks/               # Operational procedures
+│
 ├── infra/
 │   ├── ansible/                # Kubernetes cluster automation
-│   ├── kubernetes/             # Bootstrap configurations
 │   └── proxmox/                # VM templates and scripts
-├── observability/              # Monitoring stack (Phase 6)
+│
+├── observability/              # Monitoring stack
+│
 ├── platform/
 │   ├── argocd/                 # GitOps configuration
 │   │   ├── apps/               # ArgoCD Application manifests
 │   │   ├── install/            # ArgoCD Helm values
 │   │   └── root-app.yaml       # App-of-Apps root
 │   └── nginx-ingress/          # Ingress controller config
+│
 ├── resources/                  # Static assets
+│
 └── scripts/                    # Automation helpers
 ```
 
