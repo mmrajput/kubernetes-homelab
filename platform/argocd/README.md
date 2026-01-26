@@ -4,26 +4,7 @@
 
 ArgoCD provides GitOps-based continuous delivery for the homelab Kubernetes cluster. It implements the App-of-Apps pattern for scalable, declarative management of all platform services.
 
-## Access
-
-| | |
-|---|---|
-| **URL** | `http://argocd.homelab.local:30080` |
-| **Username** | `admin` |
-| **Password** | See command below |
-
-```bash
-# Get admin password
-kubectl -n platform get secret argocd-initial-admin-secret \
-  -o jsonpath="{.data.password}" | base64 -d
-
-# Add to /etc/hosts (or Windows: C:\Windows\System32\drivers\etc\hosts)
-192.168.178.34  argocd.homelab.local
-```
-
-## Architecture
-
-### App-of-Apps Pattern
+## App-of-Apps Architecture
 
 ```
 root-app (bootstrap, manually applied once)
@@ -40,19 +21,7 @@ root-app (bootstrap, manually applied once)
 3. ArgoCD deploys and manages the corresponding service
 4. Changes to Git automatically sync to cluster
 
-## Directory Structure
-
-```
-platform/argocd/
-├── README.md           # This file
-├── apps/               # ArgoCD Application manifests
-│   ├── argocd-app.yaml       # Self-management
-│   └── nginx-ingress-app.yaml
-├── install/
-│   └── values.yaml     # Helm values for ArgoCD
-├── ingress.yaml        # Ingress resource for UI access
-└── root-app.yaml       # App-of-Apps bootstrap
-```
+---
 
 ## Configuration
 
@@ -114,43 +83,6 @@ argocd app refresh argocd
 ```bash
 kubectl logs -n platform deployment/argocd-server
 kubectl logs -n platform statefulset/argocd-application-controller
-```
-
-## Adding New Applications
-
-```bash
-# 1. Create Application manifest
-cat > platform/argocd/apps/my-app.yaml << 'EOF'
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: my-app
-  namespace: platform
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/mmrajput/kubernetes-homelab.git
-    targetRevision: main
-    path: apps/my-app
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: my-app
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-EOF
-
-# 2. Commit and push
-git add -A
-git commit -m "feat(argocd): add my-app application"
-git push
-
-# 3. root-app discovers and deploys automatically
 ```
 
 ## Troubleshooting
