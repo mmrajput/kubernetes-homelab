@@ -1,4 +1,4 @@
-# Kubernetes Homelab - Production-Grade Platform Engineering
+# Kubernetes Homelab – Platform Engineering (Production-Inspired Patterns)
 
 [![Kubernetes](https://img.shields.io/badge/kubernetes-v1.31-blue.svg)](https://kubernetes.io/)
 [![Proxmox](https://img.shields.io/badge/proxmox-8.x-orange.svg)](https://www.proxmox.com/)
@@ -12,12 +12,14 @@
 
 ## 🎯 Project Overview
 
-This repository contains a fully operational Kubernetes platform running on bare-metal virtualization. The project demonstrates:
+This repository contains a self-directed Kubernetes homelab running on bare-metal virtualization. The project focuses on hands-on practice with infrastructure operations and platform engineering concepts, inspired by patterns commonly used in production environments.
 
-- **Infrastructure as Code** — Automated VM provisioning using Cloud-init and Kubernetes deployment via Ansible
+Key areas include:
+
+- **Infrastructure as Code** — Automated VM provisioning using cloud-init and Kubernetes deployment via Ansible
 - **GitOps Workflows** — ArgoCD with App-of-Apps pattern for declarative cluster management
-- **Production Patterns** — Enterprise-grade architecture decisions documented via ADRs
-- **Platform Engineering** — Self-service infrastructure with minimal manual intervention
+- **Architecture Documentation** — Architecture Decision Records (ADRs) capturing design choices and trade-offs
+- **Platform Operations** — Operating and evolving platform services with minimal manual intervention
 
 ---
 
@@ -151,7 +153,7 @@ kubernetes-homelab/
 
 ### GitOps with App-of-Apps Pattern
 
-All platform services are managed declaratively through Git:
+All platform services in the homelab are managed declaratively through Git:
 
 ```
 root-app (Bootstrap)
@@ -196,7 +198,7 @@ Reproducible CLI environment via DevContainers with pinned tool versions:
 
 ## 🏭 Enterprise Pattern Mapping
 
-This homelab implements patterns used in production environments:
+This homelab applies patterns commonly used in production environments, adapted for learning and experimentation:
 
 | Homelab Implementation | Enterprise Equivalent |
 |------------------------|----------------------|
@@ -255,7 +257,7 @@ open http://argocd.homelab.local:30080
 
 ### Near-term (Phase 6-7)
 - [ ] Observability stack (Prometheus, Grafana, Loki)
-- [ ] First production application deployment
+- [ ] First stateful / representative application deployment
 - [ ] Secrets management evaluation
 
 ### Mid-term (Phase 8-9)
