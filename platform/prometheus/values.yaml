@@ -1,0 +1,102 @@
+# kube-prometheus-stack Helm Values for Homelab
+# Chart: prometheus-community/kube-prometheus-stack
+
+# Global settings
+fullnameOverride: prometheus
+
+# Disable bundled Grafana (deploying separately)
+grafana:
+  enabled: false
+
+# Prometheus configuration
+prometheus:
+  prometheusSpec:
+    # Resource limits for homelab
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1Gi
+      limits:
+        memory: 2Gi
+    
+    # Retention optimized for 500GB disk
+    retention: 15d
+    retentionSize: "45GB"
+    
+    # Storage with Longhorn
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+    
+    # Discover all ServiceMonitors
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    
+    # Ingress for Prometheus UI
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - prometheus.homelab.local
+      paths:
+        - /
+      pathType: Prefix
+
+# Alertmanager configuration
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+    
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+    
+    # Ingress for Alertmanager UI
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - alertmanager.homelab.local
+      paths:
+        - /
+      pathType: Prefix
+
+# Node exporter - runs on every node
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      memory: 200Mi
+
+# Kube-state-metrics
+kube-state-metrics:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 200Mi
+    limits:
+      memory: 400Mi
+
+# Operator itself
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
