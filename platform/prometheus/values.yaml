@@ -10,6 +10,16 @@ grafana:
 
 # Prometheus configuration
 prometheus:
+  # Ingress at SERVICE level (not prometheusSpec)
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.homelab.local
+    paths:
+      - /
+    pathType: Prefix
+
   prometheusSpec:
     # Resource limits for homelab
     resources:
@@ -23,7 +33,7 @@ prometheus:
     retention: 15d
     retentionSize: "45GB"
     
-    # Storage with Longhorn
+    # Storage with local-path
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -35,19 +45,19 @@ prometheus:
     # Discover all ServiceMonitors
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
-    
-    # Ingress for Prometheus UI
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - prometheus.homelab.local
-      paths:
-        - /
-      pathType: Prefix
 
 # Alertmanager configuration
 alertmanager:
+  # Ingress at SERVICE level (not alertmanagerSpec)
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - alertmanager.homelab.local
+    paths:
+      - /
+    pathType: Prefix
+
   alertmanagerSpec:
     resources:
       requests:
@@ -63,16 +73,6 @@ alertmanager:
           resources:
             requests:
               storage: 5Gi
-    
-    # Ingress for Alertmanager UI
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - alertmanager.homelab.local
-      paths:
-        - /
-      pathType: Prefix
 
 # Node exporter - runs on every node
 prometheus-node-exporter:
