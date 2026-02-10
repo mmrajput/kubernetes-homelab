@@ -11,22 +11,27 @@ Platform services provide the foundational capabilities that applications depend
 | ArgoCD | GitOps continuous delivery | `platform` | `http://argocd.homelab.local:30080` |
 | nginx-ingress | HTTP routing and load balancing | `ingress-nginx` | NodePort 30080/30443 |
 | local-path-provisioner | Dynamic PV provisioning | `local-path-storage` | N/A |
+| prometheus | Monitoring stack | `monitoring` | `http://prometheus.homelab.local:30080` |
 
 ## Directory Structure
 
 ```
 platform/
-├── README.md                 # This file
+├── README.md                               # This file
 ├── argocd/
-│   ├── apps/                 # ArgoCD Application manifests (GitOps managed)
-│   │   ├── argocd-app.yaml   # ArgoCD self-management
-│   │   └── nginx-ingress-app.yaml
-│   ├── install/
-│   │   └── values.yaml       # ArgoCD Helm values (bootstrap only)
-│   ├── ingress.yaml          # ArgoCD Ingress resource
-│   └── root-app.yaml         # App-of-Apps root (bootstrap only)
-└── nginx-ingress/
-    └── values.yaml           # nginx-ingress Helm values
+│   ├── README.md                           # ArgoCD-specific documentation
+│   ├── values.yaml                         # ArgoCD Helm values (includes ingress config)
+│   ├── apps/                               # ArgoCD Application manifests (GitOps managed)
+│   │   ├── argocd-app.yaml                 # ArgoCD self-management
+│   │   ├── nginx-ingress-app.yaml
+│   │   └── kube-prometheus-stack-app.yaml
+│   └── root-app.yaml                       # App-of-Apps root (bootstrap only)
+├── nginx-ingress/
+│   ├── README.md
+│   └── values.yaml                         # nginx-ingress Helm values
+└── prometheus/
+    ├── README.md
+    └── values.yaml                         # kube-prometheus-stack Helm values
 ```
 ---
 
@@ -41,28 +46,18 @@ The App-of-Apps pattern requires a one-time manual bootstrap, after which all ch
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 
-# Install ArgoCD
+# Install ArgoCD with consolidated configuration
 helm install argocd argo/argo-cd \
   --namespace platform \
   --create-namespace \
-  --values platform/argocd/install/values.yaml
+  --values platform/argocd/values.yaml
 
 # Wait for pods
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server \
-  -n platform --timeout=120s
+  -n argocd --timeout=120s
 ```
 
-**File used:** `platform/argocd/install/values.yaml`
-
-### Step 2: Apply ArgoCD Ingress (Manual, Once)
-
-```bash
-kubectl apply -f platform/argocd/ingress.yaml
-
-# Add to /etc/hosts (or Windows: C:\Windows\System32\drivers\etc\hosts)
-192.168.178.34  argocd.homelab.local
-```
-**File used:** `platform/argocd/ingress.yaml`
+**File used:** `platform/argocd/values.yaml` (includes server config, ingress, and resource limits)
 
 **Access**
 
@@ -94,9 +89,9 @@ From this point, **no more kubectl for platform services**. Just commit to Git:
 
 ```bash
 # Adding a new service
-vim platform/argocd/apps/prometheus-app.yaml
+vim platform/argocd/apps/kube-prometheus-stack-app.yaml
 git add -A
-git commit -m "feat(platform): add prometheus"
+git commit -m "feat(platform): add kube-prometheus-stack-app"
 git push
 
 # ArgoCD automatically detects and deploys
@@ -111,13 +106,10 @@ MANUAL (one-time)                    GITOPS (ongoing)
 ─────────────────                    ────────────────
 
 1. helm install argocd               
-   (uses install/values.yaml)        
+   (uses argocd/values.yaml)        
               │                      
               ▼                      
-2. kubectl apply ingress.yaml        
-              │                      
-              ▼                      
-3. kubectl apply root-app.yaml ──────► root-app watches apps/
+2. kubectl apply root-app.yaml ──────► root-app watches apps/
                                               │
                                               ▼
                                      4. git push apps/*.yaml
@@ -193,8 +185,7 @@ git push
 
 | File | Purpose | How Applied |
 |------|---------|-------------|
-| `argocd/install/values.yaml` | ArgoCD Helm configuration | `helm install` (manual, once) |
-| `argocd/ingress.yaml` | ArgoCD UI access | `kubectl apply` (manual, once) |
+| `argocd/values.yaml` | ArgoCD Helm configuration | `helm install` (manual, once) |
 | `argocd/root-app.yaml` | Watches `apps/` directory | `kubectl apply` (manual, once) |
 | `argocd/apps/argocd-app.yaml` | ArgoCD self-management | Git push → auto-discovered |
 | `argocd/apps/nginx-ingress-app.yaml` | nginx-ingress deployment | Git push → auto-discovered |
@@ -224,4 +215,4 @@ git push
 
 ---
 
-**Last Updated:** January 2026
+**Last Updated:** Feb 2026
