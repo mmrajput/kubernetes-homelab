@@ -83,7 +83,7 @@ prometheus-node-exporter:
     limits:
       memory: 200Mi
 
-# Kube-state-metrics
+# Kube-state-metrics (Collects cluster level metrics)
 kube-state-metrics:
   resources:
     requests:
