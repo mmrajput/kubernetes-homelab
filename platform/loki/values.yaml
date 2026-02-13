@@ -40,10 +40,10 @@ singleBinary:
   # Resource limits for homelab
   resources:
     requests:
-      cpu: 100m
-      memory: 512Mi
+      cpu: 50m
+      memory: 256Mi
     limits:
-      memory: 1Gi
+      memory: 512Mi
   
   # Persistent storage
   persistence:
@@ -51,6 +51,16 @@ singleBinary:
     size: 10Gi
     storageClass: ""  # Use default (local-path)
 
+# CRITICAL: Explicitly disable cache components
+chunksCache:
+  enabled: false
+  replicas: 0
+
+resultsCache:
+  enabled: false
+  replicas: 0
+
+# Disable microservices components
 # Backend storage (not used in filesystem mode)
 backend:
   replicas: 0
