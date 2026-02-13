@@ -19,6 +19,10 @@ persistence:
   size: 1Gi
   storageClassName: ""  # Use default (local-path)
 
+# CRITICAL: Disable the failing init container
+initChownData:
+  enabled: false
+
 # Ingress configuration
 ingress:
   enabled: true
