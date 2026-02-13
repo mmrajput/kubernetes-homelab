@@ -1,0 +1,55 @@
+# Promtail Helm Values for Homelab
+# Chart: grafana/promtail
+
+# DaemonSet - runs on all nodes
+daemonset:
+  enabled: true
+
+# Resource limits
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+# Loki endpoint (internal service)
+config:
+  clients:
+    - url: http://loki:3100/loki/api/v1/push
+  
+  # Scrape configs - what logs to collect
+  snippets:
+    scrapeConfigs: |
+      # Pod logs
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_node_name]
+            target_label: node_name
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            target_label: container
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: app
+        pipeline_stages:
+          - cri: {}
+      
+      # System logs
+      - job_name: system
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: varlogs
+              __path__: /var/log/*log
+
+# ServiceMonitor for Prometheus
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus
