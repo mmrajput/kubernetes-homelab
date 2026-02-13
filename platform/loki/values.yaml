@@ -1,0 +1,100 @@
+# Loki Helm Values for Homelab
+# Chart: grafana/loki
+
+# Deployment mode: single binary (simple for homelab)
+deploymentMode: SingleBinary
+
+loki:
+  # Storage configuration - filesystem mode
+  storage:
+    type: filesystem
+  
+  # Schema configuration
+  schemaConfig:
+    configs:
+      - from: 2024-01-01
+        store: tsdb
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+  
+  # Common configuration
+  commonConfig:
+    replication_factor: 1
+  
+  # Authentication disabled (internal cluster only)
+  auth_enabled: false
+  
+  # Limits
+  limits_config:
+    retention_period: 168h  # 7 days (matches homelab scale)
+    max_query_series: 1000
+    max_query_lookback: 168h
+
+# Single binary deployment
+singleBinary:
+  replicas: 1
+  
+  # Resource limits for homelab
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      memory: 1Gi
+  
+  # Persistent storage
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""  # Use default (local-path)
+
+# Backend storage (not used in filesystem mode)
+backend:
+  replicas: 0
+
+# Read component (not used in single binary mode)
+read:
+  replicas: 0
+
+# Write component (not used in single binary mode)
+write:
+  replicas: 0
+
+# Gateway (not needed for single binary)
+gateway:
+  enabled: false
+
+# Monitoring (ServiceMonitor for Prometheus)
+monitoring:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus
+  
+  # Self-monitoring disabled to save resources
+  selfMonitoring:
+    enabled: false
+    grafanaAgent:
+      installOperator: false
+
+# Loki Canary (health check pods - disabled to save resources)
+lokiCanary:
+  enabled: false
+
+# Test pods (disabled)
+test:
+  enabled: false
+
+# Ingress for Loki API (used by Grafana)
+singleBinary:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - host: loki.homelab.local
+        paths:
+          - path: /
+            pathType: Prefix
