@@ -23,6 +23,17 @@ persistence:
 initChownData:
   enabled: false
 
+# Set proper security context
+securityContext:
+  runAsUser: 472
+  runAsGroup: 472
+  fsGroup: 472
+
+podSecurityContext:
+  runAsUser: 472
+  runAsGroup: 472
+  fsGroup: 472
+
 # Ingress configuration
 ingress:
   enabled: true
