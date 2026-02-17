@@ -1,0 +1,51 @@
+# ServiceAccount for PostgreSQL pods
+# Why separate SA? Follows least-privilege principle.
+# PostgreSQL pods should not share identity with application pods.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgres
+  namespace: kimai
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/component: database
+automountServiceAccountToken: false  # PostgreSQL doesn't need API access
+---
+# ServiceAccount for Kimai application pods
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kimai
+  namespace: kimai
+  labels:
+    app.kubernetes.io/name: kimai
+    app.kubernetes.io/component: application
+automountServiceAccountToken: false  # Kimai doesn't need API access
+---
+# Role: allows postgres pods to read their own secrets and configmaps only
+# Why Role not ClusterRole? Namespace-scoped = blast radius limited to kimai namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: postgres
+  namespace: kimai
+rules:
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "list"]
+    # Intentionally no 'watch' - reduces API server load
+    # Intentionally no 'create/update/delete' - DB pods should never modify secrets
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: postgres
+  namespace: kimai
+subjects:
+  - kind: ServiceAccount
+    name: postgres
+    namespace: kimai
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: postgres
