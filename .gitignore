@@ -8,6 +8,9 @@ secrets/
 id_rsa*
 id_ed25519*
 .config/
+**/secrets.yaml
+**/secret.yaml
+!**/secrets.template.yaml
 
 # Ansible
 # Don't commit actual node IPs in inventory (use inventory.example)
