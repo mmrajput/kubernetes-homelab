@@ -1,0 +1,36 @@
+# 1. Headless Service — gives StatefulSet pods stable DNS
+# postgres-primary-0.postgres-primary-headless.keycloak.svc.cluster.local
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-primary-headless
+  namespace: keycloak
+  labels:
+    app.kubernetes.io/component: postgres-primary
+spec:
+  clusterIP: None                  # This makes it headless
+  selector:
+    app: postgres
+    role: primary
+  ports:
+    - port: 5432
+      targetPort: 5432
+      name: postgres
+---
+# 2. Client Service — what Keycloak actually connects to
+# Stable ClusterIP, load-balances to primary pod
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-primary
+  namespace: keycloak
+  labels:
+    app.kubernetes.io/component: postgres-primary
+spec:
+  selector:
+    app: postgres
+    role: primary
+  ports:
+    - port: 5432
+      targetPort: 5432
+      name: postgres
