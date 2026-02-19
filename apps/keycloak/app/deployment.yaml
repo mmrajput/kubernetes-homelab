@@ -60,7 +60,9 @@ spec:
 
             # Hostname settings
             - name: KC_HOSTNAME
-              value: "keycloak.homelab.local"
+              value: "http://keycloak.homelab.local:30080"
+            - name: KC_HOSTNAME_ADMIN
+              value: "http://keycloak.homelab.local:30080"
             - name: KC_HOSTNAME_STRICT
               value: "false"           # Allows access via IP during debugging
             - name: KC_HTTP_ENABLED
@@ -69,6 +71,8 @@ spec:
               value: "false"
             - name: KC_PROXY_HEADERS
               value: "xforwarded"      # Trust nginx-ingress X-Forwarded headers
+            - name: KC_HEALTH_ENABLED
+              value: "true"  
 
           ports:
             - containerPort: 8080
