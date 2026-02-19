@@ -83,7 +83,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /health/live
-              port: 8080
+              port: 9000
             initialDelaySeconds: 60    # Keycloak is slow to start
             periodSeconds: 15
             failureThreshold: 5
@@ -91,7 +91,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /health/ready
-              port: 8080
+              port: 9000
             initialDelaySeconds: 30
             periodSeconds: 10
             failureThreshold: 3
@@ -99,7 +99,7 @@ spec:
           startupProbe:
             httpGet:
               path: /health/live
-              port: 8080
+              port: 9000
             initialDelaySeconds: 30
             periodSeconds: 10
             failureThreshold: 20       # 20 * 10s = 200s max startup time
