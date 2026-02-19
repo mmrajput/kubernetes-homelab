@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: keycloak
-  namespace: argocd
+  namespace: platform
   labels:
     app.kubernetes.io/component: identity-provider
   finalizers:
