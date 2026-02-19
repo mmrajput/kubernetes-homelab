@@ -65,6 +65,8 @@ spec:
               value: "false"           # Allows access via IP during debugging
             - name: KC_HTTP_ENABLED
               value: "true"            # Required for dev mode behind ingress
+            - name: KC_HOSTNAME_STRICT_HTTPS
+              value: "false"
             - name: KC_PROXY_HEADERS
               value: "xforwarded"      # Trust nginx-ingress X-Forwarded headers
 
