@@ -23,6 +23,7 @@ spec:
     syncOptions:
       - CreateNamespace=false    # We created namespace manually
       - ServerSideApply=true     # Better handling of large manifests
+      - Recurse=true
     retry:
       limit: 3
       backoff:
