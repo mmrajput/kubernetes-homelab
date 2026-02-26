@@ -1,0 +1,67 @@
+# cert-manager Helm values for mmrajputhomelab.org
+# Chart: https://charts.jetstack.io
+# Version: v1.16.2
+
+# Global settings
+global:
+  leaderElection:
+    namespace: cert-manager
+
+# Resource requests/limits for homelab
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+webhook:
+  resources:
+    requests:
+      cpu: 5m
+      memory: 16Mi
+    limits:
+      memory: 64Mi
+
+cainjector:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+
+# Security context for PSS restricted compliance
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  capabilities:
+    drop:
+      - ALL
+
+# Enable Prometheus metrics for observability
+prometheus:
+  enabled: true
+  servicemonitor:
+    enabled: true
+    namespace: cert-manager
+    labels:
+      release: kube-prometheus-stack
+
+# Install CRDs (critical for GitOps)
+installCRDs: true
+
+# DNS-01 webhook support
+# This ensures cert-manager can perform DNS-01 challenges
+dns01RecursiveNameservers: "1.1.1.1:53,8.8.8.8:53"
+dns01RecursiveNameserversOnly: true

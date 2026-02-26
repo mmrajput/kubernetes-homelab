@@ -47,3 +47,4 @@ tmp/
 todos.md
 phase-timeline.md
 .config/
+platform/cert-manager/base/cloudflare-secret.yaml
