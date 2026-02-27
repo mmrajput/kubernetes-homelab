@@ -1,8 +1,39 @@
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: wildcard-homelab-tls
   namespace: ingress-nginx
+spec:
+  secretName: wildcard-homelab-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: "*.homelab.mmrajputhomelab.org"
+  dnsNames:
+    - "*.homelab.mmrajputhomelab.org"
+    - "homelab.mmrajputhomelab.org"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-homelab-tls
+  namespace: monitoring
+spec:
+  secretName: wildcard-homelab-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: "*.homelab.mmrajputhomelab.org"
+  dnsNames:
+    - "*.homelab.mmrajputhomelab.org"
+    - "homelab.mmrajputhomelab.org"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-homelab-tls
+  namespace: platform
 spec:
   secretName: wildcard-homelab-tls
   issuerRef:
