@@ -39,9 +39,13 @@ ingress:
   enabled: true
   ingressClassName: nginx
   hosts:
-    - grafana.homelab.local
+    - grafana.homelab.mmrajputhomelab.org
   path: /
   pathType: Prefix
+  tls:
+    - secretName: wildcard-homelab-tls
+      hosts:
+        - grafana.homelab.mmrajputhomelab.org
 
 # Data sources - automatically configured
 datasources:
@@ -120,11 +124,11 @@ serviceMonitor:
 # Security settings
 grafana.ini:
   server:
-    root_url: http://grafana.homelab.local:30080
+    root_url: https://grafana.homelab.mmrajputhomelab.org
   
   security:
     allow_embedding: true
-    cookie_secure: false
+    cookie_secure: true
     cookie_samesite: lax
   
   auth.anonymous:

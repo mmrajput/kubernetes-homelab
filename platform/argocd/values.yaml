@@ -3,21 +3,21 @@
 # App: ArgoCD v3.2.3
 
 global:
-  domain: argocd.homelab.local
+  domain: argocd.homelab.mmrajputhomelab.org
 
 server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: argocd.homelab.local
+    hostname: argocd.homelab.mmrajputhomelab.org
     annotations:
-      nginx.ingress.kubernetes.io/ssl-redirect: "false"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     path: /
     pathType: Prefix
+    tls: true
   
-  extraArgs:
-    - --insecure
+  extraArgs: []
   
   resources:
     limits:
