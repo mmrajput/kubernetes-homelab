@@ -2,6 +2,13 @@
 # Chart: ingress-nginx
 
 controller:
+  config:
+    # Disables the automatic redirect from HTTP to HTTPS
+    ssl-redirect: "false"
+    # Ensures Nginx doesn't try to force HSTS headers which can confuse Cloudflare
+    hsts: "false"
+    # Use forwarded headers from cloudflared to see original client IPs
+    use-forwarded-headers: "true"  
   # NodePort service (no LoadBalancer in homelab)
   service:
     type: NodePort
