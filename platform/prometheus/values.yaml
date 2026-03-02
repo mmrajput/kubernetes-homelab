@@ -14,15 +14,14 @@ prometheus:
   ingress:
     enabled: true
     ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     hosts:
       - prometheus.homelab.mmrajputhomelab.org
     paths:
       - /
     pathType: Prefix
-    tls:
-      - secretName: wildcard-homelab-tls
-        hosts:
-          - prometheus.homelab.mmrajputhomelab.org
 
   prometheusSpec:
     # Resource limits for homelab
@@ -56,15 +55,14 @@ alertmanager:
   ingress:
     enabled: true
     ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     hosts:
       - alertmanager.homelab.mmrajputhomelab.org
     paths:
       - /
     pathType: Prefix
-    tls:
-      - secretName: wildcard-homelab-tls
-        hosts:
-          - alertmanager.homelab.mmrajputhomelab.org
 
   alertmanagerSpec:
     resources:
