@@ -11,8 +11,8 @@ server:
     ingressClassName: nginx
     hostname: argocd.homelab.mmrajputhomelab.org
     annotations:
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     path: /
     pathType: Prefix
