@@ -1,9 +1,8 @@
----
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: wildcard-homelab-tls
-  namespace: ingress-nginx
+  namespace: ingress-nginx        # one namespace — where nginx lives
 spec:
   secretName: wildcard-homelab-tls
   issuerRef:
@@ -13,33 +12,5 @@ spec:
   dnsNames:
     - "*.homelab.mmrajputhomelab.org"
     - "homelab.mmrajputhomelab.org"
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: wildcard-homelab-tls
-  namespace: monitoring
-spec:
-  secretName: wildcard-homelab-tls
-  issuerRef:
-    name: letsencrypt-production
-    kind: ClusterIssuer
-  commonName: "*.homelab.mmrajputhomelab.org"
-  dnsNames:
-    - "*.homelab.mmrajputhomelab.org"
-    - "homelab.mmrajputhomelab.org"
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: wildcard-homelab-tls
-  namespace: platform
-spec:
-  secretName: wildcard-homelab-tls
-  issuerRef:
-    name: letsencrypt-production
-    kind: ClusterIssuer
-  commonName: "*.homelab.mmrajputhomelab.org"
-  dnsNames:
-    - "*.homelab.mmrajputhomelab.org"
-    - "homelab.mmrajputhomelab.org"
+  duration: 2160h
+  renewBefore: 360h               # renew 15 days before expiry
