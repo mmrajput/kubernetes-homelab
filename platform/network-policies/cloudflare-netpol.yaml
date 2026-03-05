@@ -1,0 +1,48 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cloudflare-default-deny
+  namespace: cloudflare
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cloudflare-allow
+  namespace: cloudflare
+spec:
+  podSelector:
+    matchLabels:
+      app: cloudflared
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    # Allow DNS resolution via kube-dns
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53  # DNS UDP
+          protocol: UDP
+        - port: 53  # DNS TCP
+          protocol: TCP
+    # Allow traffic to ingress-nginx controller
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 80   # HTTP to nginx
+          protocol: TCP
+    # Allow outbound to Cloudflare edge over HTTPS and QUIC
+    - ports:
+        - port: 443   # HTTPS to Cloudflare edge
+          protocol: TCP
+        - port: 7844  # QUIC protocol to Cloudflare edge
+          protocol: UDP
