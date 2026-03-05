@@ -3,13 +3,13 @@
 # App: ArgoCD v3.2.3
 
 global:
-  domain: argocd.homelab.mmrajputhomelab.org
+  domain: argocd.mmrajputhomelab.org
 
 server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: argocd.homelab.mmrajputhomelab.org
+    hostname: argocd.mmrajputhomelab.org
     annotations:
       nginx.ingress.kubernetes.io/ssl-redirect: "false"
       nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
@@ -19,7 +19,7 @@ server:
     tls: true
     extraTls:
       - hosts:
-          - argocd.homelab.mmrajputhomelab.org
+          - argocd.mmrajputhomelab.org
         secretName: wildcard-homelab-tls
 
   extraArgs:
