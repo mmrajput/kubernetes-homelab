@@ -38,12 +38,15 @@ podSecurityContext:
 ingress:
   enabled: true
   ingressClassName: nginx
-  # Add these annotations to stop the redirect loop
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
   hosts:
-    - grafana.homelab.mmrajputhomelab.org
+    - grafana.mmrajputhomelab.org
+  tls:
+    - hosts:
+        - grafana.mmrajputhomelab.org
+      secretName: wildcard-homelab-tls
   path: /
   pathType: Prefix
   
@@ -124,8 +127,8 @@ serviceMonitor:
 # Security settings
 grafana.ini:
   server:
-    root_url: https://grafana.homelab.mmrajputhomelab.org
-  
+    root_url: https://grafana.mmrajputhomelab.org
+
   security:
     allow_embedding: true
     cookie_secure: true
