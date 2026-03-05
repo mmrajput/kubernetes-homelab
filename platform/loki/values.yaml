@@ -23,6 +23,8 @@ loki:
   compactor:
     retention_enabled: true
     working_directory: /var/loki/compactor
+    delete_request_store: filesystem
+
   
   # Common configuration
   commonConfig:
