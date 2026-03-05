@@ -19,6 +19,10 @@ loki:
         index:
           prefix: loki_index_
           period: 24h
+
+  compactor:
+    retention_enabled: true
+    working_directory: /var/loki/compactor
   
   # Common configuration
   commonConfig:
@@ -50,6 +54,16 @@ singleBinary:
     enabled: true
     size: 10Gi
     storageClass: ""  # Use default (local-path)
+
+  # Ingress for Loki API (used by Grafana)
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - host: loki.homelab.local
+        paths:
+          - path: /
+            pathType: Prefix
 
 # CRITICAL: Explicitly disable cache components
 chunksCache:
@@ -97,14 +111,3 @@ lokiCanary:
 # Test pods (disabled)
 test:
   enabled: false
-
-# Ingress for Loki API (used by Grafana)
-singleBinary:
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    hosts:
-      - host: loki.homelab.local
-        paths:
-          - path: /
-            pathType: Prefix
