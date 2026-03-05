@@ -1,0 +1,89 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ingress-nginx-default-deny
+  namespace: ingress-nginx
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ingress-nginx-allow
+  namespace: ingress-nginx
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-nginx
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow traffic from cloudflared pods in cloudflare namespace
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cloudflare
+      ports:
+        - port: 80   # HTTP
+          protocol: TCP
+        - port: 443  # HTTPS
+          protocol: TCP
+    # Allow Prometheus to scrape nginx metrics
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 10254  # nginx-ingress metrics
+          protocol: TCP
+  egress:
+    # Allow DNS resolution via kube-dns
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53  # DNS UDP
+          protocol: UDP
+        - port: 53  # DNS TCP
+          protocol: TCP
+    # Allow forwarding to platform namespace (ArgoCD)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: platform
+      ports:
+        - port: 80    # HTTP
+          protocol: TCP
+        - port: 443   # HTTPS
+          protocol: TCP
+        - port: 8080  # ArgoCD server HTTP
+          protocol: TCP
+    # Allow forwarding to monitoring namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 3000  # Grafana pod port
+          protocol: TCP
+        - port: 8080  # Prometheus web UI pod port
+          protocol: TCP
+        - port: 9090  # Prometheus metrics pod port
+          protocol: TCP
+        - port: 9093  # Alertmanager pod port
+          protocol: TCP
+        - port: 3100  # Loki pod port
+          protocol: TCP
+    # Allow webhook validation calls to itself
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 8443  # nginx admission webhook
+          protocol: TCP
