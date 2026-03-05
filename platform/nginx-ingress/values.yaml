@@ -2,25 +2,30 @@
 # Chart: ingress-nginx
 
 controller:
+  extraArgs:
+    default-ssl-certificate: "ingress-nginx/wildcard-homelab-tls"
+
   config:
-    # Disables the automatic redirect from HTTP to HTTPS
+    # TLS is terminated at Cloudflare edge - do not redirect HTTP to HTTPS
     ssl-redirect: "false"
-    # Ensures Nginx doesn't try to force HSTS headers which can confuse Cloudflare
+    force-ssl-redirect: "false"
+    # HSTS disabled - Cloudflare manages this at the edge
     hsts: "false"
-    # Use forwarded headers from cloudflared to see original client IPs
-    use-forwarded-headers: "true"  
-  # NodePort service (no LoadBalancer in homelab)
+    # Cloudflare Tunnel sets X-Forwarded-For - nginx must trust and propagate it
+    use-forwarded-headers: "true"
+    # ArgoCD sends large headers (JWT tokens) - default 4k buffer causes 502s
+    proxy-buffer-size: "16k"
+    proxy-buffers: "4 16k"
+
   service:
     type: NodePort
     nodePorts:
       http: 30080
       https: 30443
-  
-  # Set as default IngressClass
+
   ingressClassResource:
     default: true
-  
-  # Resource limits
+
   resources:
     limits:
       cpu: 500m
@@ -28,9 +33,8 @@ controller:
     requests:
       cpu: 100m
       memory: 128Mi
-  
-  # Metrics for Prometheus (Phase 5)
+
   metrics:
     enabled: true
     serviceMonitor:
-      enabled: false  # Enable when Prometheus installed
+      enabled: true
