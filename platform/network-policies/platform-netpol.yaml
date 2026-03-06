@@ -1,0 +1,76 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: platform-default-deny
+  namespace: platform
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: platform-allow
+  namespace: platform
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow ingress-nginx to reach ArgoCD server
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 8080  # ArgoCD server HTTP
+          protocol: TCP
+    # Allow intra-namespace communication
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: platform
+    # Allow Prometheus to scrape ArgoCD metrics
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 8082  # application-controller metrics
+          protocol: TCP
+        - port: 8083  # applicationset-controller metrics
+          protocol: TCP
+        - port: 8084  # repo-server metrics
+          protocol: TCP
+        - port: 8085  # argocd-server metrics
+          protocol: TCP
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53  # DNS UDP
+          protocol: UDP
+        - port: 53  # DNS TCP
+          protocol: TCP
+    # Allow intra-namespace communication
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: platform
+    # Allow reaching Kubernetes API
+    - to:
+        - ipBlock:
+            cidr: 10.96.0.1/32  # kubernetes service ClusterIP
+      ports:
+        - port: 443  # Kubernetes API
+          protocol: TCP
+    # Allow reaching GitHub and Helm repositories
+    - ports:
+        - port: 443  # HTTPS - GitHub + Helm repos
+          protocol: TCP
