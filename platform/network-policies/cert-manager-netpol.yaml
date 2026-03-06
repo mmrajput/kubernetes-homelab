@@ -1,0 +1,68 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cert-manager-default-deny
+  namespace: cert-manager
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cert-manager-allow
+  namespace: cert-manager
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow Kubernetes API to call cert-manager webhook
+    - ports:
+        - port: 10250  # cert-manager webhook
+          protocol: TCP
+        - port: 9402   # cert-manager metrics
+          protocol: TCP
+    # Allow intra-namespace communication
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cert-manager
+    # Allow Prometheus to scrape cert-manager metrics
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 9402   # cert-manager metrics
+          protocol: TCP
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53  # DNS UDP
+          protocol: UDP
+        - port: 53  # DNS TCP
+          protocol: TCP
+    # Allow intra-namespace communication
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cert-manager
+    # Allow reaching Kubernetes API for certificate management
+    - to:
+        - ipBlock:
+            cidr: 10.96.0.1/32  # kubernetes service ClusterIP
+      ports:
+        - port: 443  # Kubernetes API
+          protocol: TCP
+    # Allow reaching Let's Encrypt and Cloudflare API
+    - ports:
+        - port: 443  # HTTPS - Let's Encrypt ACME + Cloudflare API
+          protocol: TCP
