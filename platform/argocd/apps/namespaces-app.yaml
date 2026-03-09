@@ -21,7 +21,7 @@ spec:
 
   syncPolicy:
     automated:
-      prune: true   # Remove namespaces deleted from Git
+      prune: false
       selfHeal: true # Revert manual label changes
     syncOptions:
       - CreateNamespace=false
