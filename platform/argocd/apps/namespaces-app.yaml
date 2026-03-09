@@ -3,10 +3,6 @@ kind: Application
 metadata:
   name: namespaces
   namespace: platform
-  annotations:
-    # Wave -1 ensures namespaces are created before all other applications
-    # This prevents race conditions where apps try to deploy into non-existent namespaces
-    argocd.argoproj.io/sync-wave: "-1"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
