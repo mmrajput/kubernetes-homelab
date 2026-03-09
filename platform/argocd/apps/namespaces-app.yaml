@@ -25,3 +25,4 @@ spec:
       selfHeal: true # Revert manual label changes
     syncOptions:
       - CreateNamespace=false
+      - ServerSideApply=true
