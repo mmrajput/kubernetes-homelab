@@ -31,4 +31,4 @@ spec:
       prune: false      # Safety: don't auto-delete
       selfHeal: true    # Auto-revert manual changes
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=false
