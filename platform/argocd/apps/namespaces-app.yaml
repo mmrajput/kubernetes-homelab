@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: namespaces
+  namespace: platform
+  annotations:
+    # Wave -1 ensures namespaces are created before all other applications
+    # This prevents race conditions where apps try to deploy into non-existent namespaces
+    argocd.argoproj.io/sync-wave: "-1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/mmrajput/kubernetes-homelab
+    targetRevision: HEAD
+    path: platform/namespaces
+
+  destination:
+    server: https://kubernetes.default.svc
+    # Namespaces are cluster-scoped resources - namespace field is ignored
+    # but required by ArgoCD schema
+    namespace: platform
+
+  syncPolicy:
+    automated:
+      prune: true   # Remove namespaces deleted from Git
+      selfHeal: true # Revert manual label changes
+    syncOptions:
+      - CreateNamespace=false
