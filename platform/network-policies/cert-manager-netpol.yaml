@@ -55,12 +55,17 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: cert-manager
-    # Allow reaching Kubernetes API for certificate management
+    # Allow reaching Kubernetes API
+    # Both ClusterIP and control plane node IP needed for Calico DNAT
     - to:
         - ipBlock:
             cidr: 10.96.0.1/32  # kubernetes service ClusterIP
+        - ipBlock:
+            cidr: 192.168.178.34/32  # control plane node IP (post-DNAT)
       ports:
-        - port: 443  # Kubernetes API
+        - port: 443   # Kubernetes API via ClusterIP
+          protocol: TCP
+        - port: 6443  # Kubernetes API via node IP
           protocol: TCP
     # Allow reaching Let's Encrypt and Cloudflare API
     - ports:
