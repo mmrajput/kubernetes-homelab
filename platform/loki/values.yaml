@@ -8,7 +8,26 @@ loki:
   # Storage configuration - filesystem mode
   storage:
     type: filesystem
-  
+
+  # Pod Security Context - restricted PSS compliance
+  podSecurityContext:
+    fsGroup: 10001
+    fsGroupChangePolicy: OnRootMismatch
+    runAsGroup: 10001
+    runAsNonRoot: true
+    runAsUser: 10001
+    seccompProfile:
+      type: RuntimeDefault
+
+  # Container Security Context - restricted PSS compliance  
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+    seccompProfile:
+      type: RuntimeDefault
+
   # Schema configuration
   schemaConfig:
     configs:
@@ -25,7 +44,6 @@ loki:
     working_directory: /var/loki/compactor
     delete_request_store: filesystem
 
-  
   # Common configuration
   commonConfig:
     replication_factor: 1
@@ -51,23 +69,6 @@ singleBinary:
     limits:
       memory: 512Mi
   
-  # Security context - restricted PSS compliance
-  podSecurityContext:
-    runAsNonRoot: true
-    runAsUser: 10001
-    runAsGroup: 10001
-    fsGroup: 10001
-    seccompProfile:
-      type: RuntimeDefault
-  
-  containerSecurityContext:
-    readOnlyRootFilesystem: true
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop: [ALL]
-    seccompProfile:
-      type: RuntimeDefault  
-
   # Persistent storage
   persistence:
     enabled: true
@@ -126,16 +127,6 @@ monitoring:
 # Loki Canary (health check pods - disabled to save resources)
 lokiCanary:
   enabled: false
-
-# seccomp profile to the sidecar container (loki-sc-rules uses k8s-sidecar)
-sidecar:
-  securityContext:
-    readOnlyRootFilesystem: true
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop: [ALL]
-    seccompProfile:
-      type: RuntimeDefault
 
 # Test pods (disabled)
 test:
