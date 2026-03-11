@@ -141,3 +141,10 @@ grafana.ini:
     allow_sign_up: false
     auto_assign_org: true
     auto_assign_org_role: Viewer
+
+# RBAC hardening - Grafana has no need to talk to Kubernetes API
+serviceAccount:
+  create: true
+  automountServiceAccountToken: false  # ServiceAccount level: default for any pod using this SA
+
+automountServiceAccountToken: false  # Pod spec level: explicit override, takes precedence over SA setting

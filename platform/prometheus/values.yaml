@@ -55,6 +55,9 @@ prometheus:
 
 # Alertmanager configuration
 alertmanager:
+  serviceAccount:
+    create: true
+    automountServiceAccountToken: false  # ServiceAccount level: default for any pod using this SA
   # Ingress at SERVICE level (not alertmanagerSpec)
   ingress:
     enabled: true
@@ -73,6 +76,7 @@ alertmanager:
         secretName: wildcard-homelab-tls
 
   alertmanagerSpec:
+    automountServiceAccountToken: false  # Pod spec level: explicit override, takes precedence over SA setting
     resources:
       requests:
         cpu: 50m
@@ -90,6 +94,10 @@ alertmanager:
 
 # Node exporter - runs on every node
 prometheus-node-exporter:
+  serviceAccount:
+    create: true
+    automountServiceAccountToken: false  # ServiceAccount level: default for any pod using this SA
+  automountServiceAccountToken: false  # Pod spec level: explicit override, takes precedence over SA setting
   resources:
     requests:
       cpu: 50m
