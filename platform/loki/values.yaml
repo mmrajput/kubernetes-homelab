@@ -51,6 +51,23 @@ singleBinary:
     limits:
       memory: 512Mi
   
+  # Security context - restricted PSS compliance
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+    seccompProfile:
+      type: RuntimeDefault  
+
   # Persistent storage
   persistence:
     enabled: true
@@ -109,6 +126,16 @@ monitoring:
 # Loki Canary (health check pods - disabled to save resources)
 lokiCanary:
   enabled: false
+
+# seccomp profile to the sidecar container (loki-sc-rules uses k8s-sidecar)
+sidecar:
+  securityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+    seccompProfile:
+      type: RuntimeDefault
 
 # Test pods (disabled)
 test:
