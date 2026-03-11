@@ -116,6 +116,10 @@ kube-state-metrics:
 
 # Operator itself
 prometheusOperator:
+  # Admission webhook disabled - not required for homelab
+  # In production this validates PrometheusRules before they are applied
+  admissionWebhooks:
+    enabled: false
   resources:
     requests:
       cpu: 100m
