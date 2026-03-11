@@ -28,6 +28,7 @@ All significant technology choices are documented as Architecture Decision Recor
 | [ADR-008](ADR-008-app-of-apps-pattern.md) | GitOps Architecture Pattern — Argo CD App-of-Apps approach |
 | [ADR-009](ADR-009-storage-strategy.md) | Storage Strategy — local-path-provisioner (Longhorn planned for future phases) |
 | [ADR-010](ADR-010-observability-stack-architecture.md) | Observability Stack — Prometheus, Grafana, and Loki |
+| [ADR-011](ADR-011-networkpolicy-and-pss) | Security Hardening — Network policies, PSS. |
 
 ## Adding New ADRs
 
