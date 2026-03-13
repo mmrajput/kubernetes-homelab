@@ -28,6 +28,21 @@
         state: present
         update_cache: yes
 
+    - name: Install Longhorn prerequisites (worker nodes only)
+      apt:
+        name:
+          - open-iscsi     # Required for Longhorn block device transport
+          - nfs-common     # Required for Longhorn RWX volumes
+        state: present
+      when: inventory_hostname in groups['workers']     # control plane nodes don't need iSCSI and there's no reason to install it there.
+
+    - name: Enable and start iscsid (worker nodes only)
+      systemd:
+        name: iscsid
+        enabled: yes
+        state: started
+      when: inventory_hostname in groups['workers']
+
     - name: Disable swap immediately
       command: swapoff -a
       when: ansible_swaptotal_mb > 0
