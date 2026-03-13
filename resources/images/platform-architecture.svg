@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   viewBox="0 0 1000 1356"
-   width="1000"
-   height="1356"
+   viewBox="0 0 1100 1520"
+   width="1100"
+   height="1520"
    font-family="'Segoe UI', system-ui, sans-serif"
    version="1.1"
-   id="svg170"
+   id="svg143"
    sodipodi:docname="platform-architecture.svg"
    inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -13,7 +13,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
-     id="namedview170"
+     id="namedview143"
      pagecolor="#505050"
      bordercolor="#eeeeee"
      borderopacity="1"
@@ -21,2228 +21,1916 @@
      inkscape:pageopacity="0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#505050"
-     inkscape:zoom="1.76"
-     inkscape:cx="506.53409"
-     inkscape:cy="1063.3523"
-     inkscape:window-width="1920"
-     inkscape:window-height="991"
-     inkscape:window-x="2391"
-     inkscape:window-y="54"
+     inkscape:zoom="1.66"
+     inkscape:cx="550"
+     inkscape:cy="1241.8675"
+     inkscape:window-width="2400"
+     inkscape:window-height="1261"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg170" />
+     inkscape:current-layer="svg143" />
   <defs
      id="defs2">
     <marker
        id="arrow"
-       markerWidth="8"
-       markerHeight="8"
-       refX="6"
-       refY="3"
+       markerWidth="10"
+       markerHeight="10"
+       refX="7"
+       refY="3.5"
        orient="auto">
       <path
-         d="M 0,0 V 6 L 8,3 Z"
-         fill="#2e75b6"
-         opacity="0.8"
+         d="M 0,0 V 7 L 10,3.5 Z"
+         fill="#1a5fa8"
          id="path1" />
     </marker>
     <marker
        id="arrowPurple"
-       markerWidth="8"
-       markerHeight="8"
-       refX="6"
-       refY="3"
+       markerWidth="10"
+       markerHeight="10"
+       refX="7"
+       refY="3.5"
        orient="auto">
       <path
-         d="M 0,0 V 6 L 8,3 Z"
-         fill="#7c3aed"
-         opacity="0.8"
+         d="M 0,0 V 7 L 10,3.5 Z"
+         fill="#7e22ce"
          id="path2" />
     </marker>
     <filter
        id="shadow"
-       x="-0.00078125"
-       y="-0.0078125"
-       width="1.0015625"
-       height="1.015625">
+       x="-0.00094339623"
+       y="-0.0086206897"
+       width="1.0018868"
+       height="1.0172414">
       <feDropShadow
          dx="0"
-         dy="1"
-         stdDeviation="2"
-         flood-color="#00000018" />
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000025" />
     </filter>
   </defs>
   <!-- Background -->
   <rect
-     width="1000"
-     height="1352.4543"
-     fill="#f0f4f8"
-     id="rect2"
-     x="-0.91849935"
-     y="0.71022034"
-     style="stroke-width:0.975927" />
-  <!-- Subtle grid -->
-  <g
-     opacity="0.06"
-     stroke="#2e75b6"
-     stroke-width="1"
-     id="g14">
-    <line
-       x1="0"
-       y1="100"
-       x2="1000"
-       y2="100"
-       id="line2" />
-    <line
-       x1="0"
-       y1="200"
-       x2="1000"
-       y2="200"
-       id="line3" />
-    <line
-       x1="0"
-       y1="300"
-       x2="1000"
-       y2="300"
-       id="line4" />
-    <line
-       x1="0"
-       y1="400"
-       x2="1000"
-       y2="400"
-       id="line5" />
-    <line
-       x1="0"
-       y1="500"
-       x2="1000"
-       y2="500"
-       id="line6" />
-    <line
-       x1="0"
-       y1="600"
-       x2="1000"
-       y2="600"
-       id="line7" />
-    <line
-       x1="0"
-       y1="700"
-       x2="1000"
-       y2="700"
-       id="line8" />
-    <line
-       x1="0"
-       y1="800"
-       x2="1000"
-       y2="800"
-       id="line9" />
-    <line
-       x1="0"
-       y1="900"
-       x2="1000"
-       y2="900"
-       id="line10" />
-    <line
-       x1="0"
-       y1="1000"
-       x2="1000"
-       y2="1000"
-       id="line11" />
-    <line
-       x1="0"
-       y1="1100"
-       x2="1000"
-       y2="1100"
-       id="line12" />
-    <line
-       x1="0"
-       y1="1200"
-       x2="1000"
-       y2="1200"
-       id="line13" />
-    <line
-       x1="0"
-       y1="1300"
-       x2="1000"
-       y2="1300"
-       id="line14" />
-  </g>
-  <!-- ═══════════════════ TITLE ═══════════════════ -->
+     width="1100"
+     height="1520"
+     fill="#e8eef5"
+     id="rect2" />
+  <!-- TITLE BANNER -->
   <rect
      x="0"
      y="0"
-     width="1000"
-     height="72"
-     fill="#1e3a5f"
-     id="rect14" />
+     width="1100"
+     height="84"
+     fill="#0f2744"
+     id="rect3" />
   <text
-     x="500"
-     y="32"
+     x="550"
+     y="37"
      text-anchor="middle"
      fill="#ffffff"
-     font-size="22px"
+     font-size="27px"
      font-weight="700"
-     letter-spacing="1"
-     id="text14">KUBERNETES HOMELAB</text>
+     letter-spacing="1.5"
+     id="text3">KUBERNETES HOMELAB</text>
   <text
-     x="500"
-     y="52"
+     x="550"
+     y="62"
      text-anchor="middle"
      fill="#7ab2d4"
-     font-size="11px"
-     letter-spacing="3"
-     id="text15">PLATFORM ENGINEERING · LOGICAL ARCHITECTURE</text>
+     font-size="13px"
+     letter-spacing="4"
+     id="text4">PLATFORM ENGINEERING · LOGICAL ARCHITECTURE</text>
   <!-- Specs bar -->
   <rect
      x="0"
-     y="72"
-     width="1000"
-     height="26"
-     fill="#e8f0f8"
-     id="rect15" />
+     y="84"
+     width="1100"
+     height="32"
+     fill="#dde7f2"
+     id="rect4" />
   <text
-     x="500"
-     y="89"
+     x="550"
+     y="105"
      text-anchor="middle"
-     fill="#4a6a8a"
-     font-size="10px"
-     id="text16">Beelink SER5 Pro · AMD Ryzen 5 5500U · 32GB RAM · 500GB NVMe · Proxmox VE 8.x · Kubernetes v1.31 · kubeadm · Calico CNI</text>
-  <!-- ═══════════════════ LAYER 1: VIRTUALIZATION ═══════════════════ -->
-  <rect
-     x="20"
-     y="108"
-     width="960"
-     height="114"
-     rx="8"
-     fill="#ffffff"
-     stroke="#2e75b6"
-     stroke-width="1.5"
-     filter="url(#shadow)"
-     id="rect16" />
-  <rect
-     x="20"
-     y="108"
-     width="5"
-     height="114"
-     rx="3"
-     fill="#2e75b6"
-     id="rect17" />
-  <!-- Layer header -->
-  <rect
-     x="25"
-     y="108"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#e8f2fc"
-     id="rect18" />
-  <text
-     x="42"
-     y="127"
      fill="#1e3a5f"
-     font-size="10px"
+     font-size="12px"
+     font-weight="600"
+     id="text5">Beelink SER5 Pro · AMD Ryzen 5 5500U · 32GB RAM · 500GB NVMe · Proxmox VE 8.x · Kubernetes v1.31 · kubeadm · Calico CNI</text>
+  <!-- LAYER 1: VIRTUALIZATION -->
+  <rect
+     x="20"
+     y="126"
+     width="1060"
+     height="132"
+     rx="10"
+     fill="#ffffff"
+     stroke="#1a5fa8"
+     stroke-width="2"
+     filter="url(#shadow)"
+     id="rect5" />
+  <rect
+     x="20"
+     y="126"
+     width="7"
+     height="132"
+     rx="4"
+     fill="#1a5fa8"
+     id="rect6" />
+  <rect
+     x="27"
+     y="126"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#dbeeff"
+     id="rect7" />
+  <text
+     x="50"
+     y="149"
+     fill="#0a2d5c"
+     font-size="13px"
      font-weight="700"
      letter-spacing="2"
-     id="text18">VIRTUALIZATION LAYER</text>
+     id="text7">VIRTUALIZATION LAYER</text>
   <text
-     x="848.42847"
-     y="130.83116"
+     x="1070"
+     y="149"
      text-anchor="end"
-     fill="#2e75b6"
-     font-size="9.2715px"
-     id="text19"
-     transform="scale(1.0301666,0.97071677)"
-     style="stroke-width:1.03016">Phase 2 · Proxmox VE 8.x · LVM-thin · vmbr0</text>
-  <!-- VM cards -->
+     fill="#1a5fa8"
+     font-size="11px"
+     font-weight="600"
+     id="text8">Phase 2 · Proxmox VE 8.x · LVM-thin · vmbr0</text>
   <rect
-     x="36"
-     y="144"
-     width="278"
-     height="66"
-     rx="6"
-     fill="#f0f7ff"
-     stroke="#2e75b6"
-     stroke-width="1"
-     id="rect19" />
-  <text
-     x="175"
-     y="158"
-     text-anchor="middle"
-     fill="#1e3a5f"
-     font-size="10px"
-     font-weight="700"
-     id="text20">control-plane-1</text>
-  <text
-     x="175"
-     y="175"
-     text-anchor="middle"
-     fill="#2e75b6"
-     font-size="9px"
-     id="text21">6GB RAM · 4 vCPU · Ubuntu 24.04</text>
-  <text
-     x="175"
-     y="189"
-     text-anchor="middle"
-     fill="#4a6a8a"
-     font-size="8px"
-     id="text22">kube-apiserver · etcd · scheduler</text>
-  <text
-     x="175"
-     y="202"
-     text-anchor="middle"
-     fill="#4a6a8a"
-     font-size="8px"
-     id="text23">controller-manager · cloud-init</text>
-  <rect
-     x="330"
-     y="144"
-     width="278"
-     height="66"
-     rx="6"
-     fill="#f0f7ff"
-     stroke="#2e75b6"
-     stroke-width="1"
-     id="rect23" />
-  <text
-     x="469"
-     y="158"
-     text-anchor="middle"
-     fill="#1e3a5f"
-     font-size="10px"
-     font-weight="700"
-     id="text24">worker-1</text>
-  <text
-     x="469"
-     y="175"
-     text-anchor="middle"
-     fill="#2e75b6"
-     font-size="9px"
-     id="text25">7GB RAM · 4 vCPU · Ubuntu 24.04</text>
-  <text
-     x="469"
-     y="189"
-     text-anchor="middle"
-     fill="#4a6a8a"
-     font-size="8px"
-     id="text26">kubelet · kube-proxy · containerd</text>
-  <text
-     x="469"
-     y="202"
-     text-anchor="middle"
-     fill="#4a6a8a"
-     font-size="8px"
-     id="text27">Calico CNI · local-path-provisioner</text>
-  <rect
-     x="624"
-     y="144"
-     width="278"
-     height="66"
-     rx="6"
-     fill="#f0f7ff"
-     stroke="#2e75b6"
-     stroke-width="1"
-     id="rect27" />
-  <text
-     x="763"
-     y="158"
-     text-anchor="middle"
-     fill="#1e3a5f"
-     font-size="10px"
-     font-weight="700"
-     id="text28">worker-2</text>
-  <text
-     x="763"
-     y="175"
-     text-anchor="middle"
-     fill="#2e75b6"
-     font-size="9px"
-     id="text29">7GB RAM · 4 vCPU · Ubuntu 24.04</text>
-  <text
-     x="763"
-     y="189"
-     text-anchor="middle"
-     fill="#4a6a8a"
-     font-size="8px"
-     id="text30">kubelet · kube-proxy · containerd</text>
-  <text
-     x="763"
-     y="202"
-     text-anchor="middle"
-     fill="#4a6a8a"
-     font-size="8px"
-     id="text31">Calico CNI · local-path-provisioner</text>
-  <!-- Status badge -->
-  <rect
-     x="880"
-     y="112"
-     width="88"
-     height="20"
-     rx="10"
-     fill="#dcfce7"
-     id="rect31" />
-  <text
-     x="924"
-     y="126"
-     text-anchor="middle"
-     fill="#166534"
-     font-size="9px"
-     font-weight="700"
-     id="text32">● COMPLETE</text>
-  <!-- Arrow -->
-  <line
-     x1="500"
-     y1="222"
-     x2="500"
-     y2="238"
-     stroke="#2e75b6"
+     x="40"
+     y="168"
+     width="322"
+     height="78"
+     rx="8"
+     fill="#eef6ff"
+     stroke="#1a5fa8"
      stroke-width="1.5"
+     id="rect8" />
+  <text
+     x="201"
+     y="188"
+     text-anchor="middle"
+     fill="#0a2d5c"
+     font-size="13px"
+     font-weight="700"
+     id="text9">control-plane-1</text>
+  <text
+     x="201"
+     y="207"
+     text-anchor="middle"
+     fill="#1a5fa8"
+     font-size="11px"
+     id="text10">6GB RAM · 4 vCPU · Ubuntu 24.04</text>
+  <text
+     x="201"
+     y="223"
+     text-anchor="middle"
+     fill="#2a4a6e"
+     font-size="10px"
+     id="text11">kube-apiserver · etcd · scheduler</text>
+  <text
+     x="201"
+     y="237"
+     text-anchor="middle"
+     fill="#2a4a6e"
+     font-size="10px"
+     id="text12">controller-manager · cloud-init</text>
+  <rect
+     x="389"
+     y="168"
+     width="322"
+     height="78"
+     rx="8"
+     fill="#eef6ff"
+     stroke="#1a5fa8"
+     stroke-width="1.5"
+     id="rect12" />
+  <text
+     x="550"
+     y="188"
+     text-anchor="middle"
+     fill="#0a2d5c"
+     font-size="13px"
+     font-weight="700"
+     id="text13">worker-1</text>
+  <text
+     x="550"
+     y="207"
+     text-anchor="middle"
+     fill="#1a5fa8"
+     font-size="11px"
+     id="text14">7GB RAM · 4 vCPU · Ubuntu 24.04</text>
+  <text
+     x="550"
+     y="223"
+     text-anchor="middle"
+     fill="#2a4a6e"
+     font-size="10px"
+     id="text15">kubelet · kube-proxy · containerd</text>
+  <text
+     x="550"
+     y="237"
+     text-anchor="middle"
+     fill="#2a4a6e"
+     font-size="10px"
+     id="text16">Calico CNI · local-path-provisioner</text>
+  <rect
+     x="738"
+     y="168"
+     width="322"
+     height="78"
+     rx="8"
+     fill="#eef6ff"
+     stroke="#1a5fa8"
+     stroke-width="1.5"
+     id="rect16" />
+  <text
+     x="899"
+     y="188"
+     text-anchor="middle"
+     fill="#0a2d5c"
+     font-size="13px"
+     font-weight="700"
+     id="text17">worker-2</text>
+  <text
+     x="899"
+     y="207"
+     text-anchor="middle"
+     fill="#1a5fa8"
+     font-size="11px"
+     id="text18">7GB RAM · 4 vCPU · Ubuntu 24.04</text>
+  <text
+     x="899"
+     y="223"
+     text-anchor="middle"
+     fill="#2a4a6e"
+     font-size="10px"
+     id="text19">kubelet · kube-proxy · containerd</text>
+  <text
+     x="899"
+     y="237"
+     text-anchor="middle"
+     fill="#2a4a6e"
+     font-size="10px"
+     id="text20">Calico CNI · local-path-provisioner</text>
+  <line
+     x1="550"
+     y1="258"
+     x2="550"
+     y2="278"
+     stroke="#1a5fa8"
+     stroke-width="2"
      marker-end="url(#arrow)"
-     opacity="0.6"
-     id="line32" />
-  <!-- ═══════════════════ LAYER 2: GITOPS ═══════════════════ -->
+     id="line20" />
+  <!-- LAYER 2: GITOPS -->
   <rect
      x="20"
-     y="242"
-     width="960"
-     height="96"
-     rx="8"
+     y="282"
+     width="1060"
+     height="116"
+     rx="10"
      fill="#ffffff"
-     stroke="#16a34a"
+     stroke="#15803d"
+     stroke-width="2"
+     filter="url(#shadow)"
+     id="rect20" />
+  <rect
+     x="20"
+     y="282"
+     width="7"
+     height="116"
+     rx="4"
+     fill="#15803d"
+     id="rect21" />
+  <rect
+     x="27"
+     y="282"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#dcfce7"
+     id="rect22" />
+  <text
+     x="50"
+     y="305"
+     fill="#052e16"
+     font-size="13px"
+     font-weight="700"
+     letter-spacing="2"
+     id="text22">GITOPS LAYER</text>
+  <text
+     x="1070"
+     y="305"
+     text-anchor="end"
+     fill="#15803d"
+     font-size="11px"
+     font-weight="600"
+     id="text23">Phase 5 · namespace: platform · All changes via Git</text>
+  <rect
+     x="40"
+     y="324"
+     width="322"
+     height="62"
+     rx="8"
+     fill="#f0fdf4"
+     stroke="#15803d"
      stroke-width="1.5"
+     id="rect23" />
+  <text
+     x="201"
+     y="344"
+     text-anchor="middle"
+     fill="#052e16"
+     font-size="13px"
+     font-weight="700"
+     id="text24">ArgoCD</text>
+  <text
+     x="201"
+     y="362"
+     text-anchor="middle"
+     fill="#15803d"
+     font-size="11px"
+     id="text25">App-of-Apps Pattern · Self-Managed</text>
+  <text
+     x="201"
+     y="377"
+     text-anchor="middle"
+     fill="#166534"
+     font-size="10px"
+     id="text26">GitOps Engine · Zero manual kubectl apply</text>
+  <rect
+     x="389"
+     y="324"
+     width="322"
+     height="62"
+     rx="8"
+     fill="#f0fdf4"
+     stroke="#15803d"
+     stroke-width="1.5"
+     id="rect26" />
+  <text
+     x="550"
+     y="344"
+     text-anchor="middle"
+     fill="#052e16"
+     font-size="13px"
+     font-weight="700"
+     id="text27">nginx-ingress</text>
+  <text
+     x="550"
+     y="362"
+     text-anchor="middle"
+     fill="#15803d"
+     font-size="11px"
+     id="text28">NodePort 30080 / 30443</text>
+  <text
+     x="550"
+     y="377"
+     text-anchor="middle"
+     fill="#166534"
+     font-size="10px"
+     id="text29">Hostname-based routing</text>
+  <rect
+     x="738"
+     y="324"
+     width="322"
+     height="62"
+     rx="8"
+     fill="#f0fdf4"
+     stroke="#15803d"
+     stroke-width="1.5"
+     id="rect29" />
+  <text
+     x="899"
+     y="344"
+     text-anchor="middle"
+     fill="#052e16"
+     font-size="13px"
+     font-weight="700"
+     id="text30">Ansible + GitHub</text>
+  <text
+     x="899"
+     y="362"
+     text-anchor="middle"
+     fill="#15803d"
+     font-size="11px"
+     id="text31">Infrastructure as Code · Phase 3–4</text>
+  <text
+     x="899"
+     y="377"
+     text-anchor="middle"
+     fill="#166534"
+     font-size="10px"
+     id="text32">Idempotent playbooks · cloud-init</text>
+  <line
+     x1="550"
+     y1="398"
+     x2="550"
+     y2="418"
+     stroke="#1a5fa8"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line32" />
+  <!-- LAYER 3: OBSERVABILITY -->
+  <rect
+     x="20"
+     y="422"
+     width="1060"
+     height="116"
+     rx="10"
+     fill="#ffffff"
+     stroke="#6d28d9"
+     stroke-width="2"
      filter="url(#shadow)"
      id="rect32" />
   <rect
      x="20"
-     y="242"
-     width="5"
-     height="96"
-     rx="3"
-     fill="#16a34a"
+     y="422"
+     width="7"
+     height="116"
+     rx="4"
+     fill="#6d28d9"
      id="rect33" />
   <rect
-     x="25"
-     y="242"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#f0fdf4"
+     x="27"
+     y="422"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#ede9fe"
      id="rect34" />
   <text
-     x="42"
-     y="261"
-     fill="#14532d"
-     font-size="10px"
+     x="50"
+     y="445"
+     fill="#2e1065"
+     font-size="13px"
      font-weight="700"
      letter-spacing="2"
-     id="text34">GITOPS LAYER</text>
+     id="text34">OBSERVABILITY LAYER</text>
   <text
-     x="872"
-     y="261"
+     x="1070"
+     y="445"
      text-anchor="end"
-     fill="#16a34a"
-     font-size="9px"
-     id="text35">Phase 5 · namespace: platform · All changes via Git</text>
-  <rect
-     x="880"
-     y="246"
-     width="88"
-     height="20"
-     rx="10"
-     fill="#dcfce7"
-     id="rect35" />
-  <text
-     x="924"
-     y="260"
-     text-anchor="middle"
-     fill="#166534"
-     font-size="9px"
-     font-weight="700"
-     id="text36">● COMPLETE</text>
-  <rect
-     x="36"
-     y="278"
-     width="290"
-     height="48"
-     rx="6"
-     fill="#f0fdf4"
-     stroke="#16a34a"
-     stroke-width="1"
-     id="rect36" />
-  <text
-     x="181"
-     y="296"
-     text-anchor="middle"
-     fill="#14532d"
-     font-size="10px"
-     font-weight="700"
-     id="text37">ArgoCD</text>
-  <text
-     x="181"
-     y="310"
-     text-anchor="middle"
-     fill="#16a34a"
-     font-size="9px"
-     id="text38">App-of-Apps Pattern · Self-Managed</text>
-  <text
-     x="181"
-     y="322"
-     text-anchor="middle"
-     fill="#4a8a5a"
-     font-size="8px"
-     id="text39">GitOps Engine · Zero manual kubectl apply</text>
-  <rect
-     x="342"
-     y="278"
-     width="230"
-     height="48"
-     rx="6"
-     fill="#f0fdf4"
-     stroke="#16a34a"
-     stroke-width="1"
-     id="rect39" />
-  <text
-     x="457"
-     y="296"
-     text-anchor="middle"
-     fill="#14532d"
-     font-size="10px"
-     font-weight="700"
-     id="text40">nginx-ingress</text>
-  <text
-     x="457"
-     y="310"
-     text-anchor="middle"
-     fill="#16a34a"
-     font-size="9px"
-     id="text41">NodePort 30080/30443</text>
-  <text
-     x="457"
-     y="322"
-     text-anchor="middle"
-     fill="#4a8a5a"
-     font-size="8px"
-     id="text42">Hostname-based routing</text>
-  <rect
-     x="588"
-     y="278"
-     width="290"
-     height="48"
-     rx="6"
-     fill="#f0fdf4"
-     stroke="#16a34a"
-     stroke-width="1"
-     id="rect42" />
-  <text
-     x="733"
-     y="296"
-     text-anchor="middle"
-     fill="#14532d"
-     font-size="10px"
-     font-weight="700"
-     id="text43">Ansible + GitHub</text>
-  <text
-     x="733"
-     y="310"
-     text-anchor="middle"
-     fill="#16a34a"
-     font-size="9px"
-     id="text44">Infrastructure as Code · Phase 3–4</text>
-  <text
-     x="733"
-     y="322"
-     text-anchor="middle"
-     fill="#4a8a5a"
-     font-size="8px"
-     id="text45">Idempotent playbooks · cloud-init</text>
-  <!-- Arrow -->
-  <line
-     x1="500"
-     y1="338"
-     x2="500"
-     y2="354"
-     stroke="#2e75b6"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.6"
-     id="line45" />
-  <!-- ═══════════════════ LAYER 3: OBSERVABILITY ═══════════════════ -->
-  <rect
-     x="20"
-     y="358"
-     width="960"
-     height="96"
-     rx="8"
-     fill="#ffffff"
-     stroke="#7c3aed"
-     stroke-width="1.5"
-     filter="url(#shadow)"
-     id="rect45" />
-  <rect
-     x="20"
-     y="358"
-     width="5"
-     height="96"
-     rx="3"
-     fill="#7c3aed"
-     id="rect46" />
-  <rect
-     x="25"
-     y="358"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#faf5ff"
-     id="rect47" />
-  <text
-     x="42"
-     y="377"
-     fill="#4c1d95"
-     font-size="10px"
-     font-weight="700"
-     letter-spacing="2"
-     id="text47">OBSERVABILITY LAYER</text>
-  <text
-     x="872"
-     y="377"
-     text-anchor="end"
-     fill="#7c3aed"
-     font-size="9px"
-     id="text48">Phase 6 · namespace: observability · Established before workload deployment</text>
-  <rect
-     x="880"
-     y="362"
-     width="88"
-     height="20"
-     rx="10"
-     fill="#dcfce7"
-     id="rect48" />
-  <text
-     x="924"
-     y="376"
-     text-anchor="middle"
-     fill="#166534"
-     font-size="9px"
-     font-weight="700"
-     id="text49">● COMPLETE</text>
-  <rect
-     x="36"
-     y="394"
-     width="208"
-     height="48"
-     rx="6"
-     fill="#faf5ff"
-     stroke="#7c3aed"
-     stroke-width="1"
-     id="rect49" />
-  <text
-     x="140"
-     y="413"
-     text-anchor="middle"
-     fill="#4c1d95"
-     font-size="10px"
-     font-weight="700"
-     id="text50">Prometheus</text>
-  <text
-     x="140"
-     y="427"
-     text-anchor="middle"
-     fill="#7c3aed"
-     font-size="9px"
-     id="text51">Metrics · ServiceMonitor CRDs</text>
-  <text
-     x="140"
-     y="438"
-     text-anchor="middle"
-     fill="#6d4a9a"
-     font-size="8px"
-     id="text52">kube-prometheus-stack</text>
-  <rect
-     x="258"
-     y="394"
-     width="208"
-     height="48"
-     rx="6"
-     fill="#faf5ff"
-     stroke="#7c3aed"
-     stroke-width="1"
-     id="rect52" />
-  <text
-     x="362"
-     y="413"
-     text-anchor="middle"
-     fill="#4c1d95"
-     font-size="10px"
-     font-weight="700"
-     id="text53">Grafana</text>
-  <text
-     x="362"
-     y="427"
-     text-anchor="middle"
-     fill="#7c3aed"
-     font-size="9px"
-     id="text54">Dashboards · Kubernetes Panels</text>
-  <text
-     x="362"
-     y="438"
-     text-anchor="middle"
-     fill="#6d4a9a"
-     font-size="8px"
-     id="text55">Pre-built + custom dashboards</text>
-  <rect
-     x="480"
-     y="394"
-     width="208"
-     height="48"
-     rx="6"
-     fill="#faf5ff"
-     stroke="#7c3aed"
-     stroke-width="1"
-     id="rect55" />
-  <text
-     x="584"
-     y="413"
-     text-anchor="middle"
-     fill="#4c1d95"
-     font-size="10px"
-     font-weight="700"
-     id="text56">Loki + Promtail</text>
-  <text
-     x="584"
-     y="427"
-     text-anchor="middle"
-     fill="#7c3aed"
-     font-size="9px"
-     id="text57">Log Aggregation</text>
-  <text
-     x="584"
-     y="438"
-     text-anchor="middle"
-     fill="#6d4a9a"
-     font-size="8px"
-     id="text58">Node-level collectors</text>
-  <rect
-     x="702"
-     y="394"
-     width="208"
-     height="48"
-     rx="6"
-     fill="#faf5ff"
-     stroke="#7c3aed"
-     stroke-width="1"
-     id="rect58" />
-  <text
-     x="806"
-     y="413"
-     text-anchor="middle"
-     fill="#4c1d95"
-     font-size="10px"
-     font-weight="700"
-     id="text59">Alertmanager</text>
-  <text
-     x="806"
-     y="427"
-     text-anchor="middle"
-     fill="#7c3aed"
-     font-size="9px"
-     id="text60">Alert Routing</text>
-  <text
-     x="806"
-     y="438"
-     text-anchor="middle"
-     fill="#6d4a9a"
-     font-size="8px"
-     id="text61">Notification integration</text>
-  <!-- Arrow -->
-  <line
-     x1="500"
-     y1="454"
-     x2="500"
-     y2="470"
-     stroke="#2e75b6"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.6"
-     id="line61" />
-  <!-- ═══════════════════ LAYER 4: SECURITY ═══════════════════ -->
-  <rect
-     x="20"
-     y="474"
-     width="960"
-     height="128"
-     rx="8"
-     fill="#ffffff"
-     stroke="#dc2626"
-     stroke-width="1.5"
-     filter="url(#shadow)"
-     id="rect61" />
-  <rect
-     x="20"
-     y="474"
-     width="5"
-     height="128"
-     rx="3"
-     fill="#dc2626"
-     id="rect62" />
-  <rect
-     x="25"
-     y="474"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#fef2f2"
-     id="rect63" />
-  <text
-     x="42"
-     y="493"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     letter-spacing="2"
-     id="text63">SECURITY LAYER</text>
-  <text
-     x="856"
-     y="493"
-     text-anchor="end"
-     fill="#dc2626"
-     font-size="9px"
-     id="text64">Phase 7 · Security baseline before stateful workloads · Default-deny posture</text>
-  <rect
-     x="862"
-     y="478"
-     width="112"
-     height="20"
-     rx="10"
-     fill="#fef9c3"
-     id="rect64" />
-  <text
-     x="918"
-     y="492"
-     text-anchor="middle"
-     fill="#713f12"
-     font-size="9px"
-     font-weight="700"
-     id="text65">● IN PROGRESS</text>
-  <!-- Row 1 -->
-  <rect
-     x="36"
-     y="510"
-     width="200"
-     height="38"
-     rx="6"
-     fill="#fff5f5"
-     stroke="#dc2626"
-     stroke-width="1"
-     id="rect65" />
-  <text
-     x="136"
-     y="525"
-     text-anchor="middle"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     id="text66">cert-manager</text>
-  <text
-     x="136"
-     y="540"
-     text-anchor="middle"
-     fill="#dc2626"
-     font-size="8px"
-     id="text67">TLS · Cloudflare DNS-01 · Let's Encrypt</text>
-  <rect
-     x="248"
-     y="510"
-     width="200"
-     height="38"
-     rx="6"
-     fill="#fff5f5"
-     stroke="#dc2626"
-     stroke-width="1"
-     id="rect67" />
-  <text
-     x="348"
-     y="525"
-     text-anchor="middle"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     id="text68">NetworkPolicies</text>
-  <text
-     x="348"
-     y="540"
-     text-anchor="middle"
-     fill="#dc2626"
-     font-size="8px"
-     id="text69">Default-Deny · Explicit Allow Rules</text>
-  <rect
-     x="460"
-     y="510"
-     width="200"
-     height="38"
-     rx="6"
-     fill="#fff5f5"
-     stroke="#dc2626"
-     stroke-width="1"
-     id="rect69" />
-  <text
-     x="560"
-     y="525"
-     text-anchor="middle"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     id="text70">RBAC Hardening</text>
-  <text
-     x="560"
-     y="540"
-     text-anchor="middle"
-     fill="#dc2626"
-     font-size="8px"
-     id="text71">Least-Privilege Service Accounts</text>
-  <rect
-     x="672"
-     y="510"
-     width="200"
-     height="38"
-     rx="6"
-     fill="#fff5f5"
-     stroke="#dc2626"
-     stroke-width="1"
-     id="rect71" />
-  <text
-     x="772"
-     y="525"
-     text-anchor="middle"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     id="text72">Pod Security Standards</text>
-  <text
-     x="772"
-     y="540"
-     text-anchor="middle"
-     fill="#dc2626"
-     font-size="8px"
-     id="text73">Audit → Enforce · Per Namespace</text>
-  <!-- Row 2 -->
-  <rect
-     x="36"
-     y="556"
-     width="200"
-     height="34"
-     rx="6"
-     fill="#fff5f5"
-     stroke="#dc2626"
-     stroke-width="1"
-     id="rect73" />
-  <text
-     x="136"
-     y="571"
-     text-anchor="middle"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     id="text74">External Secrets Op.</text>
-  <text
-     x="136"
-     y="583"
-     text-anchor="middle"
-     fill="#dc2626"
-     font-size="8px"
-     id="text75">Secrets Backend Integration</text>
-  <rect
-     x="248"
-     y="556"
-     width="200"
-     height="34"
-     rx="6"
-     fill="#fff5f5"
-     stroke="#dc2626"
-     stroke-width="1"
-     id="rect75" />
-  <text
-     x="348"
-     y="571"
-     text-anchor="middle"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     id="text76">Falco</text>
-  <text
-     x="348"
-     y="583"
-     text-anchor="middle"
-     fill="#dc2626"
-     font-size="8px"
-     id="text77">Runtime Anomaly Detection</text>
-  <rect
-     x="460"
-     y="556"
-     width="200"
-     height="34"
-     rx="6"
-     fill="#fff5f5"
-     stroke="#dc2626"
-     stroke-width="1"
-     id="rect77" />
-  <text
-     x="560"
-     y="571"
-     text-anchor="middle"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     id="text78">kube-bench</text>
-  <text
-     x="560"
-     y="583"
-     text-anchor="middle"
-     fill="#dc2626"
-     font-size="8px"
-     id="text79">CIS Benchmark · Remediation Report</text>
-  <rect
-     x="672"
-     y="556"
-     width="200"
-     height="34"
-     rx="6"
-     fill="#fff8f0"
-     stroke="#ea580c"
-     stroke-width="1.5"
-     id="rect79" />
-  <text
-     x="772"
-     y="571"
-     text-anchor="middle"
-     fill="#7c2d12"
-     font-size="10px"
-     font-weight="700"
-     id="text80">☁ Cloudflare</text>
-  <text
-     x="772"
-     y="583"
-     text-anchor="middle"
-     fill="#ea580c"
-     font-size="8px"
-     id="text81">Tunnel · Access · WAF · DNS-01</text>
-  <!-- Arrow -->
-  <line
-     x1="500"
-     y1="602"
-     x2="500"
-     y2="618"
-     stroke="#2e75b6"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.6"
-     id="line81" />
-  <!-- ═══════════════════ LAYER 5: STORAGE ═══════════════════ -->
-  <rect
-     x="20"
-     y="622"
-     width="960"
-     height="96"
-     rx="8"
-     fill="#ffffff"
-     stroke="#0891b2"
-     stroke-width="1.5"
-     filter="url(#shadow)"
-     id="rect81" />
-  <rect
-     x="20"
-     y="622"
-     width="5"
-     height="96"
-     rx="3"
-     fill="#0891b2"
-     id="rect82" />
-  <rect
-     x="25"
-     y="622"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#f0f9ff"
-     id="rect83" />
-  <text
-     x="42"
-     y="641"
-     fill="#0c4a6e"
-     font-size="10px"
-     font-weight="700"
-     letter-spacing="2"
-     id="text83">STORAGE LAYER</text>
-  <text
-     x="872"
-     y="641"
-     text-anchor="end"
-     fill="#0891b2"
-     font-size="9px"
-     id="text84">Phase 8 · Validated before stateful workloads are deployed</text>
-  <rect
-     x="880"
-     y="626"
-     width="88"
-     height="20"
-     rx="10"
-     fill="#dbeafe"
-     id="rect84" />
-  <text
-     x="924"
-     y="640"
-     text-anchor="middle"
-     fill="#1e3a5f"
-     font-size="9px"
-     font-weight="700"
-     id="text85">● PLANNED</text>
-  <rect
-     x="36"
-     y="658"
-     width="280"
-     height="48"
-     rx="6"
-     fill="#f0f9ff"
-     stroke="#0891b2"
-     stroke-width="1"
-     id="rect85" />
-  <text
-     x="176"
-     y="676"
-     text-anchor="middle"
-     fill="#0c4a6e"
-     font-size="10px"
-     font-weight="700"
-     id="text86">Longhorn</text>
-  <text
-     x="176"
-     y="690"
-     text-anchor="middle"
-     fill="#0891b2"
-     font-size="9px"
-     id="text87">Distributed · Replication Factor 2</text>
-  <text
-     x="176"
-     y="702"
-     text-anchor="middle"
-     fill="#4a8a9a"
-     font-size="8px"
-     id="text88">Production PVs across worker nodes</text>
-  <rect
-     x="332"
-     y="658"
-     width="280"
-     height="48"
-     rx="6"
-     fill="#f0f9ff"
-     stroke="#0891b2"
-     stroke-width="1"
-     id="rect88" />
-  <text
-     x="472"
-     y="676"
-     text-anchor="middle"
-     fill="#0c4a6e"
-     font-size="10px"
-     font-weight="700"
-     id="text89">MinIO</text>
-  <text
-     x="472"
-     y="690"
-     text-anchor="middle"
-     fill="#0891b2"
-     font-size="9px"
-     id="text90">S3-Compatible Object Storage</text>
-  <text
-     x="472"
-     y="702"
-     text-anchor="middle"
-     fill="#4a8a9a"
-     font-size="8px"
-     id="text91">Loki long-term storage + Velero backup target</text>
-  <rect
-     x="628"
-     y="658"
-     width="280"
-     height="48"
-     rx="6"
-     fill="#f0f9ff"
-     stroke="#0891b2"
-     stroke-width="1"
-     id="rect91" />
-  <text
-     x="768"
-     y="676"
-     text-anchor="middle"
-     fill="#0c4a6e"
-     font-size="10px"
-     font-weight="700"
-     id="text92">local-path-provisioner</text>
-  <text
-     x="768"
-     y="690"
-     text-anchor="middle"
-     fill="#0891b2"
-     font-size="9px"
-     id="text93">Dev / Cache workloads</text>
-  <text
-     x="768"
-     y="702"
-     text-anchor="middle"
-     fill="#4a8a9a"
-     font-size="8px"
-     id="text94">Phase 4 · Fast local storage</text>
-  <!-- Arrow -->
-  <line
-     x1="500"
-     y1="718"
-     x2="500"
-     y2="734"
-     stroke="#2e75b6"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.6"
-     id="line94" />
-  <!-- ═══════════════════ LAYER 6: IDENTITY ═══════════════════ -->
-  <rect
-     x="20"
-     y="738"
-     width="960"
-     height="120"
-     rx="8"
-     fill="#ffffff"
-     stroke="#9333ea"
-     stroke-width="1.5"
-     filter="url(#shadow)"
-     id="rect94" />
-  <rect
-     x="20"
-     y="738"
-     width="5"
-     height="120"
-     rx="3"
-     fill="#9333ea"
-     id="rect95" />
-  <rect
-     x="25"
-     y="738"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#fdf4ff"
-     id="rect96" />
-  <text
-     x="42"
-     y="757"
-     fill="#581c87"
-     font-size="10px"
-     font-weight="700"
-     letter-spacing="2"
-     id="text96">IDENTITY &amp; DATABASE LAYER</text>
-  <text
-     x="872"
-     y="757"
-     text-anchor="end"
-     fill="#9333ea"
-     font-size="9px"
-     id="text97">Phase 9 · namespace: identity, databases · OIDC SSO across all platform services</text>
-  <rect
-     x="880"
-     y="742"
-     width="88"
-     height="20"
-     rx="10"
-     fill="#dbeafe"
-     id="rect97" />
-  <text
-     x="924"
-     y="756"
-     text-anchor="middle"
-     fill="#1e3a5f"
-     font-size="9px"
-     font-weight="700"
-     id="text98">● PLANNED</text>
-  <!-- Keycloak -->
-  <rect
-     x="36"
-     y="774"
-     width="268"
-     height="72"
-     rx="6"
-     fill="#fdf4ff"
-     stroke="#9333ea"
-     stroke-width="1.5"
-     id="rect98" />
-  <text
-     x="170"
-     y="789"
-     text-anchor="middle"
-     fill="#581c87"
+     fill="#6d28d9"
      font-size="11px"
-     font-weight="700"
-     id="text99">Keycloak</text>
-  <text
-     x="170"
-     y="808"
-     text-anchor="middle"
-     fill="#9333ea"
-     font-size="9px"
-     id="text100">Central OIDC Identity Provider</text>
-  <text
-     x="170"
-     y="821"
-     text-anchor="middle"
-     fill="#6d4a9a"
-     font-size="8px"
-     id="text101">TLS · Resource Limits · Longhorn Storage</text>
-  <text
-     x="170"
-     y="834"
-     text-anchor="middle"
-     fill="#6d4a9a"
-     font-size="8px"
-     id="text102">MFA · SSO · User Federation</text>
-  <!-- OIDC arrows -->
-  <line
-     x1="304"
-     y1="800"
-     x2="380"
-     y2="786"
-     stroke="#9333ea"
-     stroke-width="1.2"
-     stroke-dasharray="4, 3"
-     marker-end="url(#arrowPurple)"
-     opacity="0.7"
-     id="line102" />
-  <line
-     x1="304"
-     y1="820"
-     x2="380"
-     y2="834"
-     stroke="#9333ea"
-     stroke-width="1.2"
-     stroke-dasharray="4, 3"
-     marker-end="url(#arrowPurple)"
-     opacity="0.7"
-     id="line103" />
-  <rect
-     x="380"
-     y="774"
-     width="168"
-     height="32"
-     rx="6"
-     fill="#fdf4ff"
-     stroke="#9333ea"
-     stroke-width="1"
-     id="rect103" />
-  <text
-     x="464"
-     y="789"
-     text-anchor="middle"
-     fill="#581c87"
-     font-size="10px"
-     font-weight="700"
-     id="text103">ArgoCD SSO</text>
-  <text
-     x="464"
-     y="801"
-     text-anchor="middle"
-     fill="#7c3aed"
-     font-size="8px"
-     id="text104">OIDC Login</text>
-  <rect
-     x="380"
-     y="818"
-     width="168"
-     height="32"
-     rx="6"
-     fill="#fdf4ff"
-     stroke="#9333ea"
-     stroke-width="1"
-     id="rect104" />
-  <text
-     x="464"
-     y="833"
-     text-anchor="middle"
-     fill="#581c87"
-     font-size="10px"
-     font-weight="700"
-     id="text105">Grafana SSO</text>
-  <text
-     x="464"
-     y="845"
-     text-anchor="middle"
-     fill="#7c3aed"
-     font-size="8px"
-     id="text106">OIDC Login</text>
-  <!-- CloudNativePG -->
-  <rect
-     x="566"
-     y="774"
-     width="342"
-     height="72"
-     rx="6"
-     fill="#fdf4ff"
-     stroke="#9333ea"
-     stroke-width="1"
-     id="rect106" />
-  <text
-     x="737"
-     y="789"
-     text-anchor="middle"
-     fill="#581c87"
-     font-size="11px"
-     font-weight="700"
-     id="text107">CloudNativePG Operator</text>
-  <text
-     x="737"
-     y="808"
-     text-anchor="middle"
-     fill="#9333ea"
-     font-size="9px"
-     id="text108">PostgreSQL Lifecycle Management</text>
-  <text
-     x="737"
-     y="821"
-     text-anchor="middle"
-     fill="#6d4a9a"
-     font-size="8px"
-     id="text109">Keycloak DB · ThingsBoard DB · TLS</text>
-  <text
-     x="737"
-     y="834"
-     text-anchor="middle"
-     fill="#6d4a9a"
-     font-size="8px"
-     id="text110">Automated Failover · Longhorn PVs · Backups</text>
-  <!-- Arrow -->
-  <line
-     x1="500"
-     y1="858"
-     x2="500"
-     y2="874"
-     stroke="#2e75b6"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.6"
-     id="line110" />
-  <!-- ═══════════════════ LAYER 7: APPLICATION ═══════════════════ -->
-  <rect
-     x="20"
-     y="878"
-     width="960"
-     height="110"
-     rx="8"
-     fill="#ffffff"
-     stroke="#16a34a"
-     stroke-width="1.5"
-     filter="url(#shadow)"
-     id="rect110" />
-  <rect
-     x="20"
-     y="878"
-     width="5"
-     height="110"
-     rx="3"
-     fill="#16a34a"
-     id="rect111" />
-  <rect
-     x="25"
-     y="878"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#f0fdf4"
-     id="rect112" />
-  <text
-     x="42"
-     y="897"
-     fill="#14532d"
-     font-size="10px"
-     font-weight="700"
-     letter-spacing="2"
-     id="text112">APPLICATION LAYER</text>
-  <text
-     x="872"
-     y="897"
-     text-anchor="end"
-     fill="#16a34a"
-     font-size="9px"
-     id="text113">Phase 10 · namespace: apps · Production workloads on hardened platform</text>
-  <rect
-     x="880"
-     y="882"
-     width="88"
-     height="20"
-     rx="10"
-     fill="#dbeafe"
-     id="rect113" />
-  <text
-     x="924"
-     y="896"
-     text-anchor="middle"
-     fill="#1e3a5f"
-     font-size="9px"
-     font-weight="700"
-     id="text114">● PLANNED</text>
-  <!-- Wiki.js -->
-  <rect
-     x="36"
-     y="914"
-     width="278"
-     height="62"
-     rx="6"
-     fill="#f0fdf4"
-     stroke="#16a34a"
-     stroke-width="1"
-     id="rect114" />
-  <rect
-     x="339.16394"
-     y="913.823"
-     width="563.37671"
-     height="61.581253"
-     rx="12.159209"
-     fill="#f0fdf4"
-     stroke="#16a34a"
-     stroke-width="1.41875"
-     id="rect114-94" />
-  <rect
-     x="329.35846"
-     y="913.35852"
-     width="578.69214"
-     height="62.123959"
-     rx="12.489759"
-     fill="#f0fdf4"
-     stroke="#16a34a"
-     stroke-width="1.44423"
-     id="rect114-9" />
-  <text
-     x="175"
-     y="928"
-     text-anchor="middle"
-     fill="#14532d"
-     font-size="10px"
-     font-weight="700"
-     id="text115">Wiki.js</text>
-  <text
-     x="175"
-     y="945"
-     text-anchor="middle"
-     fill="#16a34a"
-     font-size="9px"
-     id="text116">Knowledge Management Platform</text>
-  <text
-     x="175"
-     y="958"
-     text-anchor="middle"
-     fill="#4a8a5a"
-     font-size="8px"
-     id="text117">PostgreSQL via CloudNativePG · TLS · Keycloak SSO · Longhorn</text>
-  <text
-     x="175"
-     y="970"
-     text-anchor="middle"
-     fill="#4a8a5a"
-     font-size="8px"
-     id="text118">Full CI/CD pipeline · GitOps deployment · Monitoring</text>
-  <!-- ThingsBoard — wider, featured -->
-  <text
-     x="619"
-     y="928"
-     text-anchor="middle"
-     fill="#14532d"
-     font-size="11px"
-     font-weight="700"
-     id="text119">Nextcloud</text>
-  <text
-     x="619"
-     y="945"
-     text-anchor="middle"
-     fill="#16a34a"
-     font-size="9px"
-     id="text120">Data Sovereignty Platform</text>
-  <text
-     x="619"
-     y="958"
-     text-anchor="middle"
-     fill="#4a8a5a"
-     font-size="8px"
-     id="text121">PostgreSQL via CloudNativePG · TLS · Keycloak SSO · Longhorn storage · Velero backups</text>
-  <text
-     x="619"
-     y="970"
-     text-anchor="middle"
-     fill="#4a8a5a"
-     font-size="8px"
-     id="text122">Full CI/CD pipeline · GitOps deployment · Monitoring</text>
-  <!-- Arrow -->
-  <line
-     x1="500"
-     y1="988"
-     x2="500"
-     y2="1004"
-     stroke="#2e75b6"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.6"
-     id="line122" />
-  <!-- ═══════════════════ LAYER 8: CI/CD ═══════════════════ -->
-  <rect
-     x="20"
-     y="1008"
-     width="960"
-     height="128"
-     rx="8"
-     fill="#ffffff"
-     stroke="#d97706"
-     stroke-width="1.5"
-     filter="url(#shadow)"
-     id="rect122" />
-  <rect
-     x="20"
-     y="1008"
-     width="5"
-     height="128"
-     rx="3"
-     fill="#d97706"
-     id="rect123" />
-  <rect
-     x="25"
-     y="1008"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#fffbeb"
-     id="rect124" />
-  <text
-     x="42"
-     y="1027"
-     fill="#78350f"
-     font-size="10px"
-     font-weight="700"
-     letter-spacing="2"
-     id="text124">CI/CD LAYER</text>
-  <text
-     x="872"
-     y="1027"
-     text-anchor="end"
-     fill="#d97706"
-     font-size="9px"
-     id="text125">Phase 10 · GitHub Actions → ghcr.io → ArgoCD · Full GitOps promotion pipeline</text>
-  <rect
-     x="880"
-     y="1012"
-     width="88"
-     height="20"
-     rx="10"
-     fill="#dbeafe"
-     id="rect125" />
-  <text
-     x="924"
-     y="1026"
-     text-anchor="middle"
-     fill="#1e3a5f"
-     font-size="9px"
-     font-weight="700"
-     id="text126">● PLANNED</text>
-  <!-- Pipeline steps -->
-  <rect
-     x="36"
-     y="1044"
-     width="118"
-     height="44"
-     rx="6"
-     fill="#fffbeb"
-     stroke="#d97706"
-     stroke-width="1"
-     id="rect126" />
-  <text
-     x="95"
-     y="1061"
-     text-anchor="middle"
-     fill="#78350f"
-     font-size="10px"
-     font-weight="700"
-     id="text127">GitHub</text>
-  <text
-     x="95"
-     y="1075"
-     text-anchor="middle"
-     fill="#d97706"
-     font-size="8px"
-     id="text128">Code Push / PR</text>
-  <line
-     x1="154"
-     y1="1066"
-     x2="176"
-     y2="1066"
-     stroke="#d97706"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.8"
-     id="line128" />
-  <rect
-     x="176"
-     y="1044"
-     width="132"
-     height="44"
-     rx="6"
-     fill="#fffbeb"
-     stroke="#d97706"
-     stroke-width="1"
-     id="rect128" />
-  <text
-     x="242"
-     y="1061"
-     text-anchor="middle"
-     fill="#78350f"
-     font-size="10px"
-     font-weight="700"
-     id="text129">GH Actions</text>
-  <text
-     x="242"
-     y="1075"
-     text-anchor="middle"
-     fill="#d97706"
-     font-size="8px"
-     id="text130">Build Docker Image</text>
-  <line
-     x1="308"
-     y1="1066"
-     x2="330"
-     y2="1066"
-     stroke="#d97706"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.8"
-     id="line130" />
-  <rect
-     x="330"
-     y="1044"
-     width="132"
-     height="44"
-     rx="6"
-     fill="#fff5f5"
-     stroke="#dc2626"
-     stroke-width="1.5"
-     id="rect130" />
-  <text
-     x="396"
-     y="1061"
-     text-anchor="middle"
-     fill="#7f1d1d"
-     font-size="10px"
-     font-weight="700"
-     id="text131">Trivy Scan</text>
-  <text
-     x="396"
-     y="1075"
-     text-anchor="middle"
-     fill="#dc2626"
-     font-size="8px"
-     id="text132">Block HIGH/CRITICAL</text>
-  <line
-     x1="462"
-     y1="1066"
-     x2="484"
-     y2="1066"
-     stroke="#d97706"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.8"
-     id="line132" />
-  <rect
-     x="484"
-     y="1044"
-     width="132"
-     height="44"
-     rx="6"
-     fill="#fffbeb"
-     stroke="#d97706"
-     stroke-width="1"
-     id="rect132" />
-  <text
-     x="550"
-     y="1061"
-     text-anchor="middle"
-     fill="#78350f"
-     font-size="10px"
-     font-weight="700"
-     id="text133">ghcr.io</text>
-  <text
-     x="550"
-     y="1075"
-     text-anchor="middle"
-     fill="#d97706"
-     font-size="8px"
-     id="text134">Push Image</text>
-  <line
-     x1="616"
-     y1="1066"
-     x2="638"
-     y2="1066"
-     stroke="#d97706"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.8"
-     id="line134" />
-  <rect
-     x="638"
-     y="1044"
-     width="132"
-     height="44"
-     rx="6"
-     fill="#fffbeb"
-     stroke="#d97706"
-     stroke-width="1"
-     id="rect134" />
-  <text
-     x="704"
-     y="1061"
-     text-anchor="middle"
-     fill="#78350f"
-     font-size="10px"
-     font-weight="700"
-     id="text135">Helm Update</text>
-  <text
-     x="704"
-     y="1075"
-     text-anchor="middle"
-     fill="#d97706"
-     font-size="8px"
-     id="text136">Tag → Git commit</text>
-  <line
-     x1="770"
-     y1="1066"
-     x2="792"
-     y2="1066"
-     stroke="#d97706"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.8"
-     id="line136" />
-  <rect
-     x="792"
-     y="1044"
-     width="132"
-     height="44"
-     rx="6"
-     fill="#f0fdf4"
-     stroke="#16a34a"
-     stroke-width="1.5"
-     id="rect136" />
-  <text
-     x="858"
-     y="1061"
-     text-anchor="middle"
-     fill="#14532d"
-     font-size="10px"
-     font-weight="700"
-     id="text137">ArgoCD</text>
-  <text
-     x="858"
-     y="1075"
-     text-anchor="middle"
-     fill="#16a34a"
-     font-size="8px"
-     id="text138">Sync to Cluster</text>
-  <!-- Notes row -->
-  <rect
-     x="36"
-     y="1096"
-     width="430"
-     height="28"
-     rx="4"
-     fill="#fef9c3"
-     stroke="#d97706"
-     stroke-width="0.5"
-     id="rect138" />
-  <text
-     x="251"
-     y="1114"
-     text-anchor="middle"
-     fill="#78350f"
-     font-size="9px"
-     id="text139">Branch Promotion: main → staging namespace · Git tag → production namespace</text>
-  <rect
-     x="480"
-     y="1096"
-     width="444"
-     height="28"
-     rx="4"
-     fill="#fef9c3"
-     stroke="#d97706"
-     stroke-width="0.5"
-     id="rect139" />
-  <text
-     x="702"
-     y="1114"
-     text-anchor="middle"
-     fill="#78350f"
-     font-size="9px"
-     id="text140">Self-hosted GH Actions runner deployed as pod inside cluster</text>
-  <!-- Arrow -->
-  <line
-     x1="500"
-     y1="1136"
-     x2="500"
-     y2="1152"
-     stroke="#aaaaaa"
-     stroke-width="1.5"
-     marker-end="url(#arrowPurple)"
-     opacity="0.4"
-     id="line140" />
-  <!-- ═══════════════════ FUTURE PHASES ═══════════════════ -->
-  <rect
-     x="20"
-     y="1156"
-     width="960"
-     height="96"
-     rx="8"
-     fill="#f8fafc"
-     stroke="#cbd5e1"
-     stroke-width="1.5"
-     stroke-dasharray="6, 4"
-     id="rect140" />
-  <rect
-     x="20"
-     y="1156"
-     width="5"
-     height="96"
-     rx="3"
-     fill="#94a3b8"
-     id="rect141" />
-  <rect
-     x="25"
-     y="1156"
-     width="955"
-     height="28"
-     rx="6"
-     fill="#f1f5f9"
-     id="rect142" />
-  <text
-     x="42"
-     y="1175"
-     fill="#475569"
-     font-size="10px"
-     font-weight="700"
-     letter-spacing="2"
-     id="text142">FUTURE PHASES</text>
-  <text
-     x="960"
-     y="1175"
-     text-anchor="end"
-     fill="#94a3b8"
-     font-size="9px"
-     id="text143">Post-CKA · Second Beelink SER5 Pro · Multi-node storage replication</text>
-  <rect
-     x="36"
-     y="1192"
-     width="166"
-     height="48"
-     rx="6"
-     fill="#f1f5f9"
-     stroke="#cbd5e1"
-     stroke-width="1"
-     id="rect143" />
-  <text
-     x="119"
-     y="1209"
-     text-anchor="middle"
-     fill="#475569"
-     font-size="9px"
-     font-weight="700"
-     id="text144">Advanced Networking</text>
-  <text
-     x="119"
-     y="1222"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text145">Cilium · Hubble · eBPF</text>
-  <text
-     x="119"
-     y="1234"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text146">kube-proxy replacement</text>
-  <rect
-     x="216"
-     y="1192"
-     width="166"
-     height="48"
-     rx="6"
-     fill="#f1f5f9"
-     stroke="#cbd5e1"
-     stroke-width="1"
-     id="rect146" />
-  <text
-     x="299"
-     y="1209"
-     text-anchor="middle"
-     fill="#475569"
-     font-size="9px"
-     font-weight="700"
-     id="text147">Distributed Tracing</text>
-  <text
-     x="299"
-     y="1222"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text148">Grafana Tempo</text>
-  <text
-     x="299"
-     y="1234"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text149">OpenTelemetry · SLOs</text>
-  <rect
-     x="396"
-     y="1192"
-     width="166"
-     height="48"
-     rx="6"
-     fill="#f1f5f9"
-     stroke="#cbd5e1"
-     stroke-width="1"
-     id="rect149" />
-  <text
-     x="479"
-     y="1209"
-     text-anchor="middle"
-     fill="#475569"
-     font-size="9px"
-     font-weight="700"
-     id="text150">Microservices</text>
-  <text
-     x="479"
-     y="1222"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text151">Online Boutique (11 svc)</text>
-  <text
-     x="479"
-     y="1234"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text152">Istio · mTLS · Canary</text>
-  <rect
-     x="576"
-     y="1192"
-     width="166"
-     height="48"
-     rx="6"
-     fill="#f1f5f9"
-     stroke="#cbd5e1"
-     stroke-width="1"
-     id="rect152" />
-  <text
-     x="659"
-     y="1209"
-     text-anchor="middle"
-     fill="#475569"
-     font-size="9px"
-     font-weight="700"
-     id="text153">Reliability Eng.</text>
-  <text
-     x="659"
-     y="1222"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text154">HPA · VPA · PDBs</text>
-  <text
-     x="659"
-     y="1234"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text155">Resource optimization</text>
-  <rect
-     x="756"
-     y="1192"
-     width="168"
-     height="48"
-     rx="6"
-     fill="#f1f5f9"
-     stroke="#cbd5e1"
-     stroke-width="1"
-     id="rect155" />
-  <text
-     x="840"
-     y="1209"
-     text-anchor="middle"
-     fill="#475569"
-     font-size="9px"
-     font-weight="700"
-     id="text156">Chaos Engineering</text>
-  <text
-     x="840"
-     y="1222"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text157">Failure Injection</text>
-  <text
-     x="840"
-     y="1234"
-     text-anchor="middle"
-     fill="#94a3b8"
-     font-size="8px"
-     id="text158">Runbooks · DR Testing</text>
-  <!-- ═══════════════════ LEGEND ═══════════════════ -->
-  <rect
-     x="0"
-     y="1264"
-     width="1000"
-     height="89.86805"
-     fill="#1e3a5f"
-     id="rect158"
-     style="stroke-width:0.758997" />
-  <text
-     x="500"
-     y="1286"
-     text-anchor="middle"
-     fill="#7ab2d4"
-     font-size="10px"
-     font-weight="700"
-     letter-spacing="3"
-     id="text159">LEGEND</text>
-  <!-- Status -->
+     font-weight="600"
+     id="text35">Phase 6 · namespace: observability · Established before workload deployment</text>
   <rect
      x="40"
-     y="1296"
-     width="80"
-     height="18"
-     rx="9"
-     fill="#dcfce7"
-     id="rect159" />
+     y="464"
+     width="235"
+     height="62"
+     rx="8"
+     fill="#f5f3ff"
+     stroke="#6d28d9"
+     stroke-width="1.5"
+     id="rect35" />
   <text
-     x="80"
-     y="1309"
+     x="157"
+     y="484"
+     text-anchor="middle"
+     fill="#2e1065"
+     font-size="13px"
+     font-weight="700"
+     id="text36">Prometheus</text>
+  <text
+     x="157"
+     y="502"
+     text-anchor="middle"
+     fill="#6d28d9"
+     font-size="11px"
+     id="text37">Metrics · ServiceMonitor CRDs</text>
+  <text
+     x="157"
+     y="517"
+     text-anchor="middle"
+     fill="#4c2a8a"
+     font-size="10px"
+     id="text38">kube-prometheus-stack</text>
+  <rect
+     x="291"
+     y="464"
+     width="235"
+     height="62"
+     rx="8"
+     fill="#f5f3ff"
+     stroke="#6d28d9"
+     stroke-width="1.5"
+     id="rect38" />
+  <text
+     x="408"
+     y="484"
+     text-anchor="middle"
+     fill="#2e1065"
+     font-size="13px"
+     font-weight="700"
+     id="text39">Grafana</text>
+  <text
+     x="408"
+     y="502"
+     text-anchor="middle"
+     fill="#6d28d9"
+     font-size="11px"
+     id="text40">Dashboards · Kubernetes Panels</text>
+  <text
+     x="408"
+     y="517"
+     text-anchor="middle"
+     fill="#4c2a8a"
+     font-size="10px"
+     id="text41">Pre-built + custom dashboards</text>
+  <rect
+     x="542"
+     y="464"
+     width="235"
+     height="62"
+     rx="8"
+     fill="#f5f3ff"
+     stroke="#6d28d9"
+     stroke-width="1.5"
+     id="rect41" />
+  <text
+     x="659"
+     y="484"
+     text-anchor="middle"
+     fill="#2e1065"
+     font-size="13px"
+     font-weight="700"
+     id="text42">Loki + Promtail</text>
+  <text
+     x="659"
+     y="502"
+     text-anchor="middle"
+     fill="#6d28d9"
+     font-size="11px"
+     id="text43">Log Aggregation</text>
+  <text
+     x="659"
+     y="517"
+     text-anchor="middle"
+     fill="#4c2a8a"
+     font-size="10px"
+     id="text44">Node-level collectors</text>
+  <rect
+     x="793"
+     y="464"
+     width="235"
+     height="62"
+     rx="8"
+     fill="#f5f3ff"
+     stroke="#6d28d9"
+     stroke-width="1.5"
+     id="rect44" />
+  <text
+     x="910"
+     y="484"
+     text-anchor="middle"
+     fill="#2e1065"
+     font-size="13px"
+     font-weight="700"
+     id="text45">Alertmanager</text>
+  <text
+     x="910"
+     y="502"
+     text-anchor="middle"
+     fill="#6d28d9"
+     font-size="11px"
+     id="text46">Alert Routing</text>
+  <text
+     x="910"
+     y="517"
+     text-anchor="middle"
+     fill="#4c2a8a"
+     font-size="10px"
+     id="text47">Notification integration</text>
+  <line
+     x1="550"
+     y1="538"
+     x2="550"
+     y2="558"
+     stroke="#1a5fa8"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line47" />
+  <!-- LAYER 4: SECURITY -->
+  <rect
+     x="20"
+     y="562"
+     width="1060"
+     height="152"
+     rx="10"
+     fill="#ffffff"
+     stroke="#b91c1c"
+     stroke-width="2"
+     filter="url(#shadow)"
+     id="rect47" />
+  <rect
+     x="20"
+     y="562"
+     width="7"
+     height="152"
+     rx="4"
+     fill="#b91c1c"
+     id="rect48" />
+  <rect
+     x="27"
+     y="562"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#fee2e2"
+     id="rect49" />
+  <text
+     x="50"
+     y="585"
+     fill="#450a0a"
+     font-size="13px"
+     font-weight="700"
+     letter-spacing="2"
+     id="text49">SECURITY LAYER</text>
+  <text
+     x="1070"
+     y="585"
+     text-anchor="end"
+     fill="#b91c1c"
+     font-size="11px"
+     font-weight="600"
+     id="text50">Phase 7 · Security baseline before stateful workloads · Default-deny posture</text>
+  <rect
+     x="40"
+     y="604"
+     width="240"
+     height="46"
+     rx="8"
+     fill="#fff0f0"
+     stroke="#b91c1c"
+     stroke-width="1.5"
+     id="rect50" />
+  <text
+     x="160"
+     y="622"
+     text-anchor="middle"
+     fill="#450a0a"
+     font-size="12px"
+     font-weight="700"
+     id="text51">cert-manager</text>
+  <text
+     x="160"
+     y="639"
+     text-anchor="middle"
+     fill="#b91c1c"
+     font-size="10px"
+     id="text52">TLS · Cloudflare DNS-01 · Let's Encrypt</text>
+  <rect
+     x="296"
+     y="604"
+     width="240"
+     height="46"
+     rx="8"
+     fill="#fff0f0"
+     stroke="#b91c1c"
+     stroke-width="1.5"
+     id="rect52" />
+  <text
+     x="416"
+     y="622"
+     text-anchor="middle"
+     fill="#450a0a"
+     font-size="12px"
+     font-weight="700"
+     id="text53">NetworkPolicies</text>
+  <text
+     x="416"
+     y="639"
+     text-anchor="middle"
+     fill="#b91c1c"
+     font-size="10px"
+     id="text54">Default-Deny · Explicit Allow Rules</text>
+  <rect
+     x="552"
+     y="604"
+     width="240"
+     height="46"
+     rx="8"
+     fill="#fff0f0"
+     stroke="#b91c1c"
+     stroke-width="1.5"
+     id="rect54" />
+  <text
+     x="672"
+     y="622"
+     text-anchor="middle"
+     fill="#450a0a"
+     font-size="12px"
+     font-weight="700"
+     id="text55">RBAC Hardening</text>
+  <text
+     x="672"
+     y="639"
+     text-anchor="middle"
+     fill="#b91c1c"
+     font-size="10px"
+     id="text56">Least-Privilege Service Accounts</text>
+  <rect
+     x="808"
+     y="604"
+     width="240"
+     height="46"
+     rx="8"
+     fill="#fff0f0"
+     stroke="#b91c1c"
+     stroke-width="1.5"
+     id="rect56" />
+  <text
+     x="928"
+     y="622"
+     text-anchor="middle"
+     fill="#450a0a"
+     font-size="12px"
+     font-weight="700"
+     id="text57">Pod Security Standards</text>
+  <text
+     x="928"
+     y="639"
+     text-anchor="middle"
+     fill="#b91c1c"
+     font-size="10px"
+     id="text58">Audit → Enforce · Per Namespace</text>
+  <rect
+     x="40"
+     y="658"
+     width="240"
+     height="44"
+     rx="8"
+     fill="#fff0f0"
+     stroke="#b91c1c"
+     stroke-width="1.5"
+     id="rect58" />
+  <text
+     x="160"
+     y="676"
+     text-anchor="middle"
+     fill="#450a0a"
+     font-size="12px"
+     font-weight="700"
+     id="text59">External Secrets Op.</text>
+  <text
+     x="160"
+     y="693"
+     text-anchor="middle"
+     fill="#b91c1c"
+     font-size="10px"
+     id="text60">Secrets Backend Integration</text>
+  <rect
+     x="296"
+     y="658"
+     width="240"
+     height="44"
+     rx="8"
+     fill="#fff0f0"
+     stroke="#b91c1c"
+     stroke-width="1.5"
+     id="rect60" />
+  <text
+     x="416"
+     y="676"
+     text-anchor="middle"
+     fill="#450a0a"
+     font-size="12px"
+     font-weight="700"
+     id="text61">Falco</text>
+  <text
+     x="416"
+     y="693"
+     text-anchor="middle"
+     fill="#b91c1c"
+     font-size="10px"
+     id="text62">Runtime Anomaly Detection</text>
+  <rect
+     x="552"
+     y="658"
+     width="240"
+     height="44"
+     rx="8"
+     fill="#fff0f0"
+     stroke="#b91c1c"
+     stroke-width="1.5"
+     id="rect62" />
+  <text
+     x="672"
+     y="676"
+     text-anchor="middle"
+     fill="#450a0a"
+     font-size="12px"
+     font-weight="700"
+     id="text63">kube-bench</text>
+  <text
+     x="672"
+     y="693"
+     text-anchor="middle"
+     fill="#b91c1c"
+     font-size="10px"
+     id="text64">CIS Benchmark · Remediation Report</text>
+  <rect
+     x="808"
+     y="658"
+     width="240"
+     height="44"
+     rx="8"
+     fill="#fff8ee"
+     stroke="#c2540a"
+     stroke-width="2"
+     id="rect64" />
+  <text
+     x="928"
+     y="676"
+     text-anchor="middle"
+     fill="#431407"
+     font-size="12px"
+     font-weight="700"
+     id="text65">☁ Cloudflare</text>
+  <text
+     x="928"
+     y="693"
+     text-anchor="middle"
+     fill="#c2540a"
+     font-size="10px"
+     id="text66">Tunnel · Access · WAF · DNS-01</text>
+  <line
+     x1="550"
+     y1="714"
+     x2="550"
+     y2="734"
+     stroke="#1a5fa8"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line66" />
+  <!-- LAYER 5: STORAGE -->
+  <rect
+     x="20"
+     y="738"
+     width="1060"
+     height="116"
+     rx="10"
+     fill="#ffffff"
+     stroke="#0369a1"
+     stroke-width="2"
+     filter="url(#shadow)"
+     id="rect66" />
+  <rect
+     x="20"
+     y="738"
+     width="7"
+     height="116"
+     rx="4"
+     fill="#0369a1"
+     id="rect67" />
+  <rect
+     x="27"
+     y="738"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#e0f2fe"
+     id="rect68" />
+  <text
+     x="50"
+     y="761"
+     fill="#082f49"
+     font-size="13px"
+     font-weight="700"
+     letter-spacing="2"
+     id="text68">STORAGE LAYER</text>
+  <text
+     x="1070"
+     y="761"
+     text-anchor="end"
+     fill="#0369a1"
+     font-size="11px"
+     font-weight="600"
+     id="text69">Phase 8 · Validated before stateful workloads are deployed</text>
+  <rect
+     x="40"
+     y="780"
+     width="322"
+     height="62"
+     rx="8"
+     fill="#f0f9ff"
+     stroke="#0369a1"
+     stroke-width="1.5"
+     id="rect69" />
+  <text
+     x="201"
+     y="800"
+     text-anchor="middle"
+     fill="#082f49"
+     font-size="13px"
+     font-weight="700"
+     id="text70">Longhorn</text>
+  <text
+     x="201"
+     y="818"
+     text-anchor="middle"
+     fill="#0369a1"
+     font-size="11px"
+     id="text71">Distributed · Replication Factor 2</text>
+  <text
+     x="201"
+     y="833"
+     text-anchor="middle"
+     fill="#075985"
+     font-size="10px"
+     id="text72">Production PVs across worker nodes</text>
+  <rect
+     x="389"
+     y="780"
+     width="322"
+     height="62"
+     rx="8"
+     fill="#f0f9ff"
+     stroke="#0369a1"
+     stroke-width="1.5"
+     id="rect72" />
+  <text
+     x="550"
+     y="800"
+     text-anchor="middle"
+     fill="#082f49"
+     font-size="13px"
+     font-weight="700"
+     id="text73">MinIO</text>
+  <text
+     x="550"
+     y="818"
+     text-anchor="middle"
+     fill="#0369a1"
+     font-size="11px"
+     id="text74">S3-Compatible Object Storage</text>
+  <text
+     x="550"
+     y="833"
+     text-anchor="middle"
+     fill="#075985"
+     font-size="10px"
+     id="text75">Loki long-term storage + Velero backup target</text>
+  <rect
+     x="738"
+     y="780"
+     width="322"
+     height="62"
+     rx="8"
+     fill="#f0f9ff"
+     stroke="#0369a1"
+     stroke-width="1.5"
+     id="rect75" />
+  <text
+     x="899"
+     y="800"
+     text-anchor="middle"
+     fill="#082f49"
+     font-size="13px"
+     font-weight="700"
+     id="text76">local-path-provisioner</text>
+  <text
+     x="899"
+     y="818"
+     text-anchor="middle"
+     fill="#0369a1"
+     font-size="11px"
+     id="text77">Dev / Cache workloads</text>
+  <text
+     x="899"
+     y="833"
+     text-anchor="middle"
+     fill="#075985"
+     font-size="10px"
+     id="text78">Phase 4 · Fast local storage</text>
+  <line
+     x1="550"
+     y1="854"
+     x2="550"
+     y2="874"
+     stroke="#1a5fa8"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line78" />
+  <!-- LAYER 6: IDENTITY AND DATABASE -->
+  <rect
+     x="20"
+     y="878"
+     width="1060"
+     height="142"
+     rx="10"
+     fill="#ffffff"
+     stroke="#7e22ce"
+     stroke-width="2"
+     filter="url(#shadow)"
+     id="rect78" />
+  <rect
+     x="20"
+     y="878"
+     width="7"
+     height="142"
+     rx="4"
+     fill="#7e22ce"
+     id="rect79" />
+  <rect
+     x="27"
+     y="878"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#f3e8ff"
+     id="rect80" />
+  <text
+     x="50"
+     y="901"
+     fill="#3b0764"
+     font-size="13px"
+     font-weight="700"
+     letter-spacing="2"
+     id="text80">IDENTITY &amp; DATABASE LAYER</text>
+  <text
+     x="1070"
+     y="901"
+     text-anchor="end"
+     fill="#7e22ce"
+     font-size="11px"
+     font-weight="600"
+     id="text81">Phase 9 · namespace: identity, databases · OIDC SSO across all platform services</text>
+  <rect
+     x="40"
+     y="920"
+     width="292"
+     height="88"
+     rx="8"
+     fill="#faf5ff"
+     stroke="#7e22ce"
+     stroke-width="2"
+     id="rect81" />
+  <text
+     x="186"
+     y="940"
+     text-anchor="middle"
+     fill="#3b0764"
+     font-size="14px"
+     font-weight="700"
+     id="text82">Keycloak</text>
+  <text
+     x="186"
+     y="960"
+     text-anchor="middle"
+     fill="#7e22ce"
+     font-size="11px"
+     id="text83">Central OIDC Identity Provider</text>
+  <text
+     x="186"
+     y="976"
+     text-anchor="middle"
+     fill="#5b21b6"
+     font-size="10px"
+     id="text84">TLS · Resource Limits · Longhorn Storage</text>
+  <text
+     x="186"
+     y="992"
+     text-anchor="middle"
+     fill="#5b21b6"
+     font-size="10px"
+     id="text85">MFA · SSO · User Federation</text>
+  <line
+     x1="332"
+     y1="942"
+     x2="394"
+     y2="930"
+     stroke="#7e22ce"
+     stroke-width="1.5"
+     stroke-dasharray="5,3"
+     marker-end="url(#arrowPurple)"
+     id="line85" />
+  <line
+     x1="332"
+     y1="978"
+     x2="394"
+     y2="990"
+     stroke="#7e22ce"
+     stroke-width="1.5"
+     stroke-dasharray="5,3"
+     marker-end="url(#arrowPurple)"
+     id="line86" />
+  <rect
+     x="394"
+     y="918"
+     width="192"
+     height="42"
+     rx="8"
+     fill="#faf5ff"
+     stroke="#7e22ce"
+     stroke-width="1.5"
+     id="rect86" />
+  <text
+     x="490"
+     y="937"
+     text-anchor="middle"
+     fill="#3b0764"
+     font-size="12px"
+     font-weight="700"
+     id="text86">ArgoCD SSO</text>
+  <text
+     x="490"
+     y="951"
+     text-anchor="middle"
+     fill="#7e22ce"
+     font-size="10px"
+     id="text87">OIDC Login</text>
+  <rect
+     x="394"
+     y="970"
+     width="192"
+     height="42"
+     rx="8"
+     fill="#faf5ff"
+     stroke="#7e22ce"
+     stroke-width="1.5"
+     id="rect87" />
+  <text
+     x="490"
+     y="989"
+     text-anchor="middle"
+     fill="#3b0764"
+     font-size="12px"
+     font-weight="700"
+     id="text88">Grafana SSO</text>
+  <text
+     x="490"
+     y="1003"
+     text-anchor="middle"
+     fill="#7e22ce"
+     font-size="10px"
+     id="text89">OIDC Login</text>
+  <rect
+     x="606"
+     y="920"
+     width="434"
+     height="88"
+     rx="8"
+     fill="#faf5ff"
+     stroke="#7e22ce"
+     stroke-width="1.5"
+     id="rect89" />
+  <text
+     x="823"
+     y="940"
+     text-anchor="middle"
+     fill="#3b0764"
+     font-size="14px"
+     font-weight="700"
+     id="text90">CloudNativePG Operator</text>
+  <text
+     x="823"
+     y="960"
+     text-anchor="middle"
+     fill="#7e22ce"
+     font-size="11px"
+     id="text91">PostgreSQL Lifecycle Management</text>
+  <text
+     x="823"
+     y="976"
+     text-anchor="middle"
+     fill="#5b21b6"
+     font-size="10px"
+     id="text92">Keycloak DB ·  TLS</text>
+  <text
+     x="823"
+     y="992"
+     text-anchor="middle"
+     fill="#5b21b6"
+     font-size="10px"
+     id="text93">Automated Failover · Longhorn PVs · Backups</text>
+  <line
+     x1="550"
+     y1="1020"
+     x2="550"
+     y2="1040"
+     stroke="#1a5fa8"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line93" />
+  <!-- LAYER 7: APPLICATION -->
+  <rect
+     x="20"
+     y="1044"
+     width="1060"
+     height="128"
+     rx="10"
+     fill="#ffffff"
+     stroke="#15803d"
+     stroke-width="2"
+     filter="url(#shadow)"
+     id="rect93" />
+  <rect
+     x="20"
+     y="1044"
+     width="7"
+     height="128"
+     rx="4"
+     fill="#15803d"
+     id="rect94" />
+  <rect
+     x="27"
+     y="1044"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#dcfce7"
+     id="rect95" />
+  <text
+     x="50"
+     y="1067"
+     fill="#052e16"
+     font-size="13px"
+     font-weight="700"
+     letter-spacing="2"
+     id="text95">APPLICATION LAYER</text>
+  <text
+     x="1070"
+     y="1067"
+     text-anchor="end"
+     fill="#15803d"
+     font-size="11px"
+     font-weight="600"
+     id="text96">Phase 10 · namespace: apps · Production workloads on hardened platform</text>
+  <rect
+     x="40"
+     y="1086"
+     width="494"
+     height="74"
+     rx="8"
+     fill="#f0fdf4"
+     stroke="#15803d"
+     stroke-width="1.5"
+     id="rect96" />
+  <text
+     x="287"
+     y="1108"
+     text-anchor="middle"
+     fill="#052e16"
+     font-size="13px"
+     font-weight="700"
+     id="text97">Wiki.js</text>
+  <text
+     x="287"
+     y="1127"
+     text-anchor="middle"
+     fill="#15803d"
+     font-size="11px"
+     id="text98">Knowledge Management Platform</text>
+  <text
+     x="287"
+     y="1143"
      text-anchor="middle"
      fill="#166534"
-     font-size="9px"
-     font-weight="700"
-     id="text160">● COMPLETE</text>
+     font-size="10px"
+     id="text99">PostgreSQL via CloudNativePG · TLS · Keycloak SSO · Longhorn · Full CI/CD pipeline</text>
   <rect
-     x="140"
-     y="1296"
-     width="100"
-     height="18"
-     rx="9"
+     x="566"
+     y="1086"
+     width="494"
+     height="74"
+     rx="8"
+     fill="#f0fdf4"
+     stroke="#15803d"
+     stroke-width="1.5"
+     id="rect99" />
+  <text
+     x="813"
+     y="1108"
+     text-anchor="middle"
+     fill="#052e16"
+     font-size="13px"
+     font-weight="700"
+     id="text100">Nextcloud</text>
+  <text
+     x="813"
+     y="1127"
+     text-anchor="middle"
+     fill="#15803d"
+     font-size="11px"
+     id="text101">Data Sovereignty Platform</text>
+  <text
+     x="813"
+     y="1143"
+     text-anchor="middle"
+     fill="#166534"
+     font-size="10px"
+     id="text102">PostgreSQL via CloudNativePG · TLS · Keycloak SSO · Longhorn · Velero backups</text>
+  <line
+     x1="550"
+     y1="1172"
+     x2="550"
+     y2="1192"
+     stroke="#1a5fa8"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line102" />
+  <!-- LAYER 8: CI/CD -->
+  <rect
+     x="20"
+     y="1196"
+     width="1060"
+     height="156"
+     rx="10"
+     fill="#ffffff"
+     stroke="#b45309"
+     stroke-width="2"
+     filter="url(#shadow)"
+     id="rect102" />
+  <rect
+     x="20"
+     y="1196"
+     width="7"
+     height="156"
+     rx="4"
+     fill="#b45309"
+     id="rect103" />
+  <rect
+     x="27"
+     y="1196"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#fef3c7"
+     id="rect104" />
+  <text
+     x="50"
+     y="1219"
+     fill="#451a03"
+     font-size="13px"
+     font-weight="700"
+     letter-spacing="2"
+     id="text104">CI/CD LAYER</text>
+  <text
+     x="1070"
+     y="1219"
+     text-anchor="end"
+     fill="#b45309"
+     font-size="11px"
+     font-weight="600"
+     id="text105">Phase 10 · GitHub Actions → ghcr.io → ArgoCD · Full GitOps promotion pipeline</text>
+  <rect
+     x="40"
+     y="1240"
+     width="140"
+     height="54"
+     rx="8"
+     fill="#fffbeb"
+     stroke="#b45309"
+     stroke-width="1.5"
+     id="rect105" />
+  <text
+     x="110"
+     y="1261"
+     text-anchor="middle"
+     fill="#451a03"
+     font-size="12px"
+     font-weight="700"
+     id="text106">GitHub</text>
+  <text
+     x="110"
+     y="1279"
+     text-anchor="middle"
+     fill="#b45309"
+     font-size="10px"
+     id="text107">Code Push / PR</text>
+  <line
+     x1="180"
+     y1="1267"
+     x2="198"
+     y2="1267"
+     stroke="#b45309"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line107" />
+  <rect
+     x="198"
+     y="1240"
+     width="154"
+     height="54"
+     rx="8"
+     fill="#fffbeb"
+     stroke="#b45309"
+     stroke-width="1.5"
+     id="rect107" />
+  <text
+     x="275"
+     y="1261"
+     text-anchor="middle"
+     fill="#451a03"
+     font-size="12px"
+     font-weight="700"
+     id="text108">GH Actions</text>
+  <text
+     x="275"
+     y="1279"
+     text-anchor="middle"
+     fill="#b45309"
+     font-size="10px"
+     id="text109">Build Docker Image</text>
+  <line
+     x1="352"
+     y1="1267"
+     x2="370"
+     y2="1267"
+     stroke="#b45309"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line109" />
+  <rect
+     x="370"
+     y="1240"
+     width="154"
+     height="54"
+     rx="8"
+     fill="#fff0f0"
+     stroke="#b91c1c"
+     stroke-width="2"
+     id="rect109" />
+  <text
+     x="447"
+     y="1261"
+     text-anchor="middle"
+     fill="#450a0a"
+     font-size="12px"
+     font-weight="700"
+     id="text110">Trivy Scan</text>
+  <text
+     x="447"
+     y="1279"
+     text-anchor="middle"
+     fill="#b91c1c"
+     font-size="10px"
+     id="text111">Block HIGH/CRITICAL</text>
+  <line
+     x1="524"
+     y1="1267"
+     x2="542"
+     y2="1267"
+     stroke="#b45309"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line111" />
+  <rect
+     x="542"
+     y="1240"
+     width="140"
+     height="54"
+     rx="8"
+     fill="#fffbeb"
+     stroke="#b45309"
+     stroke-width="1.5"
+     id="rect111" />
+  <text
+     x="612"
+     y="1261"
+     text-anchor="middle"
+     fill="#451a03"
+     font-size="12px"
+     font-weight="700"
+     id="text112">ghcr.io</text>
+  <text
+     x="612"
+     y="1279"
+     text-anchor="middle"
+     fill="#b45309"
+     font-size="10px"
+     id="text113">Push Image</text>
+  <line
+     x1="682"
+     y1="1267"
+     x2="700"
+     y2="1267"
+     stroke="#b45309"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line113" />
+  <rect
+     x="700"
+     y="1240"
+     width="154"
+     height="54"
+     rx="8"
+     fill="#fffbeb"
+     stroke="#b45309"
+     stroke-width="1.5"
+     id="rect113" />
+  <text
+     x="777"
+     y="1261"
+     text-anchor="middle"
+     fill="#451a03"
+     font-size="12px"
+     font-weight="700"
+     id="text114">Helm Update</text>
+  <text
+     x="777"
+     y="1279"
+     text-anchor="middle"
+     fill="#b45309"
+     font-size="10px"
+     id="text115">Tag → Git commit</text>
+  <line
+     x1="854"
+     y1="1267"
+     x2="872"
+     y2="1267"
+     stroke="#b45309"
+     stroke-width="2"
+     marker-end="url(#arrow)"
+     id="line115" />
+  <rect
+     x="872"
+     y="1240"
+     width="168"
+     height="54"
+     rx="8"
+     fill="#f0fdf4"
+     stroke="#15803d"
+     stroke-width="2"
+     id="rect115" />
+  <text
+     x="956"
+     y="1261"
+     text-anchor="middle"
+     fill="#052e16"
+     font-size="12px"
+     font-weight="700"
+     id="text116">ArgoCD</text>
+  <text
+     x="956"
+     y="1279"
+     text-anchor="middle"
+     fill="#15803d"
+     font-size="10px"
+     id="text117">Sync to Cluster</text>
+  <rect
+     x="40"
+     y="1304"
+     width="494"
+     height="36"
+     rx="6"
      fill="#fef9c3"
-     id="rect160" />
-  <text
-     x="190"
-     y="1309"
-     text-anchor="middle"
-     fill="#713f12"
-     font-size="9px"
-     font-weight="700"
-     id="text161">● IN PROGRESS</text>
-  <rect
-     x="260"
-     y="1296"
-     width="80"
-     height="18"
-     rx="9"
-     fill="#dbeafe"
-     id="rect161" />
-  <text
-     x="300"
-     y="1309"
-     text-anchor="middle"
-     fill="#1e3a5f"
-     font-size="9px"
-     font-weight="700"
-     id="text162">● PLANNED</text>
-  <rect
-     x="360"
-     y="1296"
-     width="100"
-     height="18"
-     rx="9"
-     fill="#f1f5f9"
-     stroke="#cbd5e1"
+     stroke="#b45309"
      stroke-width="1"
-     id="rect162" />
+     id="rect117" />
   <text
-     x="410"
-     y="1309"
+     x="287"
+     y="1327"
+     text-anchor="middle"
+     fill="#451a03"
+     font-size="11px"
+     id="text118">Branch Promotion: main → staging namespace · Git tag → production namespace</text>
+  <rect
+     x="566"
+     y="1304"
+     width="494"
+     height="36"
+     rx="6"
+     fill="#fef9c3"
+     stroke="#b45309"
+     stroke-width="1"
+     id="rect118" />
+  <text
+     x="813"
+     y="1327"
+     text-anchor="middle"
+     fill="#451a03"
+     font-size="11px"
+     id="text119">Self-hosted GH Actions runner deployed as pod inside cluster</text>
+  <line
+     x1="550"
+     y1="1336"
+     x2="550"
+     y2="1356"
+     stroke="#888888"
+     stroke-width="2"
+     marker-end="url(#arrowPurple)"
+     id="line119" />
+  <!-- FUTURE PHASES -->
+  <rect
+     x="20"
+     y="1364"
+     width="1060"
+     height="112"
+     rx="10"
+     fill="#f8fafc"
+     stroke="#94a3b8"
+     stroke-width="2"
+     stroke-dasharray="8, 4"
+     id="rect119" />
+  <rect
+     x="20"
+     y="1364"
+     width="7"
+     height="112"
+     rx="4"
+     fill="#94a3b8"
+     id="rect120" />
+  <rect
+     x="27"
+     y="1364"
+     width="1053"
+     height="34"
+     rx="8"
+     fill="#f1f5f9"
+     id="rect121" />
+  <text
+     x="50"
+     y="1387"
+     fill="#334155"
+     font-size="13px"
+     font-weight="700"
+     letter-spacing="2"
+     id="text121">FUTURE PHASES</text>
+  <text
+     x="1070"
+     y="1387"
+     text-anchor="end"
+     fill="#475569"
+     font-size="11px"
+     font-weight="600"
+     id="text122">Post-CKA · Second Beelink SER5 Pro · Multi-node storage replication</text>
+  <rect
+     x="40"
+     y="1406"
+     width="183"
+     height="58"
+     rx="8"
+     fill="#f1f5f9"
+     stroke="#94a3b8"
+     stroke-width="1.5"
+     id="rect122" />
+  <text
+     x="131"
+     y="1426"
+     text-anchor="middle"
+     fill="#1e293b"
+     font-size="12px"
+     font-weight="700"
+     id="text123">Advanced Networking</text>
+  <text
+     x="131"
+     y="1443"
      text-anchor="middle"
      fill="#475569"
-     font-size="9px"
-     font-weight="700"
-     id="text163">POST-CKA</text>
-  <!-- Flow indicators -->
-  <line
-     x1="490"
-     y1="1304"
-     x2="530"
-     y2="1304"
-     stroke="#2e75b6"
-     stroke-width="1.5"
-     marker-end="url(#arrow)"
-     opacity="0.9"
-     id="line163" />
+     font-size="10px"
+     id="text124">Cilium · Hubble · eBPF</text>
   <text
-     x="540"
-     y="1308"
-     fill="#7ab2d4"
-     font-size="9px"
-     id="text164">Data / Traffic Flow</text>
-  <line
-     x1="650"
-     y1="1304"
-     x2="690"
-     y2="1304"
-     stroke="#9333ea"
-     stroke-width="1.2"
-     stroke-dasharray="4, 3"
-     marker-end="url(#arrowPurple)"
-     opacity="0.9"
-     id="line164" />
-  <text
-     x="700"
-     y="1308"
-     fill="#7ab2d4"
-     font-size="9px"
-     id="text165">OIDC Authentication</text>
-  <rect
-     x="820"
-     y="1296"
-     width="100"
-     height="18"
-     rx="4"
-     fill="#fff8f0"
-     stroke="#ea580c"
-     stroke-width="1"
-     id="rect165" />
-  <text
-     x="870"
-     y="1309"
+     x="131"
+     y="1456"
      text-anchor="middle"
-     fill="#ea580c"
-     font-size="9px"
-     font-weight="700"
-     id="text166">☁ Cloudflare</text>
-  <!-- Phase reference -->
-  <line
-     x1="40"
-     y1="1326"
-     x2="960"
-     y2="1326"
-     stroke="#2a4a6a"
-     stroke-width="0.5"
-     id="line166" />
+     fill="#64748b"
+     font-size="10px"
+     id="text125">kube-proxy replacement</text>
+  <rect
+     x="240"
+     y="1406"
+     width="183"
+     height="58"
+     rx="8"
+     fill="#f1f5f9"
+     stroke="#94a3b8"
+     stroke-width="1.5"
+     id="rect125" />
   <text
-     x="500"
-     y="1344"
+     x="331"
+     y="1426"
+     text-anchor="middle"
+     fill="#1e293b"
+     font-size="12px"
+     font-weight="700"
+     id="text126">Distributed Tracing</text>
+  <text
+     x="331"
+     y="1443"
+     text-anchor="middle"
+     fill="#475569"
+     font-size="10px"
+     id="text127">Grafana Tempo</text>
+  <text
+     x="331"
+     y="1456"
+     text-anchor="middle"
+     fill="#64748b"
+     font-size="10px"
+     id="text128">OpenTelemetry · SLOs</text>
+  <rect
+     x="440"
+     y="1406"
+     width="183"
+     height="58"
+     rx="8"
+     fill="#f1f5f9"
+     stroke="#94a3b8"
+     stroke-width="1.5"
+     id="rect128" />
+  <text
+     x="531"
+     y="1426"
+     text-anchor="middle"
+     fill="#1e293b"
+     font-size="12px"
+     font-weight="700"
+     id="text129">Microservices</text>
+  <text
+     x="531"
+     y="1443"
+     text-anchor="middle"
+     fill="#475569"
+     font-size="10px"
+     id="text130">Online Boutique (11 svc)</text>
+  <text
+     x="531"
+     y="1456"
+     text-anchor="middle"
+     fill="#64748b"
+     font-size="10px"
+     id="text131">Istio · mTLS · Canary</text>
+  <rect
+     x="640"
+     y="1406"
+     width="183"
+     height="58"
+     rx="8"
+     fill="#f1f5f9"
+     stroke="#94a3b8"
+     stroke-width="1.5"
+     id="rect131" />
+  <text
+     x="731"
+     y="1426"
+     text-anchor="middle"
+     fill="#1e293b"
+     font-size="12px"
+     font-weight="700"
+     id="text132">Reliability Eng.</text>
+  <text
+     x="731"
+     y="1443"
+     text-anchor="middle"
+     fill="#475569"
+     font-size="10px"
+     id="text133">HPA · VPA · PDBs</text>
+  <text
+     x="731"
+     y="1456"
+     text-anchor="middle"
+     fill="#64748b"
+     font-size="10px"
+     id="text134">Resource optimization</text>
+  <rect
+     x="840"
+     y="1406"
+     width="200"
+     height="58"
+     rx="8"
+     fill="#f1f5f9"
+     stroke="#94a3b8"
+     stroke-width="1.5"
+     id="rect134" />
+  <text
+     x="940"
+     y="1426"
+     text-anchor="middle"
+     fill="#1e293b"
+     font-size="12px"
+     font-weight="700"
+     id="text135">Chaos Engineering</text>
+  <text
+     x="940"
+     y="1443"
+     text-anchor="middle"
+     fill="#475569"
+     font-size="10px"
+     id="text136">Failure Injection</text>
+  <text
+     x="940"
+     y="1456"
+     text-anchor="middle"
+     fill="#64748b"
+     font-size="10px"
+     id="text137">Runbooks · DR Testing</text>
+  <!-- LEGEND FOOTER -->
+  <rect
+     x="0"
+     y="1490"
+     width="1100"
+     height="30"
+     fill="#0f2744"
+     id="rect137" />
+  <text
+     x="550"
+     y="1509"
+     text-anchor="middle"
+     fill="#7ab2d4"
+     font-size="11px"
+     font-weight="700"
+     letter-spacing="3"
+     id="text138">LEGEND</text>
+  <rect
+     x="0"
+     y="1490"
+     width="1100"
+     height="30"
+     fill="#0f2744"
+     id="rect138" />
+  <line
+     x1="70"
+     y1="1505"
+     x2="110"
+     y2="1505"
+     stroke="#1a5fa8"
+     stroke-width="2.5"
+     marker-end="url(#arrow)"
+     id="line138" />
+  <text
+     x="118"
+     y="1509"
+     fill="#7ab2d4"
+     font-size="11px"
+     id="text139">Data / Traffic Flow</text>
+  <line
+     x1="290"
+     y1="1505"
+     x2="330"
+     y2="1505"
+     stroke="#7e22ce"
+     stroke-width="2"
+     stroke-dasharray="5,3"
+     marker-end="url(#arrowPurple)"
+     id="line139" />
+  <text
+     x="338"
+     y="1509"
+     fill="#7ab2d4"
+     font-size="11px"
+     id="text140">OIDC Authentication</text>
+  <rect
+     x="530"
+     y="1496"
+     width="18"
+     height="18"
+     rx="3"
+     fill="#eef6ff"
+     stroke="#1a5fa8"
+     stroke-width="1.5"
+     id="rect140" />
+  <text
+     x="556"
+     y="1509"
+     fill="#7ab2d4"
+     font-size="11px"
+     id="text141">Active Component</text>
+  <rect
+     x="730"
+     y="1496"
+     width="18"
+     height="18"
+     rx="3"
+     fill="#f8fafc"
+     stroke="#94a3b8"
+     stroke-width="1.5"
+     stroke-dasharray="3,2"
+     id="rect141" />
+  <text
+     x="756"
+     y="1509"
+     fill="#7ab2d4"
+     font-size="11px"
+     id="text142">Planned / Future</text>
+  <!-- Phase reference -->
+  <rect
+     x="0"
+     y="1490"
+     width="1100"
+     height="30"
+     fill="#0f2744"
+     id="rect142" />
+  <!-- Re-render footer properly: two rows -->
+  <rect
+     x="0"
+     y="1488"
+     width="1100"
+     height="32"
+     fill="#0f2744"
+     id="rect143" />
+  <text
+     x="550"
+     y="1510"
      text-anchor="middle"
      fill="#4a7a9a"
-     font-size="9px"
-     id="text167"
-     style="fill:#ffffff;fill-opacity:1">Ph.0 Planning · Ph.1 DevEnv · Ph.2 Proxmox · Ph.3 VMs · Ph.4 Kubernetes · Ph.5 GitOps · Ph.6 Observability · Ph.7 Security · Ph.8 Storage · Ph.9 Identity · Ph.10 Apps + CI/CD</text>
+     font-size="10px"
+     id="text143">Ph.0 Planning · Ph.1 DevEnv · Ph.2 Proxmox · Ph.3 VMs · Ph.4 Kubernetes · Ph.5 GitOps · Ph.6 Observability · Ph.7 Security · Ph.8 Storage · Ph.9 Identity · Ph.10 Apps + CI/CD</text>
 </svg>
