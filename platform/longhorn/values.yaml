@@ -1,0 +1,26 @@
+defaultSettings:
+  # Two replicas per volume for HA; data survives loss of one worker node.
+  defaultReplicaCount: 2
+  # Stop scheduling volumes if disk space drops below 10% to prevent full disks.
+  storageMinimalAvailablePercentage: 10
+  # Delete pods immediately when a node fails so Kubernetes can reschedule them without waiting ~5 minutes.
+  nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+  # Prefer placing one replica on the same node as the consuming pod to reduce network traffic.
+  defaultDataLocality: best-effort
+
+persistence:
+  defaultClass: true
+  defaultClassReplicaCount: 2
+
+longhornUI:
+  replicas: 1
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+  host: longhorn.mmrajputhomelab.org
+  tls: true
+  tlsSecret: wildcard-homelab-tls
