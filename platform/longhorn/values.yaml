@@ -24,3 +24,7 @@ ingress:
   host: longhorn.mmrajputhomelab.org
   tls: true
   tlsSecret: wildcard-homelab-tls
+
+# disable the pre-upgrade hook on fresh install
+preUpgradeChecker:
+  jobEnabled: false
