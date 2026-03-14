@@ -40,6 +40,16 @@ spec:
       ports:
         - port: 10254  # nginx-ingress metrics
           protocol: TCP
+
+    # Allow API server to reach nginx admission webhook
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 8443
+          protocol: TCP
+
   egress:
     # Allow DNS resolution via kube-dns
     - to:
@@ -79,6 +89,16 @@ spec:
           protocol: TCP
         - port: 3100  # Loki pod port
           protocol: TCP
+    
+    # Allow forwarding to longhorn-system namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: longhorn-system
+      ports:
+        - port: 8000  # Longhorn UI pod port
+          protocol: TCP
+    
     # Allow webhook validation calls to itself
     - to:
         - namespaceSelector:
