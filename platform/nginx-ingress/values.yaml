@@ -4,6 +4,8 @@
 controller:
   extraArgs:
     default-ssl-certificate: "ingress-nginx/wildcard-homelab-tls"
+  admissionWebhooks:
+    enabled: false
 
   config:
     # TLS is terminated at Cloudflare edge - do not redirect HTTP to HTTPS
