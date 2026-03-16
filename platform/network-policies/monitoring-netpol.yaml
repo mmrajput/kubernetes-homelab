@@ -75,3 +75,11 @@ spec:
       ports:
         - port: 9000
           protocol: TCP
+    # Allow access to Longhorn storage backend
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: longhorn-system
+      ports:
+        - port: 9500
+          protocol: TCP

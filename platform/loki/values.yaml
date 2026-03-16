@@ -87,7 +87,7 @@ singleBinary:
   persistence:
     enabled: true
     size: 5Gi
-    storageClass: ""
+    storageClass: "local-path"
 # CRITICAL: Explicitly disable cache components
 chunksCache:
   enabled: false
