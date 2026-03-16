@@ -16,6 +16,22 @@ resources:
 
 existingSecret: minio-credentials
 
+# Security context for PSS restricted compliance
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  runAsNonRoot: true
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
 buckets:
   - name: loki
     policy: none
@@ -47,21 +63,3 @@ consoleIngress:
     - hosts:
         - minio-console.mmrajputhomelab.org
       secretName: wildcard-homelab-tls
-
-# Security context for PSS restricted compliance
-securityContext:
-  enabled: true
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
-  runAsNonRoot: true
-
-containerSecurityContext:
-  enabled: true
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
-  runAsNonRoot: true
-  seccompProfile:
-    type: RuntimeDefault
