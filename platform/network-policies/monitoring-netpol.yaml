@@ -67,3 +67,11 @@ spec:
     - ports:
         - port: 443  # HTTPS
           protocol: TCP
+    # Allow Loki to write to MinIO S3 backend
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: minio
+      ports:
+        - port: 9000
+          protocol: TCP
