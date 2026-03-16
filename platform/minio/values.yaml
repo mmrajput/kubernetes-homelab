@@ -14,8 +14,7 @@ resources:
   limits:
     memory: 512Mi
 
-rootUser: admin
-rootPassword: ""  # Will be set via secret
+existingSecret: minio-credentials
 
 buckets:
   - name: loki
