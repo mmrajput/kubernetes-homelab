@@ -111,7 +111,18 @@ spec:
       ports:
         - port: 8000  # Longhorn UI pod port
           protocol: TCP
-    
+
+    # Allow forwarding to minio namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: minio
+      ports:
+        - port: 9000
+          protocol: TCP
+        - port: 9001
+          protocol: TCP
+
     # Allow webhook validation calls to itself
     - to:
         - namespaceSelector:
