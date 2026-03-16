@@ -1,0 +1,50 @@
+mode: standalone
+
+replicas: 1
+
+persistence:
+  enabled: true
+  storageClass: local-path
+  size: 20Gi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+rootUser: admin
+rootPassword: ""  # Will be set via secret
+
+buckets:
+  - name: loki
+    policy: none
+  - name: velero
+    policy: none
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+  hosts:
+    - minio.mmrajputhomelab.org
+  tls:
+    - hosts:
+        - minio.mmrajputhomelab.org
+      secretName: wildcard-homelab-tls
+
+consoleIngress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+  hosts:
+    - minio-console.mmrajputhomelab.org
+  tls:
+    - hosts:
+        - minio-console.mmrajputhomelab.org
+      secretName: wildcard-homelab-tls
