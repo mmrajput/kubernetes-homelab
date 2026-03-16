@@ -1,0 +1,64 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: minio-default-deny
+  namespace: minio
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: minio-allow
+  namespace: minio
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow nginx-ingress to reach MinIO S3 API and console
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 9000
+          protocol: TCP
+        - port: 9001
+          protocol: TCP
+    # Allow Loki to write to MinIO S3 API
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 9000
+          protocol: TCP
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Allow Kubernetes API server access
+    - to:
+        - ipBlock:
+            cidr: 10.96.0.1/32
+      ports:
+        - port: 443
+          protocol: TCP
+    - to:
+        - ipBlock:
+            cidr: 192.168.178.34/32
+      ports:
+        - port: 6443
+          protocol: TCP
