@@ -32,6 +32,33 @@ containerSecurityContext:
   seccompProfile:
     type: RuntimeDefault
 
+# Helm hook jobs that run after MinIO starts to create buckets and users.
+# minio-make-bucket and minio-make-user containers require explicit security
+# contexts to comply with restricted PSS - these are separate from the main pod.
+makeBucketJob:
+  securityContext:
+    enabled: false
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+makeUserJob:
+  securityContext:
+    enabled: false
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
 buckets:
   - name: loki
     policy: none
