@@ -113,6 +113,12 @@ dashboards:
       revision: 2
       datasource: Loki
 
+    # Longhorn storage monitoring
+    longhorn:
+      gnetId: 16888
+      revision: 9
+      datasource: Prometheus
+
 # Plugins to install
 plugins:
   - grafana-piechart-panel
