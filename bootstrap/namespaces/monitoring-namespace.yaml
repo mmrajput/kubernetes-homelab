@@ -4,8 +4,14 @@ metadata:
   name: monitoring
   labels:
     app.kubernetes.io/name: monitoring
-    # baseline enforced due to node-exporter requiring host namespaces and hostPort
-    # loki and promtail need security context fixes before moving to restricted
-    pod-security.kubernetes.io/enforce: baseline
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged
+  annotations:
+    # PSS is set to privileged due to Promtail requirements.
+    # Promtail runs as root (UID 0) and mounts hostPath volumes
+    # (/var/log/pods, /var/lib/docker/containers) to scrape node logs.
+    # These requirements are incompatible with baseline or restricted PSS.
+    # TODO: Move Promtail to a dedicated namespace (e.g. logging) with
+    # privileged PSS, allowing monitoring namespace to use restricted PSS
+    # for Grafana, Prometheus, and Alertmanager.
