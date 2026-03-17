@@ -26,12 +26,8 @@ config:
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
-            target_label: __path__
-            separator: "@"
-            replacement: /var/log/pods/*$1*/$2/0.log
           - source_labels: [__meta_kubernetes_pod_node_name]
-            target_label: node_name
+            target_label: __host__
           - source_labels: [__meta_kubernetes_namespace]
             target_label: namespace
           - source_labels: [__meta_kubernetes_pod_name]
@@ -40,6 +36,10 @@ config:
             target_label: container
           - source_labels: [__meta_kubernetes_pod_label_app]
             target_label: app
+          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_name, __meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
+            target_label: __path__
+            separator: /
+            replacement: /var/log/pods/$1_$2_$3/$4/0.log
         pipeline_stages:
           - cri: {}
       
