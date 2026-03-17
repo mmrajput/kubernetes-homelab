@@ -29,7 +29,7 @@ config:
           - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
             target_label: __path__
             separator: /
-            replacement: /var/log/pods/*$1*/$2/*.log
+            replacement: /var/log/pods/*$1*/$2/0.log
           - source_labels: [__meta_kubernetes_pod_node_name]
             target_label: node_name
           - source_labels: [__meta_kubernetes_namespace]
