@@ -18,40 +18,6 @@ config:
   clients:
     - url: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
   
-  # Scrape configs - what logs to collect
-  snippets:
-    scrapeConfigs: |
-      # Pod logs
-      - job_name: kubernetes-pods
-        kubernetes_sd_configs:
-          - role: pod
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_node_name]
-            target_label: __host__
-          - source_labels: [__meta_kubernetes_namespace]
-            target_label: namespace
-          - source_labels: [__meta_kubernetes_pod_name]
-            target_label: pod
-          - source_labels: [__meta_kubernetes_pod_container_name]
-            target_label: container
-          - source_labels: [__meta_kubernetes_pod_label_app]
-            target_label: app
-          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_name, __meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
-            target_label: __path__
-            separator: /
-            replacement: /var/log/pods/$1_$2_$3/$4/0.log
-        pipeline_stages:
-          - cri: {}
-      
-      # System logs
-      - job_name: system
-        static_configs:
-          - targets:
-              - localhost
-            labels:
-              job: varlogs
-              __path__: /var/log/*log
-
 # ServiceMonitor for Prometheus
 serviceMonitor:
   enabled: true
