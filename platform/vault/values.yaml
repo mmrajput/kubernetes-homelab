@@ -1,0 +1,84 @@
+# Vault Helm Values for Homelab
+# Chart: hashicorp/vault
+# Version: 0.32.0 (Vault 1.21.2)
+
+global:
+  enabled: true
+
+injector:
+  # Disable agent injector - using ESO instead
+  enabled: false
+
+server:
+  # Resource limits
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+  # Standalone mode - single instance with Longhorn storage
+  standalone:
+    enabled: true
+    config: |
+      ui = true
+
+      listener "tcp" {
+        tls_disable = 1
+        address = "[::]:8200"
+        cluster_address = "[::]:8201"
+      }
+
+      storage "file" {
+        path = "/vault/data"
+      }
+
+  # Longhorn persistent storage
+  dataStorage:
+    enabled: true
+    size: 5Gi
+    storageClass: longhorn
+    accessMode: ReadWriteOnce
+
+  # Security context - restricted PSS
+  statefulSet:
+    securityContext:
+      pod:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      container:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: [ALL]
+
+  # Service account - no API access needed
+  serviceAccount:
+    create: true
+    serviceAccountSecret: ""
+    automountServiceAccountToken: false
+
+  # Ingress for Vault UI
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    hosts:
+      - host: vault.mmrajputhomelab.org
+        paths:
+          - /
+    tls:
+      - hosts:
+          - vault.mmrajputhomelab.org
+        secretName: wildcard-homelab-tls
+
+ui:
+  enabled: true
+  serviceType: ClusterIP
