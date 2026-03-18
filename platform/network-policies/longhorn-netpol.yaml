@@ -93,3 +93,9 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: longhorn-system
+    # Allow egress to all Kubernetes service ClusterIPs
+    # Required for CSI provisioner to reach Longhorn backend service
+    # namespaceSelector alone insufficient for some pod types with Calico
+    - to:
+        - ipBlock:
+            cidr: 10.96.0.0/12
