@@ -56,6 +56,12 @@ server:
         readOnlyRootFilesystem: true
         capabilities:
           drop: [ALL]
+  
+  # Extra volumes for read-only filesystem compatibility
+  extraVolumes:
+    - type: emptyDir
+      name: tmp
+      path: /tmp
 
   # Service account - no API access needed
   serviceAccount:
