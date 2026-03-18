@@ -36,6 +36,16 @@ spec:
       ports:
         - port: 9500
           protocol: TCP
+    # Allow Kubernetes API server to reach Longhorn admission webhook and manager
+    # API server calls webhook on port 9502 during volume provisioning
+    - from:
+        - ipBlock:
+            cidr: 192.168.178.34/32
+      ports:
+        - port: 9502
+          protocol: TCP
+        - port: 9500
+          protocol: TCP
     # Allow intra-namespace communication (Longhorn internal components)
     - from:
         - podSelector: {}
