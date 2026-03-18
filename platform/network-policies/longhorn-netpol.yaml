@@ -36,19 +36,21 @@ spec:
       ports:
         - port: 9500
           protocol: TCP
-    # Allow Kubernetes API server to reach Longhorn admission webhook and manager
-    # API server calls webhook on port 9502 during volume provisioning
+    # Allow Kubernetes API server to reach Longhorn admission webhook
+    # API server originates from control plane node IP
     - from:
         - ipBlock:
             cidr: 192.168.178.34/32
       ports:
-        - port: 9502
-          protocol: TCP
         - port: 9500
           protocol: TCP
-    # Allow intra-namespace communication (Longhorn internal components)
+        - port: 9502
+          protocol: TCP
+    # Allow intra-namespace communication
     - from:
-        - podSelector: {}
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: longhorn-system
   egress:
     # Allow DNS resolution
     - to:
@@ -61,19 +63,18 @@ spec:
         - port: 53
           protocol: TCP
     # Allow Kubernetes API server access
+    # Both ClusterIP and control plane node IP needed for Calico DNAT
     - to:
         - ipBlock:
-            cidr: 10.96.0.1/32
+            cidr: 10.96.0.1/32       # kubernetes service ClusterIP
+        - ipBlock:
+            cidr: 192.168.178.34/32  # control plane node IP (post-DNAT)
       ports:
         - port: 443
           protocol: TCP
-    - to:
-        - ipBlock:
-            cidr: 192.168.178.34/32
-      ports:
         - port: 6443
           protocol: TCP
-    # Allow access to worker node IPs for disk operations
+    # Allow access to worker node kubelet for disk operations
     - to:
         - ipBlock:
             cidr: 192.168.178.35/32
@@ -86,6 +87,9 @@ spec:
       ports:
         - port: 10250
           protocol: TCP
-    # Allow intra-namespace communication (Longhorn internal components)
+    # Allow intra-namespace communication
+    # namespaceSelector handles ClusterIP traffic correctly unlike podSelector
     - to:
-        - podSelector: {}
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: longhorn-system
