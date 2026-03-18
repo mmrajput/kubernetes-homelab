@@ -58,10 +58,13 @@ server:
           drop: [ALL]
   
   # Extra volumes for read-only filesystem compatibility
-  extraVolumes:
-    - type: emptyDir
-      name: tmp
-      path: /tmp
+  volumes:
+    - name: tmp
+      emptyDir: {}
+
+  volumeMounts:
+    - name: tmp
+      mountPath: /tmp
 
   # Service account - no API access needed
   serviceAccount:
