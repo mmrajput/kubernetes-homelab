@@ -45,6 +45,12 @@ spec:
         - port: 9000
           protocol: TCP
   egress:
+    # Allow intra-namespace traffic (post-install job to MinIO)
+    - to:
+        - podSelector: {}
+      ports:
+        - port: 9000
+          protocol: TCP
     # Allow DNS resolution
     - to:
         - namespaceSelector:
