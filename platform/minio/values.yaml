@@ -32,6 +32,8 @@ buckets:
     policy: none
   - name: velero
     policy: none
+  - name: cnpg-backups
+    policy: none
 ingress:
   enabled: true
   ingressClassName: nginx
