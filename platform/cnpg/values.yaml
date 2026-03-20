@@ -1,0 +1,21 @@
+# CloudNativePG Operator
+# Operator manages PostgreSQL cluster lifecycle — does not run any databases itself
+# Database clusters deployed separately in `databases` namespace
+
+crds:
+  create: true
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+monitoring:
+  enabled: true
+  podMonitor:
+    enabled: true
