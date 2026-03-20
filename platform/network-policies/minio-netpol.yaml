@@ -20,10 +20,12 @@ spec:
     - Ingress
     - Egress
   ingress:
-    # Allowing intra-namespace traffic on port 9000
-    - to Port: 9000/TCP
-      from:
+    # Allow intra-namespace traffic (post-install job to MinIO)
+    - from:
         - podSelector: {}
+      ports:
+        - port: 9000
+          protocol: TCP
     # Allow nginx-ingress to reach MinIO S3 API and console
     - from:
         - namespaceSelector:
