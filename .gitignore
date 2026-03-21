@@ -48,3 +48,7 @@ todos.md
 phase-timeline.md
 .config/
 platform/cert-manager/base/cloudflare-secret.yaml
+
+# Exclude folders
+!platform/external-secrets/stores/
+!platform/external-secrets/stores/*
