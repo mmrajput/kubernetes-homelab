@@ -21,10 +21,10 @@ spec:
     - Egress
   ingress:
     # Allow kube-apiserver to reach CNPG webhook
+    # API server runs on host network - must use ipBlock not namespaceSelector
     - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
+        - ipBlock:
+            cidr: 192.168.178.34/32
       ports:
         - port: 9443
           protocol: TCP
