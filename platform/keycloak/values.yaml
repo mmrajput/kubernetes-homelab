@@ -1,0 +1,82 @@
+# Keycloak - Central OIDC Identity Provider
+# Chart: bitnami/keycloak 25.2.0 (Keycloak 26.3.3)
+
+auth:
+  adminUser: ""
+  adminPassword: ""
+  existingSecret: keycloak-secrets
+  adminUserKey: admin-user
+  adminPasswordKey: admin-password
+
+# Disable bundled PostgreSQL - using CloudNativePG cluster instead
+postgresql:
+  enabled: false
+
+# External PostgreSQL via CloudNativePG
+externalDatabase:
+  host: keycloak-db-rw.databases.svc.cluster.local
+  port: 5432
+  database: keycloak
+  user: ""
+  password: ""
+  existingSecret: keycloak-secrets
+  existingSecretUserKey: db-username
+  existingSecretPasswordKey: db-password
+
+production: true
+proxy: edge
+
+# Keycloak hostname
+hostname:
+  admin: keycloak.mmrajputhomelab.org
+  adminPath: /
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  hostname: keycloak.mmrajputhomelab.org
+  tls: true
+  extraTls:
+    - hosts:
+        - keycloak.mmrajputhomelab.org
+      secretName: wildcard-homelab-tls
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+# Longhorn persistent storage for Keycloak data
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 2Gi
+  accessModes:
+    - ReadWriteOnce
+
+replicaCount: 1
+
+# Pod security context - required for restricted PSS
+podSecurityContext:
+  enabled: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  enabled: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+  capabilities:
+    drop:
+      - ALL
