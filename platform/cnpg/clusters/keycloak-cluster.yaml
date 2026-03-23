@@ -1,0 +1,79 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: keycloak-db
+  namespace: databases
+  annotations:
+    # Exclude PostgreSQL PVCs from Velero block-level snapshots.
+    # CNPG handles database backup independently via Barman to MinIO:
+    #   - Continuous WAL archiving for PITR
+    #   - Periodic base backups via pg_basebackup
+    # Velero covers Kubernetes objects and non-database PVCs.
+    # Production pattern: always exclude CNPG PVCs from Velero to avoid
+    # redundant snapshots and potential consistency issues with block-level
+    # snapshots of live PostgreSQL data directories.
+    backup.velero.io/backup-volumes-excludes: pgdata
+spec:
+  # instances: 1 — homelab resource optimization
+  #
+  # Production pattern: instances: 2 or 3
+  #   - 1 primary (read/write) + 1 or 2 standby replicas (hot standby)
+  #   - CNPG automatically promotes standby to primary on failure
+  #   - podAntiAffinityType: required ensures primary and standby land on separate nodes
+  #   - Each instance gets its own PVC — Longhorn replication factor 2 means
+  #     2 instances × 2 replicas = 4x physical storage consumption
+  #
+  # Homelab trade-off:
+  #   - Single physical host (Beelink SER5 Pro) means a full node failure
+  #     takes down the control plane regardless of PostgreSQL HA configuration
+  #   - Longhorn replication factor 2 across both workers provides storage-level
+  #     protection against single node failure
+  #   - MinIO WAL archiving + base backups provide PITR and corruption recovery
+  #   - PostgreSQL-level automatic failover is not justified given the hardware constraints
+  #   - Storage saved: 5Gi PVC × 2 Longhorn replicas = 10Gi reclaimed per database cluster
+  instances: 1
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "128MB"
+
+  bootstrap:
+    initdb:
+      database: keycloak
+      owner: keycloak
+      secret:
+        name: keycloak-db-credentials
+
+  affinity:
+    podAntiAffinityType: required
+
+  storage:
+    storageClass: longhorn
+    size: 5Gi
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://cnpg-backups/keycloak
+      endpointURL: http://minio.minio.svc.cluster.local:9000
+      s3Credentials:
+        accessKeyId:
+          name: minio-cnpg-credentials
+          key: access-key
+        secretAccessKey:
+          name: minio-cnpg-credentials
+          key: secret-key
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+    retentionPolicy: 7d
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+      
