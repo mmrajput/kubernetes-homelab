@@ -44,6 +44,14 @@ spec:
       ports:
         - port: 9000
           protocol: TCP
+    # Allow CNPG to write WAL and base backups to MinIO
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: databases
+      ports:
+        - port: 9000
+          protocol: TCP
   egress:
     # Allow intra-namespace traffic (post-install job to MinIO)
     - to:
