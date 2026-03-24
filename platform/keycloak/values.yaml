@@ -86,13 +86,3 @@ resources:
   limits:
     cpu: 1000m
     memory: 1Gi
-
-# Persistent storage for Keycloak themes and providers
-extraVolumes: |
-  - name: keycloak-data
-    persistentVolumeClaim:
-      claimName: keycloak-data
-
-extraVolumeMounts: |
-  - name: keycloak-data
-    mountPath: /opt/keycloak/data
