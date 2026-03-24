@@ -55,6 +55,10 @@ extraEnv: |
     value: keycloak.mmrajputhomelab.org
   - name: KC_HOSTNAME_STRICT
     value: "false"
+  - name: KC_HOSTNAME_STRICT_HTTPS
+    value: "false"
+  - name: KC_HTTP_RELATIVE_PATH
+    value: "/"
 
 # Keycloak startup command
 command:
@@ -68,6 +72,7 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
   rules:
     - host: keycloak.mmrajputhomelab.org
       paths:
