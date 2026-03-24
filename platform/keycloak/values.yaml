@@ -25,7 +25,15 @@ securityContext:
     drop:
       - ALL
 
-# Keycloak configuration via environment variables
+# Override chart default of /auth — Keycloak 17+ serves from root
+http:
+  relativePath: "/"
+
+# Disable legacy proxy mode — KC_PROXY was removed in Keycloak 26
+# KC_PROXY_HEADERS is set explicitly in extraEnv instead
+proxy:
+  enabled: false
+
 extraEnv: |
   - name: KC_DB
     value: postgres
@@ -41,24 +49,23 @@ extraEnv: |
       secretKeyRef:
         name: keycloak-secrets
         key: db-password
-  - name: KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME
+  - name: KC_BOOTSTRAP_ADMIN_USERNAME
     valueFrom:
       secretKeyRef:
         name: keycloak-secrets
         key: admin-user
-  - name: KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD
+  - name: KC_BOOTSTRAP_ADMIN_PASSWORD
     valueFrom:
       secretKeyRef:
         name: keycloak-secrets
         key: admin-password
-  # - name: KC_HOSTNAME
-  #   value: keycloak.mmrajputhomelab.org
-  - name: KC_HOSTNAME_STRICT
-    value: "false"
-  # - name: KC_HOSTNAME_STRICT_HTTPS
-  #   value: "false"
+  - name: KC_PROXY_HEADERS
+    value: "xforwarded"
+  - name: KC_HOSTNAME
+    value: "keycloak.mmrajputhomelab.org"
+  - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
+    value: "true"
 
-# Keycloak startup command
 command:
   - "/opt/keycloak/bin/kc.sh"
   - "start"
@@ -71,15 +78,14 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
     nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Host $host;
   rules:
     - host: keycloak.mmrajputhomelab.org
       paths:
         - path: /
           pathType: Prefix
-  tls:
-    - hosts:
-        - keycloak.mmrajputhomelab.org
-      secretName: wildcard-homelab-tls
 
 resources:
   requests:
