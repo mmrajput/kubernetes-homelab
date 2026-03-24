@@ -68,3 +68,26 @@ notifications:
 
 dex:
   enabled: false
+
+configs:
+  cm:
+    oidc.config: |
+      name: Keycloak
+      issuer: https://keycloak.mmrajputhomelab.org/realms/homelab
+      clientID: argocd
+      clientSecret: $argocd-oidc-secret:oidc.keycloak.clientSecret
+      requestedScopes:
+        - openid
+        - profile
+        - email
+        - groups
+      requestedIDTokenClaims:
+        groups:
+          essential: true
+
+  rbac:
+    policy.matchMode: glob
+    policy.csv: |
+      g, argocd-admins, role:admin
+    policy.default: role:readonly
+    scopes: '[groups]'
