@@ -62,7 +62,7 @@ extraEnv: |
   - name: KC_PROXY_HEADERS
     value: "xforwarded"
   - name: KC_HOSTNAME
-    value: "keycloak.mmrajputhomelab.org"
+    value: "https://keycloak.mmrajputhomelab.org"
   - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
     value: "true"
 
