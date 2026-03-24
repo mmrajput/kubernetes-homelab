@@ -60,7 +60,6 @@ extraEnv: |
 command:
   - "/opt/keycloak/bin/kc.sh"
   - "start"
-  - "--optimized"
 
 ingress:
   enabled: true
