@@ -1,39 +1,74 @@
 # Keycloak - Central OIDC Identity Provider
-# Chart: bitnami/keycloak 25.2.0 (Keycloak 26.3.3)
+# Chart: codecentric/keycloakx 7.1.9 (Keycloak 26.5.5)
+# Image: quay.io/keycloak/keycloak (official Red Hat registry)
 
-auth:
-  adminUser: ""
-  adminPassword: ""
-  existingSecret: keycloak-secrets
-  adminUserKey: admin-user
-  adminPasswordKey: admin-password
+replicas: 1
 
-# Disable bundled PostgreSQL - using CloudNativePG cluster instead
-postgresql:
-  enabled: false
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "26.5.5"
+  pullPolicy: IfNotPresent
 
-# External PostgreSQL via CloudNativePG
-externalDatabase:
-  host: keycloak-db-rw.databases.svc.cluster.local
-  port: 5432
-  database: keycloak
-  user: ""
-  password: ""
-  existingSecret: keycloak-secrets
-  existingSecretUserKey: db-username
-  existingSecretPasswordKey: db-password
+# Pod security context - required for restricted PSS
+podSecurityContext:
+  fsGroup: 1000
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
 
-production: true
-proxy: edge
-# The `proxy: edge` setting tells Keycloak it is behind a reverse proxy.
-# The `proxyHeaders: forwarded` tells it to trust the `X-Forwarded-*` headers from nginx.
-# This is the correct pattern when TLS is terminated at nginx-ingress, Keycloak runs HTTP internally.
-proxyHeaders: forwarded
+securityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
 
-# Keycloak hostname
-hostname:
-  admin: keycloak.mmrajputhomelab.org
-  adminPath: /
+# Keycloak configuration via environment variables
+extraEnv: |
+  - name: KC_DB
+    value: postgres
+  - name: KC_DB_URL
+    value: jdbc:postgresql://keycloak-db-rw.databases.svc.cluster.local:5432/keycloak
+  - name: KC_DB_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-secrets
+        key: db-username
+  - name: KC_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-secrets
+        key: db-password
+  - name: KEYCLOAK_ADMIN
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-secrets
+        key: admin-user
+  - name: KEYCLOAK_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-secrets
+        key: admin-password
+  - name: KC_HOSTNAME
+    value: keycloak.mmrajputhomelab.org
+  - name: KC_HOSTNAME_STRICT
+    value: "false"
+  - name: KC_HTTP_ENABLED
+    value: "true"
+  - name: KC_PROXY_HEADERS
+    value: forwarded
+  - name: KC_HEALTH_ENABLED
+    value: "true"
+  - name: KC_METRICS_ENABLED
+    value: "true"
+
+# Keycloak startup command
+command:
+  - "/opt/keycloak/bin/kc.sh"
+  - "start"
+  - "--optimized"
 
 ingress:
   enabled: true
@@ -41,13 +76,13 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    # The `proxy-buffer-size: 128k` is important for Keycloak,
-    # it sends large headers with OIDC tokens and the default nginx buffer size is too small,
-    # causing `502` errors during authentication flows.
     nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
-  hostname: keycloak.mmrajputhomelab.org
-  tls: true
-  extraTls:
+  rules:
+    - host: keycloak.mmrajputhomelab.org
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
     - hosts:
         - keycloak.mmrajputhomelab.org
       secretName: wildcard-homelab-tls
@@ -60,31 +95,12 @@ resources:
     cpu: 1000m
     memory: 1Gi
 
-# Longhorn persistent storage for Keycloak data
-persistence:
-  enabled: true
-  storageClass: longhorn
-  size: 2Gi
-  accessModes:
-    - ReadWriteOnce
+# Persistent storage for Keycloak themes and providers
+extraVolumes: |
+  - name: keycloak-data
+    persistentVolumeClaim:
+      claimName: keycloak-data
 
-replicaCount: 1
-
-# Pod security context - required for restricted PSS
-podSecurityContext:
-  enabled: true
-  runAsNonRoot: true
-  runAsUser: 1000
-  fsGroup: 1000
-  seccompProfile:
-    type: RuntimeDefault
-
-containerSecurityContext:
-  enabled: true
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: false
-  runAsNonRoot: true
-  runAsUser: 1000
-  capabilities:
-    drop:
-      - ALL
+extraVolumeMounts: |
+  - name: keycloak-data
+    mountPath: /opt/keycloak/data
