@@ -41,12 +41,12 @@ extraEnv: |
       secretKeyRef:
         name: keycloak-secrets
         key: db-password
-  - name: KEYCLOAK_ADMIN
+  - name: KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME
     valueFrom:
       secretKeyRef:
         name: keycloak-secrets
         key: admin-user
-  - name: KEYCLOAK_ADMIN_PASSWORD
+  - name: KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD
     valueFrom:
       secretKeyRef:
         name: keycloak-secrets
