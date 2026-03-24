@@ -131,6 +131,15 @@ spec:
       ports:
         - port: 8200  # Vault pod port
           protocol: TCP
+    
+    # Allow forwarding to keycloak namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: keycloak
+      ports:
+        - port: 8080  # Keycloak HTTP pod port
+          protocol: TCP
 
     # Allow webhook validation calls to itself
     - to:
