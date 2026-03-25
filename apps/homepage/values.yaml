@@ -1,0 +1,160 @@
+# Homepage Helm values
+# Chart: jameswynn/homepage v2.1.0
+# Built on bjw-s-labs/common v1.5.1
+# Docs: https://gethomepage.dev
+
+# -- Pod-level security context
+# Required for restricted PSS enforcement on the homepage namespace.
+# runAsNonRoot + seccompProfile are mandatory restricted PSS requirements.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- Container-level security context
+# allowPrivilegeEscalation and capabilities.drop are mandatory restricted PSS requirements.
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# -- RBAC and Kubernetes integration
+# Kubernetes integration is intentionally disabled.
+# Homepage queries the Kubernetes API to show live pod/service status,
+# but requires a ClusterRole with broad read permissions.
+# Enable after base deployment is stable and NetworkPolicy is validated.
+# To enable: set enableRbac: true, serviceAccount.create: true,
+# and change config.kubernetes.mode to 'cluster'.
+enableRbac: false
+
+serviceAccount:
+  create: false
+  name: ""
+
+# -- Ingress
+ingress:
+  main:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    hosts:
+      - host: homepage.mmrajputhomelab.org
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - homepage.mmrajputhomelab.org
+        secretName: wildcard-homelab-tls
+
+# -- Environment
+env:
+  - name: HOMEPAGE_ALLOWED_HOSTS
+    value: "homepage.mmrajputhomelab.org"
+
+# -- Persistence
+# logs use emptyDir — no persistent storage needed for a dashboard.
+persistence:
+  logs:
+    enabled: true
+    type: emptyDir
+    mountPath: /app/config/logs
+
+# -- Resource limits
+resources:
+  requests:
+    memory: 50Mi
+    cpu: 25m
+  limits:
+    memory: 200Mi
+    cpu: 200m
+
+# -- Dashboard configuration
+config:
+  # Kubernetes integration disabled — see enableRbac comment above.
+  kubernetes:
+    mode: disable
+
+  settings: {}
+
+  settingsString: |
+    title: Homelab Dashboard
+    headerStyle: boxed
+    layout:
+      Platform:
+      Observability:
+      Storage:
+
+  bookmarks: []
+
+  # -- Service groups matching your stack tiers
+  services:
+    - Platform:
+        - ArgoCD:
+            href: https://argocd.mmrajputhomelab.org
+            description: GitOps continuous delivery
+            icon: argocd.png
+        - Vault:
+            href: https://vault.mmrajputhomelab.org
+            description: Secret management
+            icon: vault.png
+        - Keycloak:
+            href: https://keycloak.mmrajputhomelab.org
+            description: Identity and access management
+            icon: keycloak.png
+
+    - Observability:
+        - Grafana:
+            href: https://grafana.mmrajputhomelab.org
+            description: Metrics and log dashboards
+            icon: grafana.png
+        - Prometheus:
+            href: https://prometheus.mmrajputhomelab.org
+            description: Metrics collection
+            icon: prometheus.png
+        - Alertmanager:
+            href: https://alertmanager.mmrajputhomelab.org
+            description: Alert routing and silencing
+            icon: alertmanager.png
+
+    - Storage:
+        - Longhorn:
+            href: https://longhorn.mmrajputhomelab.org
+            description: Distributed block storage
+            icon: longhorn.png
+        - MinIO:
+            href: https://minio-console.mmrajputhomelab.org
+            description: S3-compatible object storage
+            icon: minio.png
+
+  # -- Widgets
+  widgets:
+    - resources:
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+    # Kubernetes widget disabled — requires RBAC.
+    # To enable: see enableRbac comment above.
+    # - kubernetes:
+    #     cluster:
+    #       show: true
+    #       cpu: true
+    #       memory: true
+    #       showLabel: true
+    #       label: "homelab"
+    #     nodes:
+    #       show: true
+    #       cpu: true
+    #       memory: true
+    #       showLabel: true
