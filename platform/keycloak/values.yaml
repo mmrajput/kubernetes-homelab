@@ -64,7 +64,7 @@ extraEnv: |
   - name: KC_HOSTNAME
     value: "https://keycloak.mmrajputhomelab.org"
   - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
-    value: "true"
+    value: "https://keycloak.mmrajputhomelab.org"
 
 command:
   - "/opt/keycloak/bin/kc.sh"
