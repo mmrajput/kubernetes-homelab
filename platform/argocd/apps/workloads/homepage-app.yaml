@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homepage
+  namespace: platform
+  labels:
+    app.kubernetes.io/part-of: homelab
+    app.kubernetes.io/component: dashboard
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mmrajput/kubernetes-homelab
+    targetRevision: HEAD
+    path: apps/homepage
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: homepage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true

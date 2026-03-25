@@ -12,8 +12,7 @@ spec:
     targetRevision: HEAD
     path: platform/argocd/apps
     directory:
-      recurse: false
-      jsonnet: {}
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
     namespace: platform
@@ -22,4 +21,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=false
