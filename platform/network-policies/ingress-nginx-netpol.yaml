@@ -149,3 +149,11 @@ spec:
       ports:
         - port: 8443  # nginx admission webhook
           protocol: TCP
+    # Allow forwarding to homepage namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: homepage
+      ports:
+        - port: 3000  # Homepage pod port
+          protocol: TCP
