@@ -131,6 +131,8 @@ serviceMonitor:
     release: prometheus
 
 # Security settings
+envFromSecret: grafana-oidc-secret
+
 grafana.ini:
   server:
     root_url: https://grafana.mmrajputhomelab.org
@@ -139,14 +141,33 @@ grafana.ini:
     allow_embedding: true
     cookie_secure: true
     cookie_samesite: lax
-  
+
   auth.anonymous:
     enabled: false
-  
+
+  auth:
+    disable_login_form: false
+    oauth_auto_login: false
+
   users:
     allow_sign_up: false
     auto_assign_org: true
     auto_assign_org_role: Viewer
+
+  auth.generic_oauth:
+    enabled: true
+    name: Keycloak
+    allow_sign_up: true
+    client_id: grafana
+    client_secret: $__env{client_secret}
+    scopes: openid profile email groups
+    auth_url: https://keycloak.mmrajputhomelab.org/realms/homelab/protocol/openid-connect/auth
+    token_url: https://keycloak.mmrajputhomelab.org/realms/homelab/protocol/openid-connect/token
+    api_url: https://keycloak.mmrajputhomelab.org/realms/homelab/protocol/openid-connect/userinfo
+    use_pkce: true
+    role_attribute_path: contains(groups[*], 'grafana-admins') && 'Admin' || contains(groups[*], 'grafana-editors') && 'Editor' || 'Viewer'
+    role_attribute_strict: false
+    allow_assign_grafana_admin: true
 
 # RBAC hardening - Grafana has no need to talk to Kubernetes API
 serviceAccount:
