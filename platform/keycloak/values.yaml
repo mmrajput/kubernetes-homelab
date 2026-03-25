@@ -63,7 +63,7 @@ extraEnv: |
     value: "xforwarded"
   - name: KC_HOSTNAME
     value: "https://keycloak.mmrajputhomelab.org"
-  - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
+  - name: KC_HOSTNAME_BACKCHANNEL
     value: "https://keycloak.mmrajputhomelab.org"
 
 command:
