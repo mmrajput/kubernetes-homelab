@@ -104,6 +104,10 @@ config:
   # -- Service groups matching your stack tiers
   services:
     - Platform:
+        - Proxmox:
+            href: https://192.168.178.33:8006
+            description: Hypervisor — LAN access only
+            icon: proxmox.png
         - ArgoCD:
             href: https://argocd.mmrajputhomelab.org
             description: GitOps continuous delivery
