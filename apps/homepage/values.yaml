@@ -92,7 +92,14 @@ config:
       Observability:
       Storage:
 
-  bookmarks: []
+  bookmarks:
+    - External:
+        - GitHub:
+            - abbr: GH
+              href: https://github.com/mmrajput/kubernetes-homelab
+        - Cloudflare:
+            - abbr: CF
+              href: https://dash.cloudflare.com
 
   # -- Service groups matching your stack tiers
   services:
@@ -115,8 +122,14 @@ config:
             href: https://grafana.mmrajputhomelab.org
             description: Metrics and log dashboards
             icon: grafana.png
-        # Prometheus and Alertmanager omitted — no authentication.
-        # Add back after SSO is configured via Keycloak.
+        - Prometheus:
+            href: https://prometheus.mmrajputhomelab.org
+            description: Metrics collection
+            icon: prometheus.png
+        - Alertmanager:
+            href: https://alertmanager.mmrajputhomelab.org
+            description: Alert routing and silencing
+            icon: alertmanager.png
 
     - Storage:
         - Longhorn:
