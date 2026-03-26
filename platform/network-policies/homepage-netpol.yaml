@@ -1,0 +1,71 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: homepage-default-deny
+  namespace: homepage
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: homepage-allow
+  namespace: homepage
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: homepage
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow nginx-ingress to reach Homepage pod
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 3000
+          protocol: TCP
+  egress:
+    # Allow DNS resolution via kube-dns
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Allow outbound HTTPS for icon and widget data fetching
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - port: 443
+          protocol: TCP
+        - port: 80
+          protocol: TCP
+    # Allow access to Kubernetes API server
+    # Currently disabled — Kubernetes integration is disabled (enableRbac: false).
+    # Uncomment when enabling RBAC and Kubernetes widget.
+    # - to:
+    #     - ipBlock:
+    #         cidr: 10.96.0.1/32
+    #   ports:
+    #     - port: 443
+    #       protocol: TCP
+    # - to:
+    #     - ipBlock:
+    #         cidr: 192.168.178.34/32
+    #   ports:
+    #     - port: 6443
+    #       protocol: TCP
