@@ -115,20 +115,12 @@ config:
             href: https://grafana.mmrajputhomelab.org
             description: Metrics and log dashboards
             icon: grafana.png
-        - Prometheus:
-            href: https://prometheus.mmrajputhomelab.org
-            description: Metrics collection
-            icon: prometheus.png
-        - Alertmanager:
-            href: https://alertmanager.mmrajputhomelab.org
-            description: Alert routing and silencing
-            icon: alertmanager.png
+        # Prometheus and Alertmanager omitted — no authentication.
+        # Add back after SSO is configured via Keycloak.
 
     - Storage:
-        - Longhorn:
-            href: https://longhorn.mmrajputhomelab.org
-            description: Distributed block storage
-            icon: longhorn.png
+        # Longhorn omitted — no authentication on UI.
+        # Add back after Keycloak SSO is configured for Longhorn.
         - MinIO:
             href: https://minio-console.mmrajputhomelab.org
             description: S3-compatible object storage
