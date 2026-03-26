@@ -87,6 +87,9 @@ config:
   settingsString: |
     title: Homelab Dashboard
     headerStyle: boxed
+    providers:
+      longhorn:
+        url: http://longhorn-frontend.longhorn-system.svc.cluster.local
     layout:
       Platform:
       Observability:
@@ -123,9 +126,6 @@ config:
             href: https://longhorn.mmrajputhomelab.org
             description: Distributed block storage
             icon: longhorn.png
-            widget:
-              type: longhorn
-              url: http://longhorn-frontend.longhorn-system.svc.cluster.local                
         - MinIO:
             href: https://minio-console.mmrajputhomelab.org
             description: S3-compatible object storage
@@ -141,6 +141,10 @@ config:
     - search:
         provider: duckduckgo
         target: _blank
+    - longhorn:
+        expanded: true
+        total: true
+        labels: true
 
     # Kubernetes widget disabled — requires RBAC.
     # To enable: see enableRbac comment above.
