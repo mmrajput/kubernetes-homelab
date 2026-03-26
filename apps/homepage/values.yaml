@@ -87,9 +87,6 @@ config:
   settingsString: |
     title: Homelab Dashboard
     headerStyle: boxed
-    providers:
-      longhorn:
-        url: http://longhorn-frontend.longhorn-system.svc.cluster.local
     layout:
       Platform:
       Observability:
@@ -141,10 +138,9 @@ config:
     - search:
         provider: duckduckgo
         target: _blank
-    - longhorn:
-        expanded: true
-        total: true
-        labels: true
+    # Longhorn widget disabled — jameswynn chart v2.1.0 does not correctly pass
+    # providers block from settingsString to Homepage settings.yaml.
+    # Re-enable after upgrading to bjw-s common chart with latest Homepage image.
 
     # Kubernetes widget disabled — requires RBAC.
     # To enable: see enableRbac comment above.
