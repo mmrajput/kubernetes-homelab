@@ -100,7 +100,7 @@ config:
         - ArgoCD:
             href: https://argocd.mmrajputhomelab.org
             description: GitOps continuous delivery
-            icon: argocd.svg
+            icon: argo-cd.svg
         - Vault:
             href: https://vault.mmrajputhomelab.org
             description: Secret management
