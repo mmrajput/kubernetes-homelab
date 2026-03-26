@@ -119,8 +119,13 @@ config:
         # Add back after SSO is configured via Keycloak.
 
     - Storage:
-        # Longhorn omitted — no authentication on UI.
-        # Add back after Keycloak SSO is configured for Longhorn.
+        - Longhorn:
+            href: https://longhorn.mmrajputhomelab.org
+            description: Distributed block storage
+            icon: longhorn.png
+            widget:
+              type: longhorn
+              url: http://longhorn-frontend.longhorn-system.svc.cluster.local                
         - MinIO:
             href: https://minio-console.mmrajputhomelab.org
             description: S3-compatible object storage
@@ -136,11 +141,7 @@ config:
     - search:
         provider: duckduckgo
         target: _blank
-    - longhorn:
-        url: http://longhorn-frontend.longhorn-system.svc.cluster.local
-        expanded: true
-        total: true
-        labels: true
+
     # Kubernetes widget disabled — requires RBAC.
     # To enable: see enableRbac comment above.
     # - kubernetes:
