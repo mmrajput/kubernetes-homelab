@@ -100,7 +100,7 @@ config:
         - ArgoCD:
             href: https://argocd.mmrajputhomelab.org
             description: GitOps continuous delivery
-            icon: argocd.png
+            icon: argocd.svg
         - Vault:
             href: https://vault.mmrajputhomelab.org
             description: Secret management
@@ -124,7 +124,7 @@ config:
         - MinIO:
             href: https://minio-console.mmrajputhomelab.org
             description: S3-compatible object storage
-            icon: minio.png
+            icon: minio.svg
 
   # -- Widgets
   widgets:
