@@ -136,6 +136,11 @@ config:
     - search:
         provider: duckduckgo
         target: _blank
+    - longhorn:
+        url: http://longhorn-frontend.longhorn-system.svc.cluster.local
+        expanded: true
+        total: true
+        labels: true
     # Kubernetes widget disabled — requires RBAC.
     # To enable: see enableRbac comment above.
     # - kubernetes:
