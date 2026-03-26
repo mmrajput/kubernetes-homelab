@@ -54,6 +54,14 @@ spec:
           protocol: TCP
         - port: 80
           protocol: TCP
+    # Allow access to Longhorn API for Longhorn widget
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: longhorn-system
+      ports:
+        - port: 80
+          protocol: TCP
     # Allow access to Kubernetes API server
     # Currently disabled — Kubernetes integration is disabled (enableRbac: false).
     # Uncomment when enabling RBAC and Kubernetes widget.
