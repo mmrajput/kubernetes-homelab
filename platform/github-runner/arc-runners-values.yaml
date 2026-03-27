@@ -13,9 +13,8 @@ controllerServiceAccount:
 
 containerMode:
   type: kubernetes
-  kubernetesModeWorkVolume:
-    accessModes:
-      - ReadWriteOnce
+  kubernetesModeWorkVolumeClaim:
+    accessModes: ["ReadWriteOnce"]
     storageClassName: longhorn
     resources:
       requests:
