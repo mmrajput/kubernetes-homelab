@@ -7,6 +7,10 @@ maxRunners: 3
 
 runnerScaleSetName: homelab-runner
 
+controllerServiceAccount:
+  name: arc-systems-gha-rs-controller
+  namespace: arc-systems
+
 containerMode:
   type: kubernetes
   kubernetesModeWorkVolume:
