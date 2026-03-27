@@ -1,0 +1,67 @@
+githubConfigUrl: https://github.com/mmrajput/kubernetes-homelab
+
+githubConfigSecret: arc-github-app-secret
+
+minRunners: 1
+maxRunners: 3
+
+runnerScaleSetName: homelab-runner
+
+containerMode:
+  type: kubernetes
+  kubernetesModeWorkVolume:
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: longhorn
+    resources:
+      requests:
+        storage: 1Gi
+
+template:
+  spec:
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:latest
+        command: ["/home/runner/run.sh"]
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+              - ALL
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+listenerTemplate:
+  spec:
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    containers:
+      - name: listener
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+              - ALL
