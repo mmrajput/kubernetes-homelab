@@ -43,7 +43,7 @@ spec:
       database: keycloak
       owner: keycloak
       secret:
-        name: databases-secrets
+        name: keycloak-initdb-secret
 
   # affinity:
   #   podAntiAffinityType: required
@@ -68,10 +68,10 @@ spec:
       endpointURL: http://minio.minio.svc.cluster.local:9000
       s3Credentials:
         accessKeyId:
-          name: databases-secrets
+          name: cnpg-minio-secret
           key: access-key
         secretAccessKey:
-          name: databases-secrets
+          name: cnpg-minio-secret
           key: secret-key
       wal:
         compression: gzip
