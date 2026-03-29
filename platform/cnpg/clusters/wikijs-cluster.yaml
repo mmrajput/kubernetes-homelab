@@ -1,0 +1,58 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: wikijs-db
+  namespace: databases
+  annotations:
+    # Exclude PostgreSQL PVCs from Velero block-level snapshots.
+    # CNPG handles database backup independently via Barman to MinIO:
+    #   - Continuous WAL archiving for PITR
+    #   - Periodic base backups via pg_basebackup
+    # Velero covers Kubernetes objects and non-database PVCs.
+    backup.velero.io/backup-volumes-excludes: pgdata
+spec:
+  # instances: 1 — Wiki.js is a temporary pipeline validation workload.
+  # This cluster will be torn down after CI/CD pipeline validation is confirmed.
+  # Production pattern: instances: 2 with podAntiAffinityType: required
+  instances: 1
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "128MB"
+
+  bootstrap:
+    initdb:
+      database: wikijs
+      owner: wikijs
+      secret:
+        name: wikijs-db-credentials
+
+  storage:
+    storageClass: longhorn
+    size: 5Gi
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://cnpg-backups/wikijs
+      endpointURL: http://minio.minio.svc.cluster.local:9000
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-minio-secret
+          key: access-key
+        secretAccessKey:
+          name: cnpg-minio-secret
+          key: secret-key
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+    retentionPolicy: 7d
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
