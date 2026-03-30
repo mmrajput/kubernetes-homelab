@@ -86,23 +86,26 @@ jobs:
           echo "internal=${{ env.INTERNAL_IMAGE }}:${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
 
       - name: Install crane
-        # crane is not pre-installed in the actions-runner image.
-        # Installed fresh each run — pinned version ensures reproducibility.
-        # Alternative: bake crane into a custom runner image (future hardening).
+        # crane is not pre-installed in the default actions-runner image.
+        # Installing to ~/.local/bin — no sudo required.
+        # allowPrivilegeEscalation: false prevents sudo from working in the runner pod.
         run: |
+          mkdir -p ~/.local/bin
           curl -sL https://github.com/google/go-containerregistry/releases/download/${{ env.CRANE_VERSION }}/go-containerregistry_Linux_x86_64.tar.gz \
             | tar xz crane
-          sudo mv crane /usr/local/bin/
+          mv crane ~/.local/bin/
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
           crane version
       
       - name: Install kubectl
         # kubectl is not pre-installed in the default actions-runner image.
         # Pinned to match cluster version (k8s v1.31) for API compatibility.
-        # Future hardening: bake into a custom runner image to avoid per-run download.
+        # Installing to ~/.local/bin — no sudo required.
         run: |
+          mkdir -p ~/.local/bin
           curl -sLO "https://dl.k8s.io/release/v1.31.0/bin/linux/amd64/kubectl"
           chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
+          mv kubectl ~/.local/bin/
           kubectl version --client
 
       - name: Verify upstream image exists
