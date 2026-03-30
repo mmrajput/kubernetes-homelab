@@ -16,6 +16,7 @@
 #   Required for kubectl steps — GitHub-hosted runners cannot reach the cluster.
 #   Uses containerMode: kubernetes (no Docker daemon available).
 #   All image operations use crane — a daemonless OCI registry client.
+#   All tools installed at runtime to ~/.local/bin — no sudo required.
 #
 # Portability note:
 #   Switching to a sovereign stack (Gitea + Harbor) requires only endpoint and
@@ -45,12 +46,22 @@ on:
           - production
 
 env:
+  # Upstream image on Docker Hub — source of truth for Wiki.js releases
   UPSTREAM_IMAGE: requarks/wiki
-  INTERNAL_IMAGE: ghcr.io/mmrajput/wiki-js
+
+  # Internal registry — scanned and approved images land here.
+  # Cluster pulls from ghcr.io, not Docker Hub directly.
+  # Provides: audit trail, rate limit immunity, sovereign image copy.
+  INTERNAL_IMAGE: ghcr.io/${{ github.repository_owner }}/wiki-js
+
+  # GitOps values files — ArgoCD reads these to determine deployed image tag
   VALUES_FILE_STAGING: apps/wikijs/staging-values.yaml
   VALUES_FILE_PRODUCTION: apps/wikijs/production-values.yaml
+
+  # Tool versions — pinned for reproducibility
   CRANE_VERSION: v0.19.0
   TRIVY_VERSION: v0.69.3
+  KUBECTL_VERSION: v1.31.0
 
 jobs:
   scan-and-promote:
@@ -75,59 +86,61 @@ jobs:
           echo "upstream=${{ env.UPSTREAM_IMAGE }}:${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
           echo "internal=${{ env.INTERNAL_IMAGE }}:${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
 
-      - name: Install crane
-        # crane is not pre-installed in the default actions-runner image.
-        # Installing to ~/.local/bin — no sudo required.
-        # allowPrivilegeEscalation: false prevents sudo from working in the runner pod.
-        run: |
-          curl -sL https://github.com/aquasecurity/trivy/releases/download/${{ env.TRIVY_VERSION }}/trivy_${TRIVY_VERSION#v}_Linux-64bit.tar.gz \
-            | tar xz trivy
-          mv trivy ~/.local/bin/
-          ~/.local/bin/trivy --version
-      
-      - name: Install kubectl
-        # kubectl is not pre-installed in the default actions-runner image.
-        # Pinned to match cluster version (k8s v1.31) for API compatibility.
-        # Installing to ~/.local/bin — no sudo required.
+      - name: Install tools
+        # Installs all pipeline tools in one step.
+        # $GITHUB_PATH persists PATH additions to all subsequent steps.
+        # Each tool pinned to a specific version for reproducibility.
+        # No sudo — allowPrivilegeEscalation: false prevents privilege escalation.
         run: |
           mkdir -p ~/.local/bin
-          curl -sLO "https://dl.k8s.io/release/v1.31.0/bin/linux/amd64/kubectl"
+
+          # Install crane — daemonless OCI registry client
+          curl -sL "https://github.com/google/go-containerregistry/releases/download/${{ env.CRANE_VERSION }}/go-containerregistry_Linux_x86_64.tar.gz" \
+            | tar xz crane
+          mv crane ~/.local/bin/
+
+          # Install kubectl — pinned to cluster version
+          curl -sLO "https://dl.k8s.io/release/${{ env.KUBECTL_VERSION }}/bin/linux/amd64/kubectl"
           chmod +x kubectl
           mv kubectl ~/.local/bin/
+
+          # Install Trivy — vulnerability scanner
+          # Strip 'v' prefix for tarball filename — tag is v0.69.3, filename uses 0.69.3
+          TRIVY_VER="${TRIVY_VERSION#v}"
+          curl -sL "https://github.com/aquasecurity/trivy/releases/download/${{ env.TRIVY_VERSION }}/trivy_${TRIVY_VER}_Linux-64bit.tar.gz" \
+            | tar xz trivy
+          mv trivy ~/.local/bin/
+
+          # Persist to PATH for all subsequent steps
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+          # Verify all tools installed correctly
+          ~/.local/bin/crane version
           ~/.local/bin/kubectl version --client
+          ~/.local/bin/trivy --version
 
       - name: Verify upstream image exists
         # Fetches image digest without downloading the full image.
         # Fails fast if the specified tag does not exist on Docker Hub.
-        # Prevents wasting pipeline time on a non-existent tag.
         run: |
           echo "Verifying upstream image: ${{ steps.refs.outputs.upstream }}"
           crane digest ${{ steps.refs.outputs.upstream }}
 
-      - name: Install Trivy
-        # Installing Trivy binary directly — trivy-action spawns a job container
-        # which conflicts with ARC containerMode: kubernetes.
-        run: |
-          curl -sL https://github.com/aquasecurity/trivy/releases/download/v0.69.3/trivy_0.69.3_Linux-64bit.tar.gz \
-            | tar xz trivy
-          mv trivy ~/.local/bin/
-          ~/.local/bin/trivy --version
-
       - name: Scan upstream image with Trivy
-        # Security gate — blocks on HIGH/CRITICAL CVEs with available fixes.
-        # ignore-unfixed: unfixed CVEs cannot be remediated by changing image tag.
+        # Security gate — pipeline blocks if HIGH or CRITICAL CVEs with fixes are found.
+        # ignore-unfixed: true — unfixed CVEs cannot be remediated by changing image tag,
+        # so they are excluded to avoid blocking on issues outside our control.
         # Scans directly from Docker Hub registry — no local image pull required.
         run: |
           trivy image \
             --severity HIGH,CRITICAL \
             --ignore-unfixed \
             --exit-code 1 \
-            ${{ steps.refs.outputs.upstream }}      
+            ${{ steps.refs.outputs.upstream }}
 
       - name: Log in to GitHub Container Registry
         # crane auth login replaces 'docker login' — no daemon required.
         # GITHUB_TOKEN is automatically provisioned by GitHub Actions.
-        # Scoped to packages: write permission declared above.
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | crane auth login ghcr.io \
             --username ${{ github.actor }} \
@@ -167,7 +180,7 @@ jobs:
       - name: Commit and push updated values file
         # Commits only if the tag actually changed — idempotent.
         # Re-promoting the same tag produces a clear log message instead of
-        # an empty commit or a pipeline failure.
+        # an empty commit or pipeline failure.
         # Bot identity used for commit authorship — distinguishes automated
         # commits from human commits in Git history.
         run: |
