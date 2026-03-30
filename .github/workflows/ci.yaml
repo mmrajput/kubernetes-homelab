@@ -95,7 +95,7 @@ jobs:
             | tar xz crane
           mv crane ~/.local/bin/
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          crane version
+          ~/.local/bin/crane version
       
       - name: Install kubectl
         # kubectl is not pre-installed in the default actions-runner image.
@@ -106,7 +106,7 @@ jobs:
           curl -sLO "https://dl.k8s.io/release/v1.31.0/bin/linux/amd64/kubectl"
           chmod +x kubectl
           mv kubectl ~/.local/bin/
-          kubectl version --client
+          ~/.local/bin/kubectl version --client
 
       - name: Verify upstream image exists
         # Fetches image digest without downloading the full image.
