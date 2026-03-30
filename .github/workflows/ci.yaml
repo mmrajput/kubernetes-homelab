@@ -68,10 +68,6 @@ jobs:
     runs-on: homelab-runner
     container:
       image: ghcr.io/actions/actions-runner:latest
-      securityContext:
-        runAsUser: 1000
-        runAsNonRoot: true
-        allowPrivilegeEscalation: false
 
     permissions:
       contents: write   # Required to commit updated values files back to Git
