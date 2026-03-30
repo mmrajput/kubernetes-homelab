@@ -94,6 +94,16 @@ jobs:
             | tar xz crane
           sudo mv crane /usr/local/bin/
           crane version
+      
+      - name: Install kubectl
+        # kubectl is not pre-installed in the default actions-runner image.
+        # Pinned to match cluster version (k8s v1.31) for API compatibility.
+        # Future hardening: bake into a custom runner image to avoid per-run download.
+        run: |
+          curl -sLO "https://dl.k8s.io/release/v1.31.0/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          kubectl version --client
 
       - name: Verify upstream image exists
         # Fetches image digest without downloading the full image.
