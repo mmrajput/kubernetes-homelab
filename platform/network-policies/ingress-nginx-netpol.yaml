@@ -149,6 +149,8 @@ spec:
       ports:
         - port: 8443  # nginx admission webhook
           protocol: TCP
+    
+    # WORKLOADS
     # Allow forwarding to homepage namespace
     - to:
         - namespaceSelector:
@@ -156,4 +158,21 @@ spec:
               kubernetes.io/metadata.name: homepage
       ports:
         - port: 3000  # Homepage pod port
+          protocol: TCP
+    
+    # Allow forwarding to wikijs-staging namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: wikijs-staging
+      ports:
+        - port: 3000  # Wiki.js pod port
+          protocol: TCP
+    # Allow forwarding to wikijs-production namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: wikijs-production
+      ports:
+        - port: 3000  # Wiki.js pod port
           protocol: TCP
