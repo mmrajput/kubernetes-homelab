@@ -189,6 +189,10 @@ jobs:
         # an empty commit or pipeline failure.
         # Bot identity used for commit authorship — distinguishes automated
         # commits from human commits in Git history.
+        # After push, ArgoCD detects the Git change via polling (default: 3 minutes)
+        # and syncs the cluster automatically — no explicit trigger required.
+        # This avoids granting the runner service account patch access to
+        # ArgoCD Application objects, which would allow spec modification.
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -201,51 +205,5 @@ jobs:
             git commit -m "chore(wikijs): promote image ${{ inputs.image_tag }} to ${{ inputs.environment }}"
             git push origin main
             echo "Committed and pushed values update"
-          fi
-
-      - name: Trigger ArgoCD hard refresh
-        # Annotating the ArgoCD Application triggers an immediate hard refresh,
-        # bypassing the default polling interval (3 minutes).
-        # ArgoCD will also detect the Git change via polling, but the explicit
-        # annotation makes promotion visible in the ArgoCD UI immediately.
-        run: |
-          if [ "${{ inputs.environment }}" = "staging" ]; then
-            APP_NAME=wikijs-staging
-          else
-            APP_NAME=wikijs-production
-          fi
-
-          kubectl annotate application $APP_NAME \
-            -n platform \
-            argocd.argoproj.io/refresh=hard \
-            --overwrite
-
-          echo "Triggered ArgoCD hard refresh for $APP_NAME"
-
-      - name: Verify ArgoCD sync status
-        # Polls ArgoCD for sync and health status after triggering refresh.
-        # sleep 15 gives ArgoCD time to begin reconciliation before querying.
-        # Production pattern: replace sleep with a polling loop that retries
-        # until Synced/Healthy or a timeout is reached.
-        run: |
-          if [ "${{ inputs.environment }}" = "staging" ]; then
-            APP_NAME=wikijs-staging
-          else
-            APP_NAME=wikijs-production
-          fi
-
-          echo "Waiting for ArgoCD to sync $APP_NAME..."
-          sleep 15
-
-          SYNC_STATUS=$(kubectl get application $APP_NAME -n platform \
-            -o jsonpath='{.status.sync.status}')
-          HEALTH_STATUS=$(kubectl get application $APP_NAME -n platform \
-            -o jsonpath='{.status.health.status}')
-
-          echo "Sync status:   $SYNC_STATUS"
-          echo "Health status: $HEALTH_STATUS"
-
-          if [ "$SYNC_STATUS" != "Synced" ] || [ "$HEALTH_STATUS" != "Healthy" ]; then
-            echo "WARNING: Application is not yet Synced/Healthy — ArgoCD may still be reconciling"
-            echo "Check ArgoCD UI for current status: https://argocd.mmrajputhomelab.org"
+            echo "ArgoCD will detect the Git change and sync automatically within 3 minutes"
           fi
