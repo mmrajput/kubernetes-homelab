@@ -22,10 +22,12 @@ template:
       fsGroup: 1000
       seccompProfile:
         type: RuntimeDefault
+    volumes: []
     containers:
       - name: runner
         image: ghcr.io/actions/actions-runner:latest
         command: ["/home/runner/run.sh"]
+        volumeMounts: []
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
