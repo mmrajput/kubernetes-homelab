@@ -13,6 +13,7 @@ spec:
     path: platform/argocd/apps
     directory:
       recurse: true
+      exclude: 'workloads/disabled/*'
   destination:
     server: https://kubernetes.default.svc
     namespace: platform
