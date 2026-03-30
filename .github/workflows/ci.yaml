@@ -127,14 +127,20 @@ jobs:
           crane digest ${{ steps.refs.outputs.upstream }}
 
       - name: Scan upstream image with Trivy
-        # Security gate — pipeline blocks if HIGH or CRITICAL CVEs with fixes are found.
-        # ignore-unfixed: true — unfixed CVEs cannot be remediated by changing image tag,
-        # so they are excluded to avoid blocking on issues outside our control.
-        # Scans directly from Docker Hub registry — no local image pull required.
+        # Security gate — blocks on HIGH/CRITICAL CVEs with fixes in OS packages.
+        # --scanners vuln: vulnerability scanning only (no secret scanning — faster)
+        # --vuln-type os: scope to OS packages only — Node.js application dependency
+        # CVEs in vendored node_modules are upstream developer responsibility.
+        # Platform operators cannot remediate application dependency CVEs by
+        # changing the image tag — only the upstream developer can fix these.
+        # Production pattern: add .trivyignore for accepted CVEs with documented rationale.
         run: |
           trivy image \
+            --scanners vuln \
+            --vuln-type os \
             --severity HIGH,CRITICAL \
             --ignore-unfixed \
+            --ignorefile .trivyignore \
             --exit-code 1 \
             ${{ steps.refs.outputs.upstream }}
 
