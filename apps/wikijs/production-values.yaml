@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/mmrajput/wiki-js
-  tag: "2.5.307"
+  tag: "2.5.312"
   imagePullPolicy: IfNotPresent
 
 postgresql:
