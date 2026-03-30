@@ -1,0 +1,82 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: arc-runners-default-deny
+  namespace: arc-runners
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: arc-runners-allow
+  namespace: arc-runners
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow ARC controller to communicate with runner pods
+    # Controller sends job assignments and monitors runner lifecycle
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: arc-systems
+      ports:
+        - port: 2376  # ARC listener port
+          protocol: TCP
+    # Allow intra-namespace traffic
+    # Required for ARC listener pod to communicate with runner pod
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: arc-runners
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Allow Kubernetes API access
+    # Required for kubectl commands in pipeline steps
+    - to:
+        - ipBlock:
+            cidr: 10.96.0.1/32
+      ports:
+        - port: 443
+          protocol: TCP
+    - to:
+        - ipBlock:
+            cidr: 192.168.178.34/32
+      ports:
+        - port: 6443
+          protocol: TCP
+    # Allow intra-namespace traffic
+    # Required for ARC listener pod to communicate with runner pod
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: arc-runners
+    # Allow external HTTPS access
+    # CI runners are inherently internet-facing — they need to reach:
+    #   - github.com / api.github.com — runner registration and job communication
+    #   - ghcr.io — crane image push/pull
+    #   - registry-1.docker.io — crane pull from Docker Hub
+    #   - dl.k8s.io — kubectl binary download
+    #   - objects.githubusercontent.com — Actions artifact downloads
+    #   - github.com/google/go-containerregistry — crane binary download
+    # Enumerating individual IPs is not practical for external SaaS endpoints.
+    # Named exception: broad external egress on 443 is intentional and documented.
+    # Future hardening: egress proxy with allowlist (e.g. Squid) for audit trail.
+    - ports:
+        - port: 443
+          protocol: TCP
