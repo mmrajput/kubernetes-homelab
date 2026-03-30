@@ -3,6 +3,11 @@ kind: NetworkPolicy
 metadata:
   name: wikijs-staging-default-deny
   namespace: wikijs-staging
+  annotations:
+    # Wiki.js locale sync and graph endpoint calls will fail under this policy.
+    # This is intentional — no egress to external endpoints is permitted.
+    # Wiki.js functions fully with built-in English locale.
+    # Consistent with DSGVO data residency and network isolation requirements.
 spec:
   podSelector: {}
   policyTypes:
