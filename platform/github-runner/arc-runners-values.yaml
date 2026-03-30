@@ -15,7 +15,7 @@ containerMode:
   type: kubernetes
   kubernetesModeWorkVolumeClaim:
     accessModes: ["ReadWriteOnce"]
-    storageClassName: longhorn
+    storageClassName: local-path
     resources:
       requests:
         storage: 1Gi
@@ -28,20 +28,6 @@ template:
       fsGroup: 1000
       seccompProfile:
         type: RuntimeDefault
-    initContainers:
-      - name: fix-permissions
-        image: busybox
-        command: ["sh", "-c", "chown -R 1000:1000 /home/runner/_work"]
-        volumeMounts:
-          - name: work
-            mountPath: /home/runner/_work
-        securityContext:
-          runAsUser: 0
-          runAsNonRoot: false
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
     containers:
       - name: runner
         image: ghcr.io/actions/actions-runner:latest
