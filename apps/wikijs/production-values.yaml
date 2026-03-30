@@ -1,0 +1,71 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/mmrajput/wiki-js
+  tag: "2.5.312"
+  imagePullPolicy: IfNotPresent
+
+postgresql:
+  enabled: false
+
+extraEnvVars:
+  - name: DB_TYPE
+    value: postgres
+  - name: DB_HOST
+    value: wikijs-db-rw.databases.svc.cluster.local
+  - name: DB_PORT
+    value: "5432"
+  - name: DB_NAME
+    value: wikijs
+  - name: DB_USER
+    valueFrom:
+      secretKeyRef:
+        name: wikijs-secrets
+        key: db-username
+  - name: DB_PASS
+    valueFrom:
+      secretKeyRef:
+        name: wikijs-secrets
+        key: db-password
+  - name: DB_SSL
+    value: "false"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+  hosts:
+    - host: wikijs.mmrajputhomelab.org
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: wildcard-homelab-tls
+      hosts:
+        - wikijs.mmrajputhomelab.org
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
