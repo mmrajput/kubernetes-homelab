@@ -66,8 +66,6 @@ jobs:
   scan-and-promote:
     name: Scan and Promote Image
     runs-on: homelab-runner
-    container:
-      image: ghcr.io/actions/actions-runner:latest
 
     permissions:
       contents: write   # Required to commit updated values files back to Git

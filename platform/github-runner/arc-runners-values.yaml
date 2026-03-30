@@ -12,13 +12,7 @@ controllerServiceAccount:
   namespace: arc-systems
 
 containerMode:
-  type: kubernetes
-  kubernetesModeWorkVolumeClaim:
-    accessModes: ["ReadWriteOnce"]
-    storageClassName: longhorn
-    resources:
-      requests:
-        storage: 1Gi
+  type: kubernetes-novolume
 
 template:
   spec:
