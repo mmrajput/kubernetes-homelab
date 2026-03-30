@@ -4,6 +4,14 @@ metadata:
   name: arc-runners
   labels:
     app.kubernetes.io/name: arc-runners
-    pod-security.kubernetes.io/enforce: restricted
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/warn: baseline
+  annotations:
+    # PSS exception: baseline instead of restricted
+    # ARC containerMode: kubernetes creates job container pods dynamically.
+    # GitHub Actions workflow syntax does not support injecting Kubernetes
+    # securityContext into job container specs — the pod spec is controlled
+    # by the ARC hook, not the workflow file.
+    # Production pattern: contribute upstream fix or use custom runner image
+    # with pre-configured security context defaults.
