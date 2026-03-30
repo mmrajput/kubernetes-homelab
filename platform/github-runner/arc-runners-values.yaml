@@ -25,6 +25,7 @@ template:
     securityContext:
       runAsNonRoot: true
       runAsUser: 1000
+      fsGroup: 1000
       seccompProfile:
         type: RuntimeDefault
     containers:
