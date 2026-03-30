@@ -1,0 +1,224 @@
+# Image Promotion Pipeline
+#
+# Purpose: Promotes upstream application images through the deployment pipeline.
+# This pipeline does NOT build images from source — it consumes upstream images,
+# scans them for vulnerabilities, mirrors them to our internal registry (ghcr.io),
+# and updates the GitOps values files that ArgoCD uses to deploy.
+#
+# Promotion flow:
+#   upstream registry (Docker Hub)
+#     → Trivy vulnerability scan (blocks on HIGH/CRITICAL CVEs with fixes)
+#     → internal registry (ghcr.io/mmrajput)
+#     → GitOps values file update (image tag)
+#     → ArgoCD detects Git change and syncs cluster
+#
+# Runner: homelab-runner (self-hosted ARC scale set)
+#   Required for kubectl steps — GitHub-hosted runners cannot reach the cluster.
+#   Uses containerMode: kubernetes (no Docker daemon available).
+#   All image operations use crane — a daemonless OCI registry client.
+#
+# Portability note:
+#   Switching to a sovereign stack (Gitea + Harbor) requires only endpoint and
+#   credential changes. Pipeline stages, ArgoCD flow, and cluster configuration
+#   remain identical. Gitea Actions uses the same workflow syntax as GitHub Actions.
+#
+# Trigger: Manual (workflow_dispatch) — image promotion is a conscious decision,
+#   not an automatic reaction to every upstream push. Operator selects the
+#   specific tag and target environment before promoting.
+
+name: Image Promotion Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Upstream image tag to promote (e.g. 2.5.312)'
+        required: true
+        default: '2.5.312'
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  # Upstream image on Docker Hub — source of truth for Wiki.js releases
+  UPSTREAM_IMAGE: requarks/wiki
+
+  # Internal registry — scanned and approved images land here
+  # Cluster pulls from ghcr.io, not Docker Hub directly.
+  # Provides: audit trail, rate limit immunity, sovereign image copy
+  INTERNAL_IMAGE: ghcr.io/${{ github.repository_owner }}/wiki-js
+
+  # GitOps values files — ArgoCD reads these to determine deployed image tag
+  VALUES_FILE_STAGING: apps/wikijs/staging-values.yaml
+  VALUES_FILE_PRODUCTION: apps/wikijs/production-values.yaml
+
+  # crane version — pinned for reproducibility
+  # crane: daemonless OCI image tool by Google, operates via registry HTTP APIs
+  # No Docker daemon required — compatible with ARC containerMode: kubernetes
+  CRANE_VERSION: v0.19.0
+
+jobs:
+  scan-and-promote:
+    name: Scan and Promote Image
+    runs-on: homelab-runner
+
+    permissions:
+      contents: write   # Required to commit updated values files back to Git
+      packages: write   # Required to push images to ghcr.io
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image references
+        id: refs
+        # Constructs full image references used throughout the pipeline.
+        # Centralised here to avoid repetition and ensure consistency.
+        run: |
+          echo "upstream=${{ env.UPSTREAM_IMAGE }}:${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          echo "internal=${{ env.INTERNAL_IMAGE }}:${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+
+      - name: Install crane
+        # crane is not pre-installed in the actions-runner image.
+        # Installed fresh each run — pinned version ensures reproducibility.
+        # Alternative: bake crane into a custom runner image (future hardening).
+        run: |
+          curl -sL https://github.com/google/go-containerregistry/releases/download/${{ env.CRANE_VERSION }}/go-containerregistry_Linux_x86_64.tar.gz \
+            | tar xz crane
+          sudo mv crane /usr/local/bin/
+          crane version
+
+      - name: Verify upstream image exists
+        # Fetches image digest without downloading the full image.
+        # Fails fast if the specified tag does not exist on Docker Hub.
+        # Prevents wasting pipeline time on a non-existent tag.
+        run: |
+          echo "Verifying upstream image: ${{ steps.refs.outputs.upstream }}"
+          crane digest ${{ steps.refs.outputs.upstream }}
+
+      - name: Scan upstream image with Trivy
+        # Security gate — pipeline blocks if HIGH or CRITICAL CVEs with fixes are found.
+        # ignore-unfixed: true — unfixed CVEs cannot be remediated by changing image tag,
+        # so they are excluded to avoid blocking on issues outside our control.
+        # Scans directly from Docker Hub registry — no local image pull required.
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.refs.outputs.upstream }}
+          format: table
+          exit-code: '1'
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+
+      - name: Log in to GitHub Container Registry
+        # crane auth login replaces 'docker login' — no daemon required.
+        # GITHUB_TOKEN is automatically provisioned by GitHub Actions.
+        # Scoped to packages: write permission declared above.
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | crane auth login ghcr.io \
+            --username ${{ github.actor }} \
+            --password-stdin
+
+      - name: Copy image to ghcr.io
+        # crane copy transfers the image directly between registries.
+        # No intermediate download to runner disk — registry-to-registry transfer.
+        # Faster than docker pull + docker push and requires no local storage.
+        # Post-copy digest verification confirms the image landed correctly.
+        run: |
+          echo "Copying ${{ steps.refs.outputs.upstream }} → ${{ steps.refs.outputs.internal }}"
+          crane copy ${{ steps.refs.outputs.upstream }} ${{ steps.refs.outputs.internal }}
+          echo "Verifying internal image digest:"
+          crane digest ${{ steps.refs.outputs.internal }}
+
+      - name: Update image tag in values file
+        id: update
+        # Updates the 'tag:' field in the target environment values file.
+        # ArgoCD watches this file — a change here triggers a cluster sync.
+        # The resolved values file path is passed to subsequent steps via output
+        # to avoid duplicating the environment if/else logic.
+        run: |
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            VALUES_FILE=${{ env.VALUES_FILE_STAGING }}
+          else
+            VALUES_FILE=${{ env.VALUES_FILE_PRODUCTION }}
+          fi
+
+          echo "Updating $VALUES_FILE with tag ${{ inputs.image_tag }}"
+          sed -i "s|tag:.*|tag: \"${{ inputs.image_tag }}\"|" $VALUES_FILE
+
+          echo "Result:"
+          grep "tag:" $VALUES_FILE
+          echo "values_file=$VALUES_FILE" >> $GITHUB_OUTPUT
+
+      - name: Commit and push updated values file
+        # Commits only if the tag actually changed — idempotent.
+        # Re-promoting the same tag produces a clear log message instead of
+        # an empty commit or a pipeline failure.
+        # Bot identity used for commit authorship — distinguishes automated
+        # commits from human commits in Git history.
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add ${{ steps.update.outputs.values_file }}
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit — image tag ${{ inputs.image_tag }} already set in ${{ inputs.environment }}"
+          else
+            git commit -m "chore(wikijs): promote image ${{ inputs.image_tag }} to ${{ inputs.environment }}"
+            git push origin main
+            echo "Committed and pushed values update"
+          fi
+
+      - name: Trigger ArgoCD hard refresh
+        # Annotating the ArgoCD Application triggers an immediate hard refresh,
+        # bypassing the default polling interval (3 minutes).
+        # ArgoCD will also detect the Git change via polling, but the explicit
+        # annotation makes promotion visible in the ArgoCD UI immediately.
+        run: |
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            APP_NAME=wikijs-staging
+          else
+            APP_NAME=wikijs-production
+          fi
+
+          kubectl annotate application $APP_NAME \
+            -n platform \
+            argocd.argoproj.io/refresh=hard \
+            --overwrite
+
+          echo "Triggered ArgoCD hard refresh for $APP_NAME"
+
+      - name: Verify ArgoCD sync status
+        # Polls ArgoCD for sync and health status after triggering refresh.
+        # sleep 15 gives ArgoCD time to begin reconciliation before querying.
+        # Production pattern: replace sleep with a polling loop that retries
+        # until Synced/Healthy or a timeout is reached.
+        run: |
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            APP_NAME=wikijs-staging
+          else
+            APP_NAME=wikijs-production
+          fi
+
+          echo "Waiting for ArgoCD to sync $APP_NAME..."
+          sleep 15
+
+          SYNC_STATUS=$(kubectl get application $APP_NAME -n platform \
+            -o jsonpath='{.status.sync.status}')
+          HEALTH_STATUS=$(kubectl get application $APP_NAME -n platform \
+            -o jsonpath='{.status.health.status}')
+
+          echo "Sync status:   $SYNC_STATUS"
+          echo "Health status: $HEALTH_STATUS"
+
+          if [ "$SYNC_STATUS" != "Synced" ] || [ "$HEALTH_STATUS" != "Healthy" ]; then
+            echo "WARNING: Application is not yet Synced/Healthy — ArgoCD may still be reconciling"
+            echo "Check ArgoCD UI for current status: https://argocd.mmrajputhomelab.org"
+          fi
