@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/mmrajput/kubernetes-homelab
-    targetRevision: HEAD
+    targetRevision: 1cabf3d
     path: platform/argocd/apps
     directory:
       recurse: true

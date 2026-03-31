@@ -19,7 +19,7 @@ spec:
           - $values/workloads/homepage/values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
-      targetRevision: HEAD
+      targetRevision: 1cabf3d
       ref: values
 
   destination:

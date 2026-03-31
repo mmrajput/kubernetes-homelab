@@ -17,7 +17,7 @@ spec:
           - $values/platform/data/longhorn/values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
-      targetRevision: HEAD
+      targetRevision: 1cabf3d
       ref: values
 
   destination:
