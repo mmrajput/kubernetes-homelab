@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: network-policies
-  namespace: platform
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/mmrajput/kubernetes-homelab
     targetRevision: HEAD
-    path: platform/network-policies
+    path: platform/networking/network-policies
     directory:
       recurse: true
 

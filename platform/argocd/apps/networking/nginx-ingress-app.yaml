@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: ingress-nginx
-  namespace: platform
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -16,7 +16,7 @@ spec:
       helm:
         releaseName: ingress-nginx
         valueFiles:
-          - $values/platform/nginx-ingress/values.yaml
+          - $values/platform/networking/nginx-ingress/values.yaml
     
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
       targetRevision: HEAD

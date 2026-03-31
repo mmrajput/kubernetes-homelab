@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: grafana
-  namespace: platform
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -14,7 +14,7 @@ spec:
       targetRevision: 10.5.15
       helm:
         valueFiles:
-          - $values/platform/grafana/values.yaml
+          - $values/platform/observability/grafana/values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
       targetRevision: HEAD

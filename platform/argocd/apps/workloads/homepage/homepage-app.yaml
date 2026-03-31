@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: homepage
-  namespace: platform
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   labels:
@@ -16,7 +16,7 @@ spec:
       targetRevision: 2.1.0
       helm:
         valueFiles:
-          - $values/apps/homepage/values.yaml
+          - $values/workloads/homepage/values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
       targetRevision: HEAD

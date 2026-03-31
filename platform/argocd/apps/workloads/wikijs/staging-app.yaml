@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: wikijs-staging
-  namespace: platform
+  namespace: argocd
   labels:
     app.kubernetes.io/name: wikijs-staging
     app.kubernetes.io/part-of: workloads
@@ -17,7 +17,7 @@ spec:
       targetRevision: 3.0.0
       helm:
         valueFiles:
-          - $values/apps/wikijs/staging-values.yaml
+          - $values/workloads/wikijs/staging-values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
       targetRevision: HEAD

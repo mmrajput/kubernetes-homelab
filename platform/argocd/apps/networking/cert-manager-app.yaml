@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: cert-manager
-  namespace: platform
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -14,7 +14,7 @@ spec:
       targetRevision: v1.16.2
       helm:
         valueFiles:
-          - $values/platform/cert-manager/values.yaml
+          - $values/platform/networking/cert-manager/values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
       targetRevision: HEAD
