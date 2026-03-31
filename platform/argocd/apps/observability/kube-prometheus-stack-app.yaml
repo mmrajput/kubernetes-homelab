@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kube-prometheus-stack
-  namespace: platform
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -15,10 +15,10 @@ spec:
       targetRevision: 65.8.1
       helm:
         valueFiles:
-          - $values/platform/prometheus/values.yaml
+          - $values/platform/observability/prometheus/values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
-      targetRevision: HEAD
+      targetRevision: 1cabf3d
       ref: values
 
   destination:

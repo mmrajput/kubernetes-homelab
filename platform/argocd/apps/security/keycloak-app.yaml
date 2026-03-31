@@ -1,23 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: arc-runners
+  name: keycloak
   namespace: argocd
-  labels:
-    app.kubernetes.io/name: arc-runners
-    app.kubernetes.io/part-of: ci-cd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
 
   sources:
-    - repoURL: ghcr.io/actions/actions-runner-controller-charts
-      chart: gha-runner-scale-set
-      targetRevision: 0.14.0
+    - repoURL: https://codecentric.github.io/helm-charts
+      chart: keycloakx
+      targetRevision: 7.1.9
       helm:
         valueFiles:
-          - $values/platform/ci-cd/github-runner/arc-runners-values.yaml
+          - $values/platform/security/keycloak/values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
       targetRevision: 1cabf3d
@@ -25,7 +22,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: arc-runners
+    namespace: keycloak
 
   syncPolicy:
     automated:

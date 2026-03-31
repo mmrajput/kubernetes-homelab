@@ -1,23 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: arc-runners
+  name: cert-manager
   namespace: argocd
-  labels:
-    app.kubernetes.io/name: arc-runners
-    app.kubernetes.io/part-of: ci-cd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
 
   sources:
-    - repoURL: ghcr.io/actions/actions-runner-controller-charts
-      chart: gha-runner-scale-set
-      targetRevision: 0.14.0
+    - repoURL: https://charts.jetstack.io
+      chart: cert-manager
+      targetRevision: v1.16.2
       helm:
         valueFiles:
-          - $values/platform/ci-cd/github-runner/arc-runners-values.yaml
+          - $values/platform/networking/cert-manager/values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
       targetRevision: 1cabf3d
@@ -25,7 +22,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: arc-runners
+    namespace: cert-manager
 
   syncPolicy:
     automated:
