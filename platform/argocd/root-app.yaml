@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: root-app
-  namespace: platform
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -16,7 +16,7 @@ spec:
       exclude: 'workloads/disabled/*'
   destination:
     server: https://kubernetes.default.svc
-    namespace: platform
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
