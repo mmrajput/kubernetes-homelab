@@ -12,7 +12,7 @@ spec:
     repoURL: https://github.com/mmrajput/kubernetes-homelab
     targetRevision: HEAD
     path: platform/cnpg/clusters/
-
+    exclude: 'clusters/disabled/*'
   destination:
     server: https://kubernetes.default.svc
     namespace: databases
