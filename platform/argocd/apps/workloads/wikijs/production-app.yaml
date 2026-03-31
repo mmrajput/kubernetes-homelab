@@ -20,7 +20,7 @@ spec:
           - $values/workloads/wikijs/production-values.yaml
 
     - repoURL: https://github.com/mmrajput/kubernetes-homelab
-      targetRevision: 1cabf3d
+      targetRevision: HEAD
       ref: values
 
   destination:
