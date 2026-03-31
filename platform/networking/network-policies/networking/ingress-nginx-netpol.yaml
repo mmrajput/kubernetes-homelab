@@ -74,16 +74,12 @@ spec:
       ports:
         - port: 6443
           protocol: TCP
-    # Allow forwarding to platform namespace (ArgoCD)
+    # Allow forwarding to argocd namespace
     - to:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: platform
+              kubernetes.io/metadata.name: argocd
       ports:
-        - port: 80    # HTTP
-          protocol: TCP
-        - port: 443   # HTTPS
-          protocol: TCP
         - port: 8080  # ArgoCD server HTTP
           protocol: TCP
     # Allow forwarding to monitoring namespace
