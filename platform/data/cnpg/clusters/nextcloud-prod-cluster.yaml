@@ -6,7 +6,17 @@ metadata:
   annotations:
     backup.velero.io/backup-volumes-excludes: pgdata
 spec:
-  instances: 1
+  # instances: 2 — primary + 1 hot standby replica
+  #
+  # podAntiAffinityType: required ensures CNPG schedules primary and standby
+  # on different nodes (k8s-worker-01 and k8s-worker-02).
+  # If only one worker is available, the replica pod will stay Pending rather
+  # than co-locate with the primary — correct behaviour for a HA cluster.
+  instances: 2
+
+  affinity:
+    podAntiAffinityType: required
+    topologyKey: kubernetes.io/hostname
 
   postgresql:
     parameters:

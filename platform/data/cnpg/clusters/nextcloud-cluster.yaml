@@ -47,27 +47,14 @@ spec:
     # Expand online via Longhorn when needed
     size: 3Gi
 
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://cnpg-backups/nextcloud
-      endpointURL: http://minio.minio.svc.cluster.local:9000
-      s3Credentials:
-        accessKeyId:
-          name: cnpg-minio-secret
-          key: access-key
-        secretAccessKey:
-          name: cnpg-minio-secret
-          key: secret-key
-      wal:
-        compression: gzip
-      data:
-        compression: gzip
-    retentionPolicy: 7d
+  # backup: omitted — staging has no WAL archiving or base backups.
+  # Staging is used for pipeline testing and image promotion only.
+  # PITR and DR coverage is production-only.
 
   resources:
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 50m
+      memory: 128Mi
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 200m
+      memory: 256Mi
