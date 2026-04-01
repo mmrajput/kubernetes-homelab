@@ -41,7 +41,10 @@ nextcloud:
   # Without overwriteprotocol, Nextcloud generates http:// URLs which break redirects
   # and CSRF checks when the browser is on https://.
   configs:
-    reverse-proxy.config.php: |-
+    # Named z- so it loads after the chart's built-in reverse-proxy.config.php (alphabetical order).
+    # Using reverse-proxy.config.php directly conflicts with the chart's own ConfigMap entry
+    # in nextcloud-config, producing a duplicate volumeMount at the same mountPath (chart v9.0.4 bug).
+    z-custom-proxy.config.php: |-
       <?php
       $CONFIG = array(
         'trusted_proxies'     => ['10.0.0.0/8'],
