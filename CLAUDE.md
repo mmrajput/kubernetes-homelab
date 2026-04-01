@@ -318,3 +318,50 @@ production database credentials, and production Keycloak clients are out of scop
 ### Line endings
 - All YAML files must use LF line endings (`.gitattributes` enforces this)
 - sed patterns will fail on CRLF files — strip with `sed -i 's/\r//'` if needed
+
+---
+
+## Storage conventions
+
+### Longhorn (default StorageClass)
+- Used for all persistent workload data — databases, user files, stateful app data
+- RF=2 — every PVC consumes 2× its declared size in physical storage
+- Total available: ~160GB raw, ~80GB effective (RF=2)
+- Schedulable nodes: k8s-worker-01, k8s-worker-02 only (control plane excluded)
+
+### Recommended PVC sizes — Nextcloud
+| Volume | Staging | Production |
+|---|---|---|
+| User files (nextcloud-data) | 5Gi | 15Gi |
+| CNPG database (nextcloud-db) | 3Gi | 8Gi |
+| Redis cache | 1Gi | 1Gi |
+
+PVCs can be expanded online via Longhorn — start conservative, expand when needed.
+
+### MinIO (S3-compatible object storage)
+- Used for: CNPG WAL archiving, Velero backups, Loki log storage
+- Nextcloud CNPG backups: `s3://cnpg-backups/nextcloud/`
+- MinIO endpoint (internal): `http://minio.minio.svc.cluster.local:9000`
+- Credentials managed via ESO at `secret/minio/<app>`
+
+### StorageClass selection
+| Use case | StorageClass |
+|---|---|
+| Production databases | longhorn |
+| Staging databases | longhorn |
+| Nextcloud user files | longhorn |
+| Redis cache | longhorn |
+| ARC runner work volumes | local-path (Longhorn causes chown failures) |
+| Development/test scratch | local-path |
+
+### Velero backup annotations
+Exclude CNPG PVCs from Velero (CNPG handles its own backup via WAL archiving):
+```yaml
+annotations:
+  backup.velero.io/backup-volumes-excludes: pgdata
+```
+Include Nextcloud user file PVCs in Velero:
+```yaml
+annotations:
+  backup.velero.io/backup-volumes: nextcloud-data
+```
