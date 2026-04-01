@@ -1,0 +1,67 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: nextcloud-prod-db
+  namespace: databases
+  annotations:
+    backup.velero.io/backup-volumes-excludes: pgdata
+spec:
+  instances: 1
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "128MB"
+
+  bootstrap:
+    initdb:
+      database: nextcloud
+      owner: nextcloud
+      secret:
+        name: nextcloud-initdb-secret
+
+  storage:
+    storageClass: longhorn
+    # 8Gi production — per storage conventions (CLAUDE.md)
+    # Longhorn RF=2: 8Gi PVC = 16Gi physical consumed
+    # Expand online via Longhorn when needed
+    size: 8Gi
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://cnpg-backups/nextcloud-production
+      endpointURL: http://minio.minio.svc.cluster.local:9000
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-minio-secret
+          key: access-key
+        secretAccessKey:
+          name: cnpg-minio-secret
+          key: secret-key
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+    retentionPolicy: 7d
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: nextcloud-prod-db-backup
+  namespace: databases
+spec:
+  # Run base backup daily at 3:30 AM (offset from staging to avoid concurrent MinIO load)
+  schedule: "0 30 3 * * *"
+  backupOwnerReference: self
+  cluster:
+    name: nextcloud-prod-db
+  target: primary
+  method: barmanObjectStore
