@@ -172,3 +172,11 @@ spec:
       ports:
         - port: 3000  # Wiki.js pod port
           protocol: TCP
+    # Allow forwarding to nextcloud-staging namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: nextcloud-staging
+      ports:
+        - port: 80  # Nextcloud pod port
+          protocol: TCP
