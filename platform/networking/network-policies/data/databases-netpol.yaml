@@ -93,6 +93,12 @@ spec:
       ports:
         - port: 9000
           protocol: TCP
+    # Allow intra-namespace egress (CNPG streaming replication — replica → primary)
+    - to:
+        - podSelector: {}
+      ports:
+        - port: 5432
+          protocol: TCP
     # Allow Kubernetes API server access (CNPG operator communication)
     - to:
         - ipBlock:
