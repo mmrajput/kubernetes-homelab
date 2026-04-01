@@ -115,6 +115,35 @@ platform/argocd/apps/workloads/nextcloud/staging-app.yaml
 platform/argocd/apps/workloads/nextcloud/production-app.yaml
 ```
 
+### Shared namespace NetworkPolicy updates (mandatory)
+
+Two shared NetworkPolicies must be updated for every new workload — omitting either causes
+silent connectivity failures that only surface after deployment:
+
+**1. `platform/networking/network-policies/networking/ingress-nginx-netpol.yaml`**
+Add an egress rule so nginx-ingress can forward traffic to the workload namespace:
+```yaml
+- to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: <app>-staging
+  ports:
+    - port: <app-pod-port>   # pod port, not service port
+      protocol: TCP
+```
+
+**2. `platform/networking/network-policies/data/databases-netpol.yaml`**
+Add an ingress rule so the workload namespace can reach PostgreSQL:
+```yaml
+- from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: <app>-staging
+  ports:
+    - port: 5432
+      protocol: TCP
+```
+
 Namespaces are applied manually before ArgoCD manages the workload:
 ```bash
 kubectl apply -f bootstrap/namespaces/workloads/nextcloud/staging-namespace.yaml
