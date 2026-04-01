@@ -1,0 +1,73 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: nextcloud-db
+  namespace: databases
+  annotations:
+    # Exclude PostgreSQL PVCs from Velero block-level snapshots.
+    # CNPG handles database backup independently via Barman to MinIO:
+    #   - Continuous WAL archiving for PITR
+    #   - Periodic base backups via pg_basebackup
+    # Velero covers Kubernetes objects and non-database PVCs.
+    # Production pattern: always exclude CNPG PVCs from Velero to avoid
+    # redundant snapshots and potential consistency issues with block-level
+    # snapshots of live PostgreSQL data directories.
+    backup.velero.io/backup-volumes-excludes: pgdata
+spec:
+  # instances: 1 — homelab resource optimization
+  #
+  # Production pattern: instances: 2 or 3
+  #   - 1 primary (read/write) + 1 or 2 standby replicas (hot standby)
+  #   - CNPG automatically promotes standby to primary on failure
+  #   - podAntiAffinityType: required ensures primary and standby land on separate nodes
+  #
+  # Homelab trade-off:
+  #   - Single physical host means a full node failure takes down the control plane
+  #     regardless of PostgreSQL HA configuration
+  #   - Longhorn RF=2 across both workers provides storage-level protection
+  #   - MinIO WAL archiving + base backups provide PITR and corruption recovery
+  instances: 1
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "128MB"
+
+  bootstrap:
+    initdb:
+      database: nextcloud
+      owner: nextcloud
+      secret:
+        name: nextcloud-initdb-secret
+
+  storage:
+    storageClass: longhorn
+    # 3Gi staging — per storage conventions (CLAUDE.md)
+    # Longhorn RF=2: 3Gi PVC = 6Gi physical consumed
+    # Expand online via Longhorn when needed
+    size: 3Gi
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://cnpg-backups/nextcloud
+      endpointURL: http://minio.minio.svc.cluster.local:9000
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-minio-secret
+          key: access-key
+        secretAccessKey:
+          name: cnpg-minio-secret
+          key: secret-key
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+    retentionPolicy: 7d
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

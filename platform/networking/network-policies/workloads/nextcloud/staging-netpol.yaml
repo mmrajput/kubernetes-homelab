@@ -1,0 +1,69 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nextcloud-staging-default-deny
+  namespace: nextcloud-staging
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nextcloud-staging-allow
+  namespace: nextcloud-staging
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow nginx-ingress to reach Nextcloud pod (Apache on port 80)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 80
+          protocol: TCP
+  egress:
+    # DNS resolution via kube-dns
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # PostgreSQL via CNPG read-write service (nextcloud-db-rw.databases.svc.cluster.local)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: databases
+      ports:
+        - port: 5432
+          protocol: TCP
+    # Redis within namespace (deployed as Nextcloud chart sub-dependency)
+    - to:
+        - podSelector: {}
+      ports:
+        - port: 6379
+          protocol: TCP
+    # Kubernetes API — ClusterIP (required by Calico before DNAT)
+    - to:
+        - ipBlock:
+            cidr: 10.96.0.1/32
+      ports:
+        - port: 443
+          protocol: TCP
+    # Kubernetes API — control plane node IP (Calico evaluates before kube-proxy DNAT)
+    - to:
+        - ipBlock:
+            cidr: 192.168.178.34/32
+      ports:
+        - port: 6443
+          protocol: TCP
