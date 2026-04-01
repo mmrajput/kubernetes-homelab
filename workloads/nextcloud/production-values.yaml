@@ -1,0 +1,129 @@
+# Nextcloud Helm values — production
+# Chart: nextcloud/nextcloud v9.0.4
+# App:   Nextcloud 33.0.0
+# Repo:  https://nextcloud.github.io/helm/
+
+image:
+  tag: "33.0.0"
+  pullPolicy: IfNotPresent
+
+# -- Pod security context
+# Namespace enforces baseline PSS — runAsNonRoot not required.
+# fsGroup 33 = www-data: ensures the Longhorn PVC is writable by the Nextcloud process.
+# Do not set runAsUser here — the Nextcloud entrypoint starts as root to set up
+# directory permissions, then drops to www-data internally.
+podSecurityContext:
+  fsGroup: 33
+
+# -- Pod annotations
+# Velero file-system backup: include nextcloud-main volume (contains html, config, data, apps)
+podAnnotations:
+  backup.velero.io/backup-volumes: nextcloud-main
+
+# -- Admin credentials from ExternalSecret
+# Secret nextcloud-production-secret is synced from Vault at secret/nextcloud/admin
+nextcloud:
+  host: nextcloud.mmrajputhomelab.org
+
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-production-secret
+    usernameKey: nextcloud-username
+    passwordKey: nextcloud-password
+
+  # Trusted domains: restrict which hostnames Nextcloud accepts requests for.
+  # The chart sets NEXTCLOUD_TRUSTED_DOMAINS from this list.
+  trustedDomains:
+    - nextcloud.mmrajputhomelab.org
+
+  # -- Reverse proxy config
+  # Required for Nextcloud to generate correct HTTPS URLs behind nginx-ingress.
+  # Without overwriteprotocol, Nextcloud generates http:// URLs which break redirects
+  # and CSRF checks when the browser is on https://.
+  configs:
+    # Named z- so it loads after the chart's built-in reverse-proxy.config.php (alphabetical order).
+    # Using reverse-proxy.config.php directly conflicts with the chart's own ConfigMap entry
+    # in nextcloud-config, producing a duplicate volumeMount at the same mountPath (chart v9.0.4 bug).
+    z-custom-proxy.config.php: |-
+      <?php
+      $CONFIG = array(
+        'trusted_proxies'     => ['10.0.0.0/8'],
+        'overwriteprotocol'   => 'https',
+        'overwrite.cli.url'   => 'https://nextcloud.mmrajputhomelab.org',
+        'forwarded_for_headers' => ['HTTP_X_FORWARDED_FOR'],
+      );
+
+# -- Disable internal SQLite database
+internalDatabase:
+  enabled: false
+
+# -- External PostgreSQL via CNPG
+# CNPG creates service nextcloud-db-rw in the databases namespace for read-write access.
+# Credentials pulled from nextcloud-production-secret (same Vault path as CNPG initdb secret,
+# so they stay in sync without a separate rotation step).
+externalDatabase:
+  enabled: true
+  type: postgresql
+  host: nextcloud-db-rw.databases.svc.cluster.local
+  database: nextcloud
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-production-secret
+    usernameKey: db-username
+    passwordKey: db-password
+
+# -- Redis for APCu memory caching and file locking
+# Auth disabled — intra-namespace access only, enforced by NetworkPolicy.
+# local-path StorageClass: Redis is cache-only — no durability requirement.
+# Saves 2Gi Longhorn effective capacity (RF=2 would consume 2Gi for a 1Gi PVC).
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  global:
+    storageClass: local-path
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+  replica:
+    replicaCount: 0
+
+# -- Persistence — Longhorn for all Nextcloud data
+# Single PVC (nextcloud-main) covers /var/www/html including html, config, apps, and data.
+# 15Gi production — per storage conventions (CLAUDE.md).
+# Longhorn RF=2: 15Gi PVC = 30Gi physical consumed.
+# Expand online via Longhorn when needed.
+persistence:
+  enabled: true
+  storageClass: longhorn
+  accessMode: ReadWriteOnce
+  size: 15Gi
+
+# -- Ingress
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    # Nextcloud uploads can be large — allow up to 4GB
+    nginx.ingress.kubernetes.io/proxy-body-size: 4G
+    # Disable request buffering for uploads and WebDAV
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    # Extended timeouts for large file transfers
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+  tls:
+    - secretName: wildcard-homelab-tls
+      hosts:
+        - nextcloud.mmrajputhomelab.org
+
+# -- Resources
+# Production: higher requests for consistent performance under load
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
