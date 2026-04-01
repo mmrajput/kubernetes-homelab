@@ -72,12 +72,14 @@ externalDatabase:
 # -- Redis for APCu memory caching and file locking
 # Auth disabled for staging — intra-namespace access only, enforced by NetworkPolicy.
 # Production pattern: enable auth with an existingSecret.
+# local-path StorageClass: Redis is cache-only — no durability requirement.
+# Saves 2Gi Longhorn effective capacity (RF=2 would consume 2Gi for a 1Gi PVC).
 redis:
   enabled: true
   auth:
     enabled: false
   global:
-    storageClass: longhorn
+    storageClass: local-path
   master:
     persistence:
       enabled: true
