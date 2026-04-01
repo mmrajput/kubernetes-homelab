@@ -52,6 +52,14 @@ spec:
       ports:
         - port: 5432
           protocol: TCP
+    # Allow Nextcloud production to reach PostgreSQL
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: nextcloud-production
+      ports:
+        - port: 5432
+          protocol: TCP
     # Allow intra-namespace traffic (CNPG primary to standby replication)
     - from:
         - podSelector: {}

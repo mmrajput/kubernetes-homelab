@@ -180,3 +180,11 @@ spec:
       ports:
         - port: 80  # Nextcloud pod port
           protocol: TCP
+    # Allow forwarding to nextcloud-production namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: nextcloud-production
+      ports:
+        - port: 80  # Nextcloud pod port
+          protocol: TCP
