@@ -16,9 +16,8 @@ podSecurityContext:
   fsGroup: 33
 
 # -- Pod annotations
-# Velero file-system backup: include nextcloud-main volume (contains html, config, data, apps)
-podAnnotations:
-  backup.velero.io/backup-volumes: nextcloud-main
+# No Velero backup for staging — pipeline testing environment only.
+podAnnotations: {}
 
 # -- Admin credentials from ExternalSecret
 # Secret nextcloud-staging-secret is synced from Vault at secret/nextcloud/admin
@@ -120,11 +119,11 @@ ingress:
         - nextcloud-staging.mmrajputhomelab.org
 
 # -- Resources
-# Staging: conservative requests, headroom in limits for install/upgrade operations
+# Staging: minimum footprint — pipeline testing only, not load-bearing.
 resources:
   requests:
-    cpu: 100m
-    memory: 256Mi
+    cpu: 50m
+    memory: 128Mi
   limits:
-    cpu: 1000m
-    memory: 1Gi
+    cpu: 500m
+    memory: 512Mi
