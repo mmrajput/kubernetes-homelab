@@ -64,7 +64,7 @@ internalDatabase:
 externalDatabase:
   enabled: true
   type: postgresql
-  host: nextcloud-db-rw.databases.svc.cluster.local
+  host: nextcloud-prod-db-rw.databases.svc.cluster.local
   database: nextcloud
   existingSecret:
     enabled: true
