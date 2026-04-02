@@ -13,35 +13,30 @@ spec:
             path: platform/networking/network-policies
             namespace: ingress-nginx
             recurse: true
-            serverSideApply: false
 
           # ESO ClusterSecretStore: vault-backend pointing to vault.vault.svc.cluster.local
           - name: external-secrets-config
             path: platform/security/external-secrets/config
             namespace: external-secrets
             recurse: false
-            serverSideApply: false
 
           # ExternalSecrets: operators/, databases/, workloads/ — all ESO CRs
           - name: external-secrets-stores
             path: platform/security/external-secrets/stores
             namespace: databases
             recurse: true
-            serverSideApply: false
 
           # CNPG clusters: keycloak-db, nextcloud-db (staging), nextcloud-prod-db
           - name: cnpg-clusters
             path: platform/data/cnpg/clusters
             namespace: databases
             recurse: false
-            serverSideApply: true
 
           # Rclone CronJob: syncs MinIO velero+cnpg-backups buckets → OneDrive at 04:00 UTC
           - name: rclone-onedrive-sync
             path: platform/data/rclone
             namespace: velero
             recurse: false
-            serverSideApply: false
 
   template:
     metadata:
@@ -68,6 +63,4 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=false
-{{- if .serverSideApply }}
           - ServerSideApply=true
-{{- end }}

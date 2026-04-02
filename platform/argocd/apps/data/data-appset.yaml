@@ -15,7 +15,6 @@ spec:
             chartVersion: 0.27.1
             namespace: cnpg-system
             valuesFile: platform/data/cnpg/values.yaml
-            serverSideApply: true
 
           # MinIO: S3-compatible object store for Velero, CNPG WAL, Loki
           - name: minio
@@ -24,7 +23,6 @@ spec:
             chartVersion: 5.4.0
             namespace: minio
             valuesFile: platform/data/minio/values.yaml
-            serverSideApply: false
 
           # Velero: cluster and PVC backup to MinIO; rclone offloads to OneDrive
           - name: velero
@@ -33,7 +31,6 @@ spec:
             chartVersion: 12.0.0
             namespace: velero
             valuesFile: platform/data/velero/values.yaml
-            serverSideApply: true
 
   # Note: longhorn is intentionally kept as a standalone Application (longhorn-app.yaml)
   # because it requires ignoreDifferences for CRD status fields and DaemonSet annotations.
@@ -67,6 +64,4 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=false
-{{- if .serverSideApply }}
           - ServerSideApply=true
-{{- end }}

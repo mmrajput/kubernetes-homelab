@@ -30,3 +30,4 @@ spec:
       selfHeal: true    # Auto-revert manual changes
     syncOptions:
       - CreateNamespace=false
+      - ServerSideApply=true

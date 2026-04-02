@@ -15,7 +15,6 @@ spec:
             chartVersion: v1.16.2
             namespace: cert-manager
             valuesFile: platform/networking/cert-manager/values.yaml
-            serverSideApply: true
             prune: true
 
           # ingress-nginx: NodePort ingress for Cloudflare Tunnel (prune: false — safety)
@@ -25,7 +24,6 @@ spec:
             chartVersion: "4.11.3"
             namespace: ingress-nginx
             valuesFile: platform/networking/nginx-ingress/values.yaml
-            serverSideApply: false
             prune: false
 
   template:
@@ -57,6 +55,4 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=false
-{{- if .serverSideApply }}
           - ServerSideApply=true
-{{- end }}
