@@ -58,3 +58,10 @@ spec:
     # Allow intra-namespace traffic (velero server → node-agent)
     - to:
         - podSelector: {}
+    # Allow rclone CronJob to reach OneDrive (Microsoft Graph API)
+    # rclone syncs MinIO backup buckets to OneDrive nightly at 4 AM.
+    # Broad external HTTPS egress is intentional — Microsoft endpoints
+    # are not enumerable as static IPs.
+    - ports:
+        - port: 443
+          protocol: TCP
