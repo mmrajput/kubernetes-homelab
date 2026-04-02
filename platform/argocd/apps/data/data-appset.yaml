@@ -8,29 +8,45 @@ spec:
   generators:
     - list:
         elements:
+          # --- Helm apps ---
+
           # CloudNativePG: PostgreSQL operator managing keycloak-db, nextcloud-db clusters
           - name: cloudnativepg
-            helmRepoURL: https://cloudnative-pg.github.io/charts
             chart: cloudnative-pg
+            helmRepoURL: https://cloudnative-pg.github.io/charts
             chartVersion: 0.27.1
             namespace: cnpg-system
             valuesFile: platform/data/cnpg/values.yaml
 
           # MinIO: S3-compatible object store for Velero, CNPG WAL, Loki
           - name: minio
-            helmRepoURL: https://charts.min.io
             chart: minio
+            helmRepoURL: https://charts.min.io
             chartVersion: 5.4.0
             namespace: minio
             valuesFile: platform/data/minio/values.yaml
 
           # Velero: cluster and PVC backup to MinIO; rclone offloads to OneDrive
           - name: velero
-            helmRepoURL: https://vmware-tanzu.github.io/helm-charts
             chart: velero
+            helmRepoURL: https://vmware-tanzu.github.io/helm-charts
             chartVersion: 12.0.0
             namespace: velero
             valuesFile: platform/data/velero/values.yaml
+
+          # --- Git-raw apps ---
+
+          # CNPG clusters: keycloak-db, nextcloud-db (staging), nextcloud-prod-db
+          - name: cnpg-clusters
+            path: platform/data/cnpg/clusters
+            namespace: databases
+            recurse: false
+
+          # Rclone CronJob: syncs MinIO velero+cnpg-backups buckets → OneDrive at 04:00 UTC
+          - name: rclone-onedrive-sync
+            path: platform/data/rclone
+            namespace: velero
+            recurse: false
 
   # Note: longhorn is intentionally kept as a standalone Application (longhorn-app.yaml)
   # because it requires ignoreDifferences for CRD status fields and DaemonSet annotations.
@@ -45,6 +61,7 @@ spec:
         - resources-finalizer.argocd.argoproj.io
     spec:
       project: default
+{{- if .chart }}
       sources:
         - repoURL: "{{ .helmRepoURL }}"
           chart: "{{ .chart }}"
@@ -55,6 +72,14 @@ spec:
         - repoURL: https://github.com/mmrajput/kubernetes-homelab
           targetRevision: HEAD
           ref: values
+{{- else }}
+      source:
+        repoURL: https://github.com/mmrajput/kubernetes-homelab
+        targetRevision: HEAD
+        path: "{{ .path }}"
+        directory:
+          recurse: {{ .recurse }}
+{{- end }}
       destination:
         server: https://kubernetes.default.svc
         namespace: "{{ .namespace }}"

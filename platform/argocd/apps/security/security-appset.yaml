@@ -8,10 +8,12 @@ spec:
   generators:
     - list:
         elements:
+          # --- Helm apps ---
+
           # Vault: secret store backend, file storage, standalone mode
           - name: vault
-            helmRepoURL: https://helm.releases.hashicorp.com
             chart: vault
+            helmRepoURL: https://helm.releases.hashicorp.com
             chartVersion: 0.32.0
             namespace: vault
             valuesFile: platform/security/vault/values.yaml
@@ -19,8 +21,8 @@ spec:
 
           # External Secrets Operator: syncs Vault secrets → Kubernetes Secrets
           - name: external-secrets
-            helmRepoURL: https://charts.external-secrets.io
             chart: external-secrets
+            helmRepoURL: https://charts.external-secrets.io
             chartVersion: 2.1.0
             namespace: external-secrets
             valuesFile: platform/security/external-secrets/values.yaml
@@ -28,12 +30,26 @@ spec:
 
           # Keycloak: OIDC identity provider for ArgoCD, Grafana
           - name: keycloak
-            helmRepoURL: https://codecentric.github.io/helm-charts
             chart: keycloakx
+            helmRepoURL: https://codecentric.github.io/helm-charts
             chartVersion: 7.1.9
             namespace: keycloak
             valuesFile: platform/security/keycloak/values.yaml
             retry: false
+
+          # --- Git-raw apps ---
+
+          # ESO ClusterSecretStore: vault-backend pointing to vault.vault.svc.cluster.local
+          - name: external-secrets-config
+            path: platform/security/external-secrets/config
+            namespace: external-secrets
+            recurse: false
+
+          # ExternalSecrets: operators/, databases/, workloads/ — all ESO CRs
+          - name: external-secrets-stores
+            path: platform/security/external-secrets/stores
+            namespace: databases
+            recurse: true
 
   template:
     metadata:
@@ -45,6 +61,7 @@ spec:
         - resources-finalizer.argocd.argoproj.io
     spec:
       project: default
+{{- if .chart }}
       sources:
         - repoURL: "{{ .helmRepoURL }}"
           chart: "{{ .chart }}"
@@ -55,6 +72,14 @@ spec:
         - repoURL: https://github.com/mmrajput/kubernetes-homelab
           targetRevision: HEAD
           ref: values
+{{- else }}
+      source:
+        repoURL: https://github.com/mmrajput/kubernetes-homelab
+        targetRevision: HEAD
+        path: "{{ .path }}"
+        directory:
+          recurse: {{ .recurse }}
+{{- end }}
       destination:
         server: https://kubernetes.default.svc
         namespace: "{{ .namespace }}"

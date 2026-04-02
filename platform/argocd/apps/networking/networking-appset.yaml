@@ -8,10 +8,12 @@ spec:
   generators:
     - list:
         elements:
+          # --- Helm apps ---
+
           # cert-manager: TLS certificate lifecycle via Cloudflare DNS-01
           - name: cert-manager
-            helmRepoURL: https://charts.jetstack.io
             chart: cert-manager
+            helmRepoURL: https://charts.jetstack.io
             chartVersion: v1.16.2
             namespace: cert-manager
             valuesFile: platform/networking/cert-manager/values.yaml
@@ -19,12 +21,21 @@ spec:
 
           # ingress-nginx: NodePort ingress for Cloudflare Tunnel (prune: false — safety)
           - name: ingress-nginx
-            helmRepoURL: https://kubernetes.github.io/ingress-nginx
             chart: ingress-nginx
+            helmRepoURL: https://kubernetes.github.io/ingress-nginx
             chartVersion: "4.11.3"
             namespace: ingress-nginx
             valuesFile: platform/networking/nginx-ingress/values.yaml
             prune: false
+
+          # --- Git-raw apps ---
+
+          # NetworkPolicies: default-deny + allow rules for all platform namespaces
+          - name: network-policies
+            path: platform/networking/network-policies
+            namespace: ingress-nginx
+            recurse: true
+            prune: true
 
   template:
     metadata:
@@ -36,6 +47,7 @@ spec:
         - resources-finalizer.argocd.argoproj.io
     spec:
       project: default
+{{- if .chart }}
       sources:
         - repoURL: "{{ .helmRepoURL }}"
           chart: "{{ .chart }}"
@@ -46,6 +58,14 @@ spec:
         - repoURL: https://github.com/mmrajput/kubernetes-homelab
           targetRevision: HEAD
           ref: values
+{{- else }}
+      source:
+        repoURL: https://github.com/mmrajput/kubernetes-homelab
+        targetRevision: HEAD
+        path: "{{ .path }}"
+        directory:
+          recurse: {{ .recurse }}
+{{- end }}
       destination:
         server: https://kubernetes.default.svc
         namespace: "{{ .namespace }}"
