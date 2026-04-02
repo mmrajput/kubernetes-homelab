@@ -50,9 +50,7 @@ tmp/
 *.log
 
 # Personal docs (not for repo)
-todos.md
 CLAUDE.md
-phase-timeline.md
 
 # Config (local overrides)
 .config/
