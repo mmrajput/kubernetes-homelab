@@ -52,6 +52,14 @@ spec:
       ports:
         - port: 9000
           protocol: TCP
+    # Allow Velero to write backups to MinIO
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: velero
+      ports:
+        - port: 9000
+          protocol: TCP
   egress:
     # Allow intra-namespace traffic (post-install job to MinIO)
     - to:
