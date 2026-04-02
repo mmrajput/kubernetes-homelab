@@ -1,25 +1,29 @@
-# Sensitive files
+# Sensitive files — credentials, keys, certs
 *.key
 *.pem
-*kubeconfig*
-*admin.conf
-secrets/
-.env
+*.crt
+*.csr
+*.p12
+*.pfx
 id_rsa*
 id_ed25519*
-.config/
-**/secrets.yaml
-**/**secret.yaml
+*kubeconfig*
+*admin.conf
+.env
+.env.*
 vault-init.json
+secrets/
+**/secrets.yaml
+**/*secret.yaml
+*cloudflare-secret*
 
 # Ansible
 # Don't commit actual node IPs in inventory (use inventory.example)
 inventory.ini
 *.retry
 .ansible/
-*.log
 
-# Terraform (future)
+# Terraform
 *.tfstate
 *.tfstate.*
 .terraform/
@@ -33,22 +37,24 @@ inventory.ini
 
 # OS
 .DS_Store
+**/.DS_Store
 Thumbs.db
 
-# Temporary files
+# Temporary / build
 tmp/
 *.tmp
+*.bak
 /tmp/kubeadm-join-command.sh
 
 # Logs
 *.log
 
-# Docs
-todos.md
-phase-timeline.md
-.config/
-platform/cert-manager/base/cloudflare-secret.yaml
+# Personal docs (not for repo)
+CLAUDE.md
 
-# Exclude folders
+# Config (local overrides)
+.config/
+
+# Re-include ESO store manifests (not secrets — just ExternalSecret CRs)
 !platform/security/external-secrets/stores/
 !platform/security/external-secrets/stores/**

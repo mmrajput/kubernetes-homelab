@@ -1,0 +1,78 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: networking
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # --- Helm apps ---
+
+          # cert-manager: TLS certificate lifecycle via Cloudflare DNS-01
+          - name: cert-manager
+            chart: cert-manager
+            helmRepoURL: https://charts.jetstack.io
+            chartVersion: v1.16.2
+            namespace: cert-manager
+            valuesFile: platform/networking/cert-manager/values.yaml
+            prune: true
+
+          # ingress-nginx: NodePort ingress for Cloudflare Tunnel (prune: false — safety)
+          - name: ingress-nginx
+            chart: ingress-nginx
+            helmRepoURL: https://kubernetes.github.io/ingress-nginx
+            chartVersion: "4.11.3"
+            namespace: ingress-nginx
+            valuesFile: platform/networking/nginx-ingress/values.yaml
+            prune: false
+
+          # --- Git-raw apps ---
+
+          # NetworkPolicies: default-deny + allow rules for all platform namespaces
+          - name: network-policies
+            path: platform/networking/network-policies
+            namespace: ingress-nginx
+            recurse: true
+            prune: true
+
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: networking
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+{{- if .chart }}
+      sources:
+        - repoURL: "{{ .helmRepoURL }}"
+          chart: "{{ .chart }}"
+          targetRevision: "{{ .chartVersion }}"
+          helm:
+            valueFiles:
+              - "$values/{{ .valuesFile }}"
+        - repoURL: https://github.com/mmrajput/kubernetes-homelab
+          targetRevision: HEAD
+          ref: values
+{{- else }}
+      source:
+        repoURL: https://github.com/mmrajput/kubernetes-homelab
+        targetRevision: HEAD
+        path: "{{ .path }}"
+        directory:
+          recurse: {{ .recurse }}
+{{- end }}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: {{ .prune }}
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+          - ServerSideApply=true

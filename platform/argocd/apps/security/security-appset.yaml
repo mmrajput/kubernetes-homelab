@@ -1,0 +1,100 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: security
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # --- Helm apps ---
+
+          # Vault: secret store backend, file storage, standalone mode
+          - name: vault
+            chart: vault
+            helmRepoURL: https://helm.releases.hashicorp.com
+            chartVersion: 0.32.0
+            namespace: vault
+            valuesFile: platform/security/vault/values.yaml
+            retry: true
+
+          # External Secrets Operator: syncs Vault secrets → Kubernetes Secrets
+          - name: external-secrets
+            chart: external-secrets
+            helmRepoURL: https://charts.external-secrets.io
+            chartVersion: 2.1.0
+            namespace: external-secrets
+            valuesFile: platform/security/external-secrets/values.yaml
+            retry: false
+
+          # Keycloak: OIDC identity provider for ArgoCD, Grafana
+          - name: keycloak
+            chart: keycloakx
+            helmRepoURL: https://codecentric.github.io/helm-charts
+            chartVersion: 7.1.9
+            namespace: keycloak
+            valuesFile: platform/security/keycloak/values.yaml
+            retry: false
+
+          # --- Git-raw apps ---
+
+          # ESO ClusterSecretStore: vault-backend pointing to vault.vault.svc.cluster.local
+          - name: external-secrets-config
+            path: platform/security/external-secrets/config
+            namespace: external-secrets
+            recurse: false
+
+          # ExternalSecrets: operators/, databases/, workloads/ — all ESO CRs
+          - name: external-secrets-stores
+            path: platform/security/external-secrets/stores
+            namespace: databases
+            recurse: true
+
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: security
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+{{- if .chart }}
+      sources:
+        - repoURL: "{{ .helmRepoURL }}"
+          chart: "{{ .chart }}"
+          targetRevision: "{{ .chartVersion }}"
+          helm:
+            valueFiles:
+              - "$values/{{ .valuesFile }}"
+        - repoURL: https://github.com/mmrajput/kubernetes-homelab
+          targetRevision: HEAD
+          ref: values
+{{- else }}
+      source:
+        repoURL: https://github.com/mmrajput/kubernetes-homelab
+        targetRevision: HEAD
+        path: "{{ .path }}"
+        directory:
+          recurse: {{ .recurse }}
+{{- end }}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+          - ServerSideApply=true
+{{- if .retry }}
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+{{- end }}

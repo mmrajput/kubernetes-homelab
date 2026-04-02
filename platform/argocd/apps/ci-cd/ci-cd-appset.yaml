@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ci-cd
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # ARC controller: manages runner scale set lifecycle
+          - name: arc-systems
+            chart: gha-runner-scale-set-controller
+            chartVersion: 0.14.0
+            namespace: arc-systems
+            valuesFile: platform/ci-cd/github-runner/arc-systems-values.yaml
+
+          # ARC runner scale set: homelab-runner, 1–3 replicas, kubernetes container mode
+          - name: arc-runners
+            chart: gha-runner-scale-set
+            chartVersion: 0.14.0
+            namespace: arc-runners
+            valuesFile: platform/ci-cd/github-runner/arc-runners-values.yaml
+
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: ci-cd
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      sources:
+        - repoURL: ghcr.io/actions/actions-runner-controller-charts
+          chart: "{{ .chart }}"
+          targetRevision: "{{ .chartVersion }}"
+          helm:
+            valueFiles:
+              - "$values/{{ .valuesFile }}"
+        - repoURL: https://github.com/mmrajput/kubernetes-homelab
+          targetRevision: HEAD
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+          - ServerSideApply=true

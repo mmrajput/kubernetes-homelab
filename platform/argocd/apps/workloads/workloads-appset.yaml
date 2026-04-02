@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: workloads
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # Homepage: platform dashboard, links to all internal services
+          - name: homepage
+            helmRepoURL: https://jameswynn.github.io/helm-charts
+            chart: homepage
+            chartVersion: 2.1.0
+            namespace: homepage
+            valuesFile: workloads/homepage/values.yaml
+
+          # Nextcloud staging: Nextcloud 33.0.0, 5Gi data, staging CNPG cluster
+          - name: nextcloud-staging
+            helmRepoURL: https://nextcloud.github.io/helm/
+            chart: nextcloud
+            chartVersion: 9.0.4
+            namespace: nextcloud-staging
+            valuesFile: workloads/nextcloud/staging-values.yaml
+
+          # Nextcloud production: Nextcloud 33.0.0, 15Gi data, prod CNPG cluster (2 instances)
+          - name: nextcloud-production
+            helmRepoURL: https://nextcloud.github.io/helm/
+            chart: nextcloud
+            chartVersion: 9.0.4
+            namespace: nextcloud-production
+            valuesFile: workloads/nextcloud/production-values.yaml
+
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: workloads
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      sources:
+        - repoURL: "{{ .helmRepoURL }}"
+          chart: "{{ .chart }}"
+          targetRevision: "{{ .chartVersion }}"
+          helm:
+            valueFiles:
+              - "$values/{{ .valuesFile }}"
+        - repoURL: https://github.com/mmrajput/kubernetes-homelab
+          targetRevision: HEAD
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+          - ServerSideApply=true
