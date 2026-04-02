@@ -20,6 +20,20 @@ Two complementary tools cover all data planes:
 
 CNPG PVCs are excluded from Velero (`backup.velero.io/backup-volumes-excludes: pgdata`) — Barman is the authoritative backup path for all PostgreSQL data.
 
+### Off-cluster copy — OneDrive
+
+A nightly rclone CronJob (4:00 AM, after Velero and Barman complete) syncs both MinIO buckets to OneDrive:
+
+```
+MinIO (in-cluster) → rclone CronJob → OneDrive: homelab-backups/
+                                         ├── velero/
+                                         └── cnpg-backups/
+```
+
+This provides a true off-cluster DR copy. If the cluster and its storage are destroyed, backups are recoverable from OneDrive by restoring the MinIO data directory and pointing Velero/Barman at the restored MinIO instance.
+
+> **Constraint:** rclone syncs files, not S3 objects. Restore from OneDrive requires copying data back to a MinIO instance first, then using Velero/Barman normally. This is not instant — factor in transfer time for large restores.
+
 ---
 
 ## Velero backup schedules

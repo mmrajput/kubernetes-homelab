@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rclone-onedrive-sync
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: rclone-onedrive-sync
+    app.kubernetes.io/part-of: data
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/mmrajput/kubernetes-homelab
+    targetRevision: HEAD
+    path: platform/data/rclone
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: velero
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
