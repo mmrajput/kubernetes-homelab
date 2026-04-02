@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: networking
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # cert-manager: TLS certificate lifecycle via Cloudflare DNS-01
+          - name: cert-manager
+            helmRepoURL: https://charts.jetstack.io
+            chart: cert-manager
+            chartVersion: v1.16.2
+            namespace: cert-manager
+            valuesFile: platform/networking/cert-manager/values.yaml
+            serverSideApply: true
+            prune: true
+
+          # ingress-nginx: NodePort ingress for Cloudflare Tunnel (prune: false — safety)
+          - name: ingress-nginx
+            helmRepoURL: https://kubernetes.github.io/ingress-nginx
+            chart: ingress-nginx
+            chartVersion: "4.11.3"
+            namespace: ingress-nginx
+            valuesFile: platform/networking/nginx-ingress/values.yaml
+            serverSideApply: false
+            prune: false
+
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: networking
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      sources:
+        - repoURL: "{{ .helmRepoURL }}"
+          chart: "{{ .chart }}"
+          targetRevision: "{{ .chartVersion }}"
+          helm:
+            valueFiles:
+              - "$values/{{ .valuesFile }}"
+        - repoURL: https://github.com/mmrajput/kubernetes-homelab
+          targetRevision: HEAD
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: {{ .prune }}
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+{{- if .serverSideApply }}
+          - ServerSideApply=true
+{{- end }}

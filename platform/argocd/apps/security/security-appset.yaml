@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: security
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # Vault: secret store backend, file storage, standalone mode
+          - name: vault
+            helmRepoURL: https://helm.releases.hashicorp.com
+            chart: vault
+            chartVersion: 0.32.0
+            namespace: vault
+            valuesFile: platform/security/vault/values.yaml
+            retry: true
+
+          # External Secrets Operator: syncs Vault secrets → Kubernetes Secrets
+          - name: external-secrets
+            helmRepoURL: https://charts.external-secrets.io
+            chart: external-secrets
+            chartVersion: 2.1.0
+            namespace: external-secrets
+            valuesFile: platform/security/external-secrets/values.yaml
+            retry: false
+
+          # Keycloak: OIDC identity provider for ArgoCD, Grafana
+          - name: keycloak
+            helmRepoURL: https://codecentric.github.io/helm-charts
+            chart: keycloakx
+            chartVersion: 7.1.9
+            namespace: keycloak
+            valuesFile: platform/security/keycloak/values.yaml
+            retry: false
+
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: security
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      sources:
+        - repoURL: "{{ .helmRepoURL }}"
+          chart: "{{ .chart }}"
+          targetRevision: "{{ .chartVersion }}"
+          helm:
+            valueFiles:
+              - "$values/{{ .valuesFile }}"
+        - repoURL: https://github.com/mmrajput/kubernetes-homelab
+          targetRevision: HEAD
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+          - ServerSideApply=true
+{{- if .retry }}
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+{{- end }}

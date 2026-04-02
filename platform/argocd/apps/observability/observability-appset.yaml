@@ -1,0 +1,80 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: observability
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # kube-prometheus-stack: Prometheus, Alertmanager, node-exporter, kube-state-metrics
+          - name: kube-prometheus-stack
+            helmRepoURL: https://prometheus-community.github.io/helm-charts
+            chart: kube-prometheus-stack
+            chartVersion: 65.8.1
+            valuesFile: platform/observability/prometheus/values.yaml
+            serverSideApply: true
+
+          # Grafana: dashboards, OIDC via Keycloak, Prometheus + Loki datasources
+          - name: grafana
+            helmRepoURL: https://grafana.github.io/helm-charts
+            chart: grafana
+            chartVersion: 10.5.15
+            valuesFile: platform/observability/grafana/values.yaml
+            serverSideApply: false
+
+          # Loki: log aggregation, SingleBinary mode, MinIO S3 backend
+          - name: loki
+            helmRepoURL: https://grafana.github.io/helm-charts
+            chart: loki
+            chartVersion: 6.20.0
+            valuesFile: platform/observability/loki/values.yaml
+            serverSideApply: false
+
+          # Promtail: DaemonSet log shipper → Loki
+          - name: promtail
+            helmRepoURL: https://grafana.github.io/helm-charts
+            chart: promtail
+            chartVersion: 6.16.6
+            valuesFile: platform/observability/loki/promtail-values.yaml
+            serverSideApply: false
+
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: observability
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      sources:
+        - repoURL: "{{ .helmRepoURL }}"
+          chart: "{{ .chart }}"
+          targetRevision: "{{ .chartVersion }}"
+          helm:
+            valueFiles:
+              - "$values/{{ .valuesFile }}"
+        - repoURL: https://github.com/mmrajput/kubernetes-homelab
+          targetRevision: HEAD
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: monitoring
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+{{- if .serverSideApply }}
+          - ServerSideApply=true
+{{- end }}
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
