@@ -1,0 +1,97 @@
+# Velero 1.18.0 — backup and DR for the homelab cluster
+# Storage backend: MinIO (s3://velero-backups)
+# File-system backup via kopia (node-agent DaemonSet)
+# CNPG PVCs excluded — CNPG/Barman handles PostgreSQL via WAL archiving
+
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.13.1
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+# Use the ESO-created secret (cloud key in AWS CLI file format)
+credentials:
+  useSecret: true
+  existingSecret: velero-minio-credentials
+
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: velero
+      default: true
+      config:
+        region: minio
+        s3ForcePathStyle: "true"
+        s3Url: http://minio.minio.svc.cluster.local:9000
+        publicUrl: http://minio.minio.svc.cluster.local:9000
+
+  # No CSI volume snapshots — using file-system backup (kopia) for all PVCs
+  volumeSnapshotLocation: []
+
+  # Use kopia for file-system backup (default in Velero 1.14+)
+  defaultBackupStorageLocation: default
+  defaultVolumesToFsBackup: true
+
+# Deploy node-agent DaemonSet required for file-system (kopia) PVC backup
+deployNodeAgent: true
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+nodeAgent:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+schedules:
+  # Schedule 1 — nightly full namespace backup (2:00 AM)
+  # Covers: Kubernetes objects + PVCs for all critical namespaces
+  # CNPG PVCs are excluded via annotation — Barman handles PostgreSQL
+  # Retention: 30 days
+  nightly-full:
+    disabled: false
+    schedule: "0 2 * * *"
+    useOwnerReferencesInBackup: false
+    template:
+      ttl: 720h
+      includedNamespaces:
+        - nextcloud-production
+        - databases
+        - argocd
+        - ingress-nginx
+        - cert-manager
+        - external-secrets
+        - vault
+        - keycloak
+      defaultVolumesToFsBackup: true
+      storageLocation: default
+
+  # Schedule 2 — Nextcloud user files every 6 hours
+  # Higher frequency for user-generated content (uploads, photos, documents)
+  # Targets only Nextcloud pods to avoid full-namespace overhead
+  # Retention: 7 days
+  nextcloud-files:
+    disabled: false
+    schedule: "0 */6 * * *"
+    useOwnerReferencesInBackup: false
+    template:
+      ttl: 168h
+      includedNamespaces:
+        - nextcloud-production
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: nextcloud
+      defaultVolumesToFsBackup: true
+      storageLocation: default
