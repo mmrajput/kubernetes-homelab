@@ -115,3 +115,16 @@ spec:
         syncOptions:
           - CreateNamespace=false
           - ServerSideApply=true
+{{- if eq .name "external-secrets-stores" }}
+      ignoreDifferences:
+        - group: external-secrets.io
+          kind: ExternalSecret
+          jqPathExpressions:
+            - .metadata.finalizers
+            - .spec.target.deletionPolicy
+            - .spec.target.template.engineVersion
+            - .spec.target.template.mergePolicy
+            - .spec.data[].remoteRef.conversionStrategy
+            - .spec.data[].remoteRef.decodingStrategy
+            - .spec.data[].remoteRef.metadataPolicy
+{{- end }}
