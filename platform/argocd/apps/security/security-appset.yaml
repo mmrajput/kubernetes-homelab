@@ -1,15 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: security
+  name: security-helm
   namespace: argocd
 spec:
   goTemplate: true
   generators:
     - list:
         elements:
-          # --- Helm apps ---
-
           # Vault: secret store backend, file storage, standalone mode
           - name: vault
             chart: vault
@@ -17,7 +15,6 @@ spec:
             chartVersion: 0.32.0
             namespace: vault
             valuesFile: platform/security/vault/values.yaml
-            retry: true
 
           # External Secrets Operator: syncs Vault secrets → Kubernetes Secrets
           - name: external-secrets
@@ -26,7 +23,6 @@ spec:
             chartVersion: 2.1.0
             namespace: external-secrets
             valuesFile: platform/security/external-secrets/values.yaml
-            retry: false
 
           # Keycloak: OIDC identity provider for ArgoCD, Grafana
           - name: keycloak
@@ -35,21 +31,6 @@ spec:
             chartVersion: 7.1.9
             namespace: keycloak
             valuesFile: platform/security/keycloak/values.yaml
-            retry: false
-
-          # --- Git-raw apps ---
-
-          # ESO ClusterSecretStore: vault-backend pointing to vault.vault.svc.cluster.local
-          - name: external-secrets-config
-            path: platform/security/external-secrets/config
-            namespace: external-secrets
-            recurse: false
-
-          # ExternalSecrets: operators/, databases/, workloads/ — all ESO CRs
-          - name: external-secrets-stores
-            path: platform/security/external-secrets/stores
-            namespace: databases
-            recurse: true
 
   template:
     metadata:
@@ -61,7 +42,6 @@ spec:
         - resources-finalizer.argocd.argoproj.io
     spec:
       project: default
-{{- if .chart }}
       sources:
         - repoURL: "{{ .helmRepoURL }}"
           chart: "{{ .chart }}"
@@ -72,14 +52,6 @@ spec:
         - repoURL: https://github.com/mmrajput/kubernetes-homelab
           targetRevision: HEAD
           ref: values
-{{- else }}
-      source:
-        repoURL: https://github.com/mmrajput/kubernetes-homelab
-        targetRevision: HEAD
-        path: "{{ .path }}"
-        directory:
-          recurse: {{ .recurse }}
-{{- end }}
       destination:
         server: https://kubernetes.default.svc
         namespace: "{{ .namespace }}"
@@ -90,24 +62,56 @@ spec:
         syncOptions:
           - CreateNamespace=false
           - ServerSideApply=true
-{{- if .retry }}
         retry:
           limit: 5
           backoff:
             duration: 5s
             factor: 2
             maxDuration: 3m
-{{- end }}
-{{- if eq .name "external-secrets-stores" }}
-      ignoreDifferences:
-        - group: external-secrets.io
-          kind: ExternalSecret
-          jqPathExpressions:
-            - .metadata.finalizers
-            - .spec.target.deletionPolicy
-            - .spec.target.template.engineVersion
-            - .spec.target.template.mergePolicy
-            - .spec.data[].remoteRef.conversionStrategy
-            - .spec.data[].remoteRef.decodingStrategy
-            - .spec.data[].remoteRef.metadataPolicy
-{{- end }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: security-git
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # ESO ClusterSecretStore: vault-backend pointing to vault.vault.svc.cluster.local
+          - name: external-secrets-config
+            path: platform/security/external-secrets/config
+            namespace: external-secrets
+
+          # ExternalSecrets: operators/, databases/, workloads/ — all ESO CRs
+          - name: external-secrets-stores
+            path: platform/security/external-secrets/stores
+            namespace: databases
+
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: security
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/mmrajput/kubernetes-homelab
+        targetRevision: HEAD
+        path: "{{ .path }}"
+        directory:
+          recurse: true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+          - ServerSideApply=true
