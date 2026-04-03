@@ -115,7 +115,6 @@ spec:
         syncOptions:
           - CreateNamespace=false
           - ServerSideApply=true
-{{- if eq .name "external-secrets-stores" }}
       ignoreDifferences:
         - group: external-secrets.io
           kind: ExternalSecret
@@ -127,4 +126,3 @@ spec:
             - .spec.data[].remoteRef.conversionStrategy
             - .spec.data[].remoteRef.decodingStrategy
             - .spec.data[].remoteRef.metadataPolicy
-{{- end }}
