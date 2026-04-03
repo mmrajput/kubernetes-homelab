@@ -33,6 +33,7 @@ verify_tool "crictl" "crictl --version"
 verify_tool "jq" "jq --version"
 verify_tool "yq" "yq --version"
 verify_tool "ansible" "ansible --version | head -1"
+verify_tool "python3" "python3 -c 'import diagrams; print(\"diagrams OK\")'"
 
 # Check SSH key mount
 echo ""

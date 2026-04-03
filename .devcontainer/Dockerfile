@@ -19,6 +19,7 @@ ARG ARGOCD_VERSION=2.13.2
 ARG ETCD_VERSION=3.5.17
 ARG CRICTL_VERSION=1.31.1
 ARG YQ_VERSION=4.44.6
+ARG DIAGRAMS_VERSION=0.24.4
 
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -53,6 +54,8 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     # JSON/YAML processing
     jq \
+    # Graphviz (required by diagrams for architecture diagram rendering)
+    graphviz \
     # SSH client
     openssh-client \
     # Additional utilities
@@ -130,6 +133,10 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     ansible-core==2.17.7 \
     kubernetes \
     jmespath
+
+# Install Diagrams (architecture-as-code for portfolio diagrams)
+RUN pip3 install --no-cache-dir --break-system-packages \
+    diagrams==${DIAGRAMS_VERSION}
 
 # Enable bash completion for kubectl
 RUN kubectl completion bash > /etc/bash_completion.d/kubectl
