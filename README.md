@@ -1,4 +1,4 @@
-# Kubernetes Homelab — Platform Engineering Project
+# Kubernetes Homelab — Platform Engineering Foundations
 
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.31-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![Proxmox](https://img.shields.io/badge/Proxmox-VE_8.x-E57000?logo=proxmox&logoColor=white)](https://www.proxmox.com/)
@@ -9,26 +9,75 @@
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-Tunnel_·_Access-F38020?logo=cloudflare&logoColor=white)](https://www.cloudflare.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-
-> **A production-grade 3-node Kubernetes homelab built on Proxmox VE, demonstrating platform engineering through a deliberate sequence: build the platform, secure it, establish identity management, then deploy real-world workloads with automated CI/CD.**
-
-**📄 [→ Download Technical Project Overview (PDF)](PROJECT-OVERVIEW.pdf)**
+> A 3-node Kubernetes homelab on Proxmox VE — kubeadm, Calico, ArgoCD, full observability, secrets management, identity, and stateful workloads.
 
 ---
 
+## What's Next
 
-## Platform Architecture Diagram
+This repo is the **foundation**. The next iteration — [**kubernetes-platform-engineering**](https://github.com/mmrajput/kubernetes-platform-engineering) — rebuilds the platform with enterprise-grade tooling:
 
-![Homelab Logical Architecture](resources/images/platform-architecture.svg)
+- **Talos Linux** (immutable OS, no SSH)
+- **Cilium** with eBPF, kube-proxy replacement, and Gateway API
+- **SPIFFE/SPIRE** for workload identity
+- **vCluster** for staging/production isolation
+- **ArgoCD Hub** multi-cluster GitOps
 
 ---
 
-## Project Objective
+## Architecture
 
-This homelab demonstrates production-ready platform engineering through hands-on implementation rather than theoretical knowledge. Every phase produces working infrastructure with documented architectural decisions, following the same engineering standards expected in professional environments.
+![Platform Architecture](resources/images/platform-architecture.png)
 
-The project targets roles in **Platform Engineering, DevOps, and SRE**, with particular interest in companies operating Kubernetes at scale for example in manufacturing, mobility, energy or e-commerce sector.
+### Legends
+- Grey solid                User request traffic (Cloudflare → ingress → workload)
+- Grey dashed               Backup and DR flows (Velero → MinIO → rclone → OneDrive)
+- Blue dashed               GitOps reconciliation (GitHub → ArgoCD → cluster)
+- Purple dashed             TLS certificate issuance and SSO authentication
+- Red dashed                Secret injection (Vault → ESO → workloads)
+- Green dashed              Metrics scraping and log shipping (Promtail → Loki)
+- Green solid               Dashboard query flows (Grafana → Prometheus / Loki)
+---
 
+The diagram above illustrates the full platform architecture of the Kubernetes Homelab, deployed on a three-node kubeadm v1.31 cluster with Calico CNI. The platform is organised into six functional concern groups, all managed declaratively via GitOps.
+
+### External Layer
+The platform engineer interacts with the cluster exclusively through Git. Code changes are pushed to GitHub (github.com/mmrajput), which triggers the CI/CD pipeline. All external access to cluster services is routed through Cloudflare Tunnel / DNS, providing secure ingress without exposing ports directly to the internet. Cloudflare also handles DNS-01 certificate challenges for TLS automation.
+
+### Networking · TLS · GitOps managed
+ingress-nginx serves as the cluster ingress controller, routing external traffic to internal services. cert-manager, integrated with Cloudflare DNS-01, automates TLS certificate issuance and renewal for all exposed endpoints. This layer is fully GitOps managed.
+
+### CI/CD · GitOps managed
+ARC (Actions Runner Controller) provides self-hosted GitHub Actions runners inside the cluster, operating in webhook-based scale-to-zero mode. ArgoCD operates in poll-based mode, continuously reconciling cluster state against the Git repository. ARC runners handle image builds and promotion; ArgoCD handles all Kubernetes resource reconciliation. The two work in concert: CI produces and promotes artifacts, ArgoCD detects the Git change and syncs the cluster.
+
+### Workloads · GitOps managed
+Nextcloud is the primary platform workload, deployed for sovereign file sharing. It connects to the data/storage layer via Longhorn for persistent volume storage and to the security layer for SSO via Keycloak. Nextcloud exercises all platform layers simultaneously: storage, identity, secrets, observability, backup, and networking.
+
+### Data · Storage · Backup · GitOps managed
+This is the most interconnected layer of the platform:
+
+Longhorn v1.7.2 (RF=2) is the default StorageClass, providing replicated block storage across worker nodes.
+CloudNativePG (CNPG) manages PostgreSQL clusters for stateful workloads. It ships WAL archives continuously to MinIO via Barman, enabling point-in-time recovery.
+MinIO (S3-compatible) serves as the central object store, backing Loki log storage, Velero backup storage, and CNPG WAL archiving.
+Velero handles filesystem-level backup of persistent volumes (via Kopia as the backup uploader), storing snapshots in MinIO.
+Redis provides caching and file-locking for Nextcloud.
+A scheduled CronJob runs rclone to sync MinIO data offsite to OneDrive, providing a 3-2-1 backup posture with an offsite DR copy.
+
+### Security · Identity · GitOps managed
+
+HashiCorp Vault (KV v2) is the secrets backend, storing all platform secrets under component-namespaced paths.
+External Secrets Operator (ESO) bridges Vault and Kubernetes, synchronising secrets into the appropriate namespaces as native Kubernetes Secret objects.
+Keycloak 26 (SSO / OIDC) provides centralised identity for the platform, with SSO integrated across ArgoCD, Grafana, and Nextcloud via the homelab realm.
+
+### Observability · GitOps managed
+
+Prometheus & Alertmanager scrape metrics from all platform components and manage alerting rules.
+Grafana visualises metrics from Prometheus and log data from Loki on unified dashboards.
+Loki aggregates logs from across the cluster, backed by MinIO for durable log chunk storage.
+Promtail (deployed as a DaemonSet) runs on every node, collecting and shipping container and system logs to Loki.
+
+### Data Flow Summary
+Traffic enters via Cloudflare → ingress-nginx → workloads. Secrets flow from Vault → ESO → Kubernetes Secrets → workloads. Persistent data is stored on Longhorn, with databases managed by CNPG writing WAL to MinIO. Backups flow from workloads → Velero (Kopia) → MinIO → rclone → OneDrive. Metrics flow from all components → Prometheus → Grafana. Logs flow from all nodes → Promtail → Loki (MinIO-backed) → Grafana.
 ---
 
 ## Current Status
@@ -42,192 +91,48 @@ The project targets roles in **Platform Engineering, DevOps, and SRE**, with par
 | Phase 4 | Kubernetes Cluster (kubeadm + Calico) | ✅ Complete |
 | Phase 5 | GitOps & Platform Services (ArgoCD) | ✅ Complete |
 | Phase 6 | Observability Stack (Prometheus + Loki + Grafana) | ✅ Complete |
-| Phase 7 | Security Hardening (cert-manager + NetworkPolicies + Falco) | 🔄 In Progress |
-| Phase 8 | Storage & Backup (Longhorn + MinIO) | ⏳ Planned |
-| Phase 9 | Stateful Applications & Identity (Keycloak + CloudNativePG) | ⏳ Planned |
-| Phase 10 | CI/CD Pipeline & Applications | ⏳ Planned |
-
-> **Post-CKA:** Advanced Networking (Cilium), Distributed Tracing (Tempo), Microservices (Online Boutique + Istio), Chaos Engineering
+| Phase 7 | Security Hardening (cert-manager + NetworkPolicies + Vault + ESO) | ✅ Complete |
+| Phase 8 | Storage & Backup (Longhorn + MinIO + Velero) | ✅ Complete |
+| Phase 9 | Identity & Stateful Workloads (Keycloak + CloudNativePG + Nextcloud) | ✅ Complete |
+| Phase 10 | CI/CD Pipeline (ARC + GitHub Actions) | ✅ Complete |
 
 ---
 
 ## Platform Stack
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| Hardware | Beelink SER5 Pro | AMD Ryzen 5 5500U · 32GB RAM · 500GB NVMe |
-| Hypervisor | Proxmox VE 8.x | Type-1 virtualization · LVM-thin · vmbr0 |
-| OS | Ubuntu 24.04 LTS | All VM nodes · cloud-init provisioned |
-| Container Runtime | containerd | CRI implementation |
-| Kubernetes | v1.31 · kubeadm | 3-node cluster · 1 control plane · 2 workers |
-| CNI | Calico | Pod networking · NetworkPolicy enforcement |
-| GitOps | ArgoCD | App-of-Apps pattern · Self-managed config |
-| Ingress | nginx-ingress | NodePort 30080/30443 · Hostname routing |
-| Observability | Prometheus · Grafana · Loki | Metrics · Dashboards · Log aggregation |
-| Security | cert-manager · Falco · kube-bench | TLS · Runtime security · CIS benchmarks |
-| Identity | Keycloak · CloudNativePG | OIDC SSO · PostgreSQL lifecycle management |
-| Storage | Longhorn · MinIO · local-path | Distributed PVs · S3 backup · Dev cache |
-| External Access | Cloudflare Tunnel · Access · WAF | Zero-trust · No open inbound ports |
-| IaC | Ansible | Idempotent cluster provisioning |
-| Applications | Wiki.js · Production Workloads | Knowledge management · Others|
-| CI/CD | GitHub Actions · ghcr.io · ArgoCD | Full GitOps promotion pipeline |
-
----
-
-## Key Design Principles
-
-**Security before stateful workloads.** TLS termination, NetworkPolicies with default-deny, RBAC hardening, and Falco runtime security are all in place before any database or application workload is deployed. Security retrofitting is exponentially more expensive than building it in.
-
-**GitOps-first operations.** Every change flows through Git — no manual `kubectl apply` in the platform layer. ArgoCD manages itself via the App-of-Apps pattern, and all platform services are declaratively defined.
-
-**Observability before complexity.** The full metrics, logging, and alerting stack was established in Phase 6, before any complex workloads were introduced. You cannot debug what you cannot observe.
-
-**Manual understanding before automation.** PostgreSQL StatefulSets were built manually before adopting the CloudNativePG operator. Understanding the underlying primitives is what enables effective troubleshooting when operators fail.
-
-**Enterprise pattern mapping.** Every component maps to a production equivalent. 
-Proxmox → VMware vSphere,
-kubeadm cluster → EKS/AKS,
-Cloudflare Tunnel → Zscaler Private Access,
-CloudNativePG → RDS with automated failover.
+| Layer | Technology |
+|-------|------------|
+| Hypervisor | Proxmox VE 8.x |
+| OS | Ubuntu 24.04 LTS · cloud-init |
+| Kubernetes | v1.31 · kubeadm · 1 control plane · 2 workers |
+| CNI | Calico |
+| GitOps | ArgoCD (App-of-Apps) |
+| Ingress | nginx-ingress · Cloudflare Tunnel |
+| Observability | Prometheus · Grafana · Loki · Promtail |
+| Security | cert-manager · Vault · External Secrets Operator · Falco |
+| Identity | Keycloak · CloudNativePG |
+| Storage | Longhorn · MinIO · Velero |
+| CI/CD | GitHub Actions ARC · ghcr.io |
+| Workloads | Nextcloud · Homepage |
 
 ---
 
 ## Repository Structure
 
 ```
-kubernetes-homelab/
-├── .devcontainer/              # Reproducible dev environment (kubectl, helm, k9s)
-├── .config/                    # Tool configurations (k9s, helm)
-│
-├── apps/                       # Application deployments (Phase 10)
-│   ├── nextcloud/              # Data Platform
-│   └── wikijs/                 # Knowledge management
-│
-├── docs/
-│   ├── adr/                    # Architecture Decision Records
-│   ├── architecture/           # Design documentation & diagrams
-│   ├── guides/                 # Setup and operational guides
-│   └── runbooks/               # Operational procedures & troubleshooting
-│
-├── infra/
-│   ├── ansible/                # Kubernetes cluster provisioning
-│   └── proxmox/                # VM templates and cloud-init scripts
-│
-├── platform/
-│   ├── argocd/                 # GitOps configuration & App-of-Apps
-│   ├── cert-manager/           # TLS certificate management (Phase 7)
-│   ├── cloudnativepg/          # PostgreSQL operator configuration (Phase 9)
-│   ├── grafana/                # Dashboards
-│   ├── keycloak/               # Identity provider (Phase 9)
-│   ├── longhorn/               # Distributed storage (Phase 8)
-│   ├── loki/                   # Log aggregation
-│   ├── minio/                  # S3-compatible object storage (Phase 8)
-│   ├── nginx-ingress/          # Ingress controller
-│   └── prometheus/             # Metrics & alerting
-│
-├── resources/                  # Static assets & architecture diagrams
-│   └── images/
-│
-└── scripts/                    # Automation helpers
+bootstrap/namespaces/    # One-time namespace setup (kubectl apply, not ArgoCD)
+platform/
+  argocd/               # Root app + AppSets per category
+  networking/           # cert-manager, nginx-ingress, NetworkPolicies
+  security/             # Vault, Keycloak, External Secrets
+  data/                 # CNPG clusters, Longhorn, MinIO, Velero, rclone
+  observability/        # Prometheus, Grafana, Loki, Promtail
+  ci-cd/                # ARC systems + runners
+workloads/              # Helm values per app (staging / production)
+infra/                  # Ansible + Proxmox scripts
+docs/                   # ADRs, guides, runbooks, reference
+scripts/                # Dev shell, diagrams, helpers
 ```
-
----
-
-## GitOps Workflow
-
-All platform services are managed through ArgoCD with the App-of-Apps pattern. No manual `kubectl apply` in the platform layer — every change is a Git commit.
-
-```
-GitHub Repository
-       │
-       │  git push
-       ▼
-  root-app.yaml  (Bootstrap)
-       │
-       └── watches: platform/argocd/apps/
-               ├── argocd-app.yaml          → ArgoCD self-manages
-               ├── nginx-ingress-app.yaml   → Ingress controller
-               ├── observability-app.yaml   → Prometheus + Grafana + Loki
-               ├── cert-manager-app.yaml    → TLS automation
-               ├── longhorn-app.yaml        → Distributed storage
-               ├── keycloak-app.yaml        → Identity provider
-               └── apps-app.yaml            → Application workloads
-```
-
-**Promotion pipeline:** `git commit` → ArgoCD detects change → syncs to cluster → health check → done.
-
----
-
-## CI/CD Pipeline (Phase 10)
-
-```
-Code Push → GitHub Actions → Trivy Scan → ghcr.io → Helm Values Update → ArgoCD Sync
-                                  │
-                          Block on HIGH/CRITICAL CVEs
-```
-
-Branch-based promotion: `main` branch deploys to staging namespace, Git tags promote to production namespace. Self-hosted GitHub Actions runner runs as a pod inside the cluster.
-
----
-
-## Network Topology
-
-| Component | IP Address | Role |
-|-----------|------------|------|
-| Proxmox Host | 192.168.178.33 | Type-1 Hypervisor |
-| k8s-cp-01 | 192.168.178.34 | Control Plane · 6GB RAM · 3 vCPU |
-| k8s-worker-01 | 192.168.178.35 | Worker Node · 7GB RAM · 3 vCPU |
-| k8s-worker-02 | 192.168.178.36 | Worker Node · 7GB RAM · 3 vCPU |
-
-**External access:** Cloudflare Tunnel — no open inbound ports on the router. Public services are authenticated via Cloudflare Access before traffic reaches the cluster.
-
----
-
-## Quick Start
-
-### Prerequisites
-
-- Git
-- VS Code with Dev Containers extension
-- SSH access to Proxmox host
-
-### Clone and Setup
-
-```bash
-git clone https://github.com/mmrajput/kubernetes-homelab.git
-cd kubernetes-homelab
-
-# Open in DevContainer (recommended)
-code .
-# Select "Reopen in Container" when prompted
-
-# Verify tools
-./scripts/verify-tools.sh
-
-# Configure cluster access
-export KUBECONFIG=~/.kube/config
-kubectl get nodes
-```
-
-### Access Platform Services
-
-```bash
-# Add to /etc/hosts (Windows: C:\Windows\System32\drivers\etc\hosts)
-192.168.178.34  argocd.homelab.local
-192.168.178.34  grafana.homelab.local
-192.168.178.34  prometheus.homelab.local
-
-# ArgoCD admin password
-kubectl -n platform get secret argocd-initial-admin-secret \
-  -o jsonpath="{.data.password}" | base64 -d
-```
-
-| Service | URL |
-|---------|-----|
-| ArgoCD | `https://argocd.homelab.local` |
-| Grafana | `https://grafana.homelab.local` |
-| Prometheus | `https://prometheus.homelab.local` |
-| Kubernetes API | `https://192.168.178.34:6443` |
 
 ---
 
@@ -235,27 +140,14 @@ kubectl -n platform get secret argocd-initial-admin-secret \
 
 | Document | Description |
 |----------|-------------|
-| [Architecture Decisions](docs/adr/) | ADRs with context, trade-offs, and rationale |
-| [Network Topology](docs/architecture/network-topology.md) | Network design and IP allocation |
-
----
-
-## Enterprise Pattern Mapping
-
-| Homelab Implementation | Enterprise Equivalent |
-|------------------------|----------------------|
-| Proxmox VE | VMware vSphere / AWS EC2 |
-| kubeadm cluster | EKS / AKS / GKE |
-| Calico CNI | Cilium / AWS VPC CNI |
-| Cloudflare Tunnel + Access | Zscaler Private Access / BeyondCorp |
-| cert-manager + DNS-01 | Internal PKI / AWS ACM |
-| ArgoCD App-of-Apps | ArgoCD / Flux CD at scale |
-| CloudNativePG | RDS with Multi-AZ / Azure Database |
-| Longhorn | EBS CSI / Azure Disk / Ceph |
-| MinIO | AWS S3 / Azure Blob Storage |
-| Keycloak | Okta / Azure AD / Auth0 |
-| Falco | Aqua Security / Sysdig |
-| GitHub Actions + self-hosted runner | Jenkins / GitLab CI on Kubernetes |
+| [Reproduction Guide](docs/guides/homelab-reproduction-guide.md) | End-to-end guide to reproduce this homelab from scratch |
+| [Platform Inventory](docs/reference/platform-inventory.md) | Service endpoints, ArgoCD app inventory |
+| [Workload Onboarding](docs/reference/workload-onboarding.md) | Step-by-step guide for adding workloads |
+| [Data Layer](docs/reference/data-layer.md) | CNPG, Vault, ESO secrets inventory |
+| [Network Topology](docs/architecture/network-topology.md) | Network architecture, Calico, Cloudflare Tunnel, NetworkPolicy |
+| [Architecture Decisions](docs/adr/) | ADRs 001–016 with context and rationale |
+| [Troubleshooting](docs/guides/troubleshooting.md) | Platform-level troubleshooting across all components |
+| [Runbooks](docs/runbooks/) | Operational procedures (backup, DR, Vault, certificates) |
 
 ---
 
@@ -266,4 +158,4 @@ kubectl -n platform get secret argocd-initial-admin-secret \
 
 ---
 
-*Last updated: 25 February 2026 · Altdorf 71155, Germany*
+*Last updated: April 2026 · Altdorf 71155, Germany*
