@@ -3,6 +3,8 @@
 # App:   Nextcloud 33.0.0
 # Repo:  https://nextcloud.github.io/helm/
 
+replicaCount: 0
+
 image:
   tag: "33.0.0"
   pullPolicy: IfNotPresent
