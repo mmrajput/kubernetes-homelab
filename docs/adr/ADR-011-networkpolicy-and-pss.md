@@ -13,7 +13,7 @@ After deploying the core platform stack, the cluster had no network isolation be
 
 Two complementary controls were needed: NetworkPolicies to restrict traffic flow, and Pod Security Standards (PSS) to restrict what containers can do on the host.
 
-For implementation detail, commands, and troubleshooting see `docs/guide/security-hardening.md`.
+For implementation detail, commands, and troubleshooting see `docs/guides/security-hardening-guide.md`.
 
 ---
 
