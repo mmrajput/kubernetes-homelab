@@ -43,7 +43,8 @@ The diagram above illustrates the full platform architecture of the Kubernetes H
 
 ### External Layer
 - The platform engineer interacts with the cluster exclusively through Git — all changes are commits, never direct `kubectl apply`
-- Code pushed to GitHub triggers the CI/CD pipeline via ARC self-hosted runners
+- Code changes are pushed to GitHub as the single source of truth — ArgoCD reconciles the cluster state from there continuously
+- Image promotion workflows are triggered manually via GitHub Actions, executed by ARC self-hosted runners running inside the cluster
 - All external access is routed through **Cloudflare Tunnel**, providing secure ingress without any open inbound ports on the home network
 - Cloudflare DNS handles DNS-01 challenges for automated TLS certificate issuance via cert-manager
 
