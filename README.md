@@ -48,7 +48,7 @@ The platform engineer interacts with the cluster exclusively through Git. Code c
 ingress-nginx serves as the cluster ingress controller, routing external traffic to internal services. cert-manager, integrated with Cloudflare DNS-01, automates TLS certificate issuance and renewal for all exposed endpoints. This layer is fully GitOps managed.
 
 ### CI/CD · GitOps managed
-ARC (Actions Runner Controller) provides self-hosted GitHub Actions runners inside the cluster, operating in webhook-based scale-to-zero mode. ArgoCD operates in poll-based mode, continuously reconciling cluster state against the Git repository. ARC runners handle image builds and promotion; ArgoCD handles all Kubernetes resource reconciliation. The two work in concert: CI produces and promotes artifacts, ArgoCD detects the Git change and syncs the cluster.
+ARC (Actions Runner Controller) provides self-hosted GitHub Actions runners inside the cluster, operating in webhook-based scale-to-zero mode. ArgoCD operates in poll-based mode, continuously reconciling cluster state against the Git repository. ARC runners pull upstream images from Docker Hub, scan them with Trivy, mirror them to ghcr.io via crane, and update the pinned image tag in the Git values file. ArgoCD detects the tag change and syncs the cluster — no custom images are built.
 
 ### Workloads · GitOps managed
 Nextcloud is the primary platform workload, deployed for sovereign file sharing. It connects to the data/storage layer via Longhorn for persistent volume storage and to the security layer for SSO via Keycloak. Nextcloud exercises all platform layers simultaneously: storage, identity, secrets, observability, backup, and networking.
