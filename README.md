@@ -67,7 +67,7 @@ A scheduled CronJob runs rclone to sync MinIO data offsite to OneDrive, providin
 
 HashiCorp Vault (KV v2) is the secrets backend, storing all platform secrets under component-namespaced paths.
 External Secrets Operator (ESO) bridges Vault and Kubernetes, synchronising secrets into the appropriate namespaces as native Kubernetes Secret objects.
-Keycloak 26 (SSO / OIDC) provides centralised identity for the platform, with SSO integrated across ArgoCD, Grafana, and Nextcloud via the homelab realm.
+Keycloak 26 (SSO / OIDC) provides centralised identity for the platform, with SSO integrated across ArgoCD and Grafana via the homelab realm. Nextcloud SSO is configured in the production instance via the Nextcloud Admin UI using the `user_oidc` app — it is not managed through the Helm chart.
 
 ### Observability · GitOps managed
 
