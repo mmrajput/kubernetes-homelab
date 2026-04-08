@@ -77,7 +77,17 @@ Loki aggregates logs from across the cluster, backed by MinIO for durable log ch
 Promtail (deployed as a DaemonSet) runs on every node, collecting and shipping container and system logs to Loki.
 
 ### Data Flow Summary
-Traffic enters via Cloudflare → ingress-nginx → workloads. Secrets flow from Vault → ESO → Kubernetes Secrets → workloads. Persistent data is stored on Longhorn, with databases managed by CNPG writing WAL to MinIO. Backups flow from workloads → Velero (Kopia) → MinIO → rclone → OneDrive. Metrics flow from all components → Prometheus → Grafana. Logs flow from all nodes → Promtail → Loki (MinIO-backed) → Grafana.
+
+| Flow | Path |
+|------|------|
+| External traffic | Cloudflare → cloudflared → nginx-ingress → workloads |
+| Secrets | Vault → ESO → Kubernetes Secrets → workloads |
+| User files | Workloads → Longhorn PVC |
+| Database | CNPG (PostgreSQL) → WAL archiving → MinIO |
+| Backup | Velero (Kopia) → MinIO · CNPG Barman → MinIO |
+| Offsite DR | MinIO → rclone → OneDrive |
+| Metrics | All components → Prometheus → Grafana |
+| Logs | All nodes → Promtail → Loki (MinIO-backed) → Grafana |
 ---
 
 ## Current Status
