@@ -51,7 +51,7 @@ ingress-nginx serves as the cluster ingress controller, routing external traffic
 ARC (Actions Runner Controller) provides self-hosted GitHub Actions runners inside the cluster, operating in webhook-based scale-to-zero mode. ArgoCD operates in poll-based mode, continuously reconciling cluster state against the Git repository. ARC runners pull upstream images from Docker Hub, scan them with Trivy, mirror them to ghcr.io via crane, and update the pinned image tag in the Git values file. ArgoCD detects the tag change and syncs the cluster — no custom images are built.
 
 ### Workloads · GitOps managed
-Nextcloud is the primary platform workload, deployed for sovereign file sharing. It connects to the data/storage layer via Longhorn for persistent volume storage and to the security layer for SSO via Keycloak. Nextcloud exercises all platform layers simultaneously: storage, identity, secrets, observability, backup, and networking.
+Nextcloud is the primary platform workload, deployed for sovereign file sharing. It integrates with three data-layer services, each serving a distinct purpose: **CloudNativePG** manages the PostgreSQL database that stores Nextcloud's metadata, user accounts, and application state; **Longhorn** provides the replicated persistent volume for user file storage; and **Redis** handles session caching and file-locking to prevent write conflicts under concurrent access. SSO is provided by Keycloak. Nextcloud was chosen as the reference workload because it exercises every platform layer simultaneously — storage, databases, identity, secrets, observability, backup, and networking.
 
 ### Data · Storage · Backup · GitOps managed
 This is the most interconnected layer of the platform:
