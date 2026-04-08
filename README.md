@@ -81,7 +81,7 @@ Promtail (deployed as a DaemonSet) runs on every node, collecting and shipping c
 | Flow | Path |
 |------|------|
 | External traffic | Cloudflare → cloudflared → nginx-ingress → workloads |
-| Secrets | Vault → ESO → Kubernetes Secrets → workloads |
+| Secrets | Vault → ESO → Kubernetes Secrets → workloads · databases · platform services |
 | User files | Workloads → Longhorn PVC |
 | Database | CNPG (PostgreSQL) → WAL archiving → MinIO |
 | Backup | Velero (Kopia) → MinIO · CNPG Barman → MinIO |
