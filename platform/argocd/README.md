@@ -1,198 +1,179 @@
 # ArgoCD
 
+GitOps continuous delivery for the homelab cluster, implementing the App-of-Apps pattern.
+
 ## Overview
 
-ArgoCD provides GitOps-based continuous delivery for the homelab Kubernetes cluster. It implements the App-of-Apps pattern for scalable, declarative management of all platform services.
+| Property | Value |
+|----------|-------|
+| Chart | argo-cd 9.3.0 |
+| App version | ArgoCD 3.2.3 |
+| Namespace | `argocd` |
+| Install method | Raw upstream manifest (not Helm) |
+| URL | argocd.mmrajputhomelab.org |
+| Sync interval | 120s (poll) |
 
 ## App-of-Apps Architecture
+
 ```
-root-app (bootstrap, manually applied once)
+root-app.yaml  (applied manually once via kubectl)
     │
-    └── watches: platform/argocd/apps/
+    └── watches platform/argocd/apps/ (all subdirs)
             │
-            ├── argocd-app.yaml ──────────────▶ ArgoCD (self-managed)
-            ├── nginx-ingress-app.yaml ───────▶ nginx-ingress controller
-            └── kube-prometheus-stack-app.yaml ▶ Prometheus, Grafana, AlertManager
+            ├── networking/   ── cert-manager, ingress-nginx, network-policies
+            ├── security/     ── vault, external-secrets, keycloak
+            ├── data/         ── cnpg, longhorn, minio, velero, rclone
+            ├── observability/ ─ prometheus, grafana, loki, promtail
+            ├── ci-cd/        ── arc-systems, arc-runners
+            └── workloads/    ── workloads-appset (ApplicationSet)
 ```
 
-**How it works:**
-1. `root-app` monitors `platform/argocd/apps/` directory in Git
-2. Any `*.yaml` file added to that directory becomes an ArgoCD Application
-3. ArgoCD deploys and manages the corresponding service
-4. Changes to Git automatically sync to cluster
+Every `*.yaml` file added to `platform/argocd/apps/` is automatically discovered and deployed by ArgoCD. No manual sync required.
 
----
+## Application Conventions
 
-## Configuration
+All platform applications follow these settings:
 
-### Helm Values (`argocd/values.yaml`)
-
-All ArgoCD configuration is consolidated in a single values file, including ingress settings.
-
-Key configurations:
 ```yaml
-server:
-  ingress:
-    enabled: true                    # Managed by Helm
-    ingressClassName: nginx
-    hostname: argocd.homelab.local
-  extraArgs:
-    - --insecure                     # TLS terminated at ingress
-
-controller:
-  extraArgs:
-    - --app-resync=120               # Sync every 2 minutes
+metadata:
+  namespace: argocd                     # All apps live in argocd namespace
+spec:
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true                    # ArgoCD corrects manual drift
+    syncOptions:
+      - CreateNamespace=false           # Namespaces managed via bootstrap/
+  sources:
+    - repoURL: <helm-chart-repo>
+      chart: <chart>
+      targetRevision: <pinned-version>
+      helm:
+        valueFiles:
+          - $values/platform/<layer>/<service>/values.yaml
+    - repoURL: https://github.com/mmrajput/kubernetes-homelab-01
+      targetRevision: HEAD
+      ref: values                       # Multi-source: chart + Git values
 ```
 
-**Resource limits:**
-- Server: 100m-500m CPU, 128Mi-512Mi memory
-- Repo Server: 100m-500m CPU, 128Mi-512Mi memory  
-- Controller: 250m-1000m CPU, 512Mi-1Gi memory
-
-### Self-Management Settings (`apps/argocd-app.yaml`)
-```yaml
-syncPolicy:
-  automated:
-    prune: false        # Prevent accidental deletion
-    selfHeal: true      # Auto-correct drift
-```
+`ServerSideApply=true` is added for CRD-heavy operators: CNPG, ESO, ARC.
 
 ## Common Operations
 
-### View Sync Status
 ```bash
-# CLI
+# List all applications
 argocd app list
-argocd app get argocd
 
-# Or use Web UI at http://argocd.homelab.local
+# Check a specific app
+argocd app get <app-name>
+
+# Force hard refresh (re-read from Git immediately)
+kubectl annotate application <app-name> -n argocd \
+  argocd.argoproj.io/refresh=hard --overwrite
+
+# Disable selfHeal before a manual fix
+kubectl patch application <app-name> -n argocd \
+  --type merge \
+  -p '{"spec":{"syncPolicy":{"automated":{"prune":true,"selfHeal":false}}}}'
+
+# Re-enable selfHeal after fix
+kubectl patch application <app-name> -n argocd \
+  --type merge \
+  -p '{"spec":{"syncPolicy":{"automated":{"prune":true,"selfHeal":true}}}}'
 ```
 
-### Manual Sync
+## Access
+
+**Web UI:** argocd.mmrajputhomelab.org (SSO via Keycloak, `argocd-admins` group)
+
+**Port-forward fallback (if ingress is down):**
 ```bash
-# Sync specific application
-argocd app sync nginx-ingress
-
-# Sync all applications
-argocd app sync --all
-```
-
-### Refresh from Git
-```bash
-argocd app refresh argocd
-```
-
-### View Application Logs
-```bash
-kubectl logs -n platform deployment/argocd-server
-kubectl logs -n platform statefulset/argocd-application-controller
-```
-
-### Access UI Without Ingress (Port-Forward)
-```bash
-# If ingress is down, use port-forward
-kubectl port-forward svc/argocd-server -n platform 8080:80
-
-# Access at http://localhost:8080
-# Get admin password:
-kubectl get secret argocd-initial-admin-secret -n platform -o jsonpath="{.data.password}" | base64 -d && echo
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+# https://localhost:8080
+# Initial admin password:
+kubectl get secret argocd-initial-admin-secret -n argocd \
+  -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
 ## Troubleshooting
 
-### Application Stuck in "Progressing"
+### Application stuck in Progressing
+
 ```bash
-# Check application status
 argocd app get <app-name>
-
-# Check events
-kubectl describe application <app-name> -n platform
-
-# Check controller logs
-kubectl logs -n platform statefulset/argocd-application-controller --tail=50
+kubectl describe application <app-name> -n argocd
+kubectl logs -n argocd -l app.kubernetes.io/name=argocd-application-controller --tail=50
 ```
 
-### Sync Failed
+### Sync failed
+
 ```bash
-# View sync details
+# Dry-run to see what ArgoCD would apply
 argocd app sync <app-name> --dry-run
 
-# Check for resource conflicts
-kubectl get events -n <app-namespace> --sort-by='.lastTimestamp'
-
-# Common issue: duplicate ingress resources
-kubectl get ingress -A | grep <hostname>
+# Check events in target namespace
+kubectl get events -n <namespace> --sort-by='.lastTimestamp'
 ```
 
-### Cannot Access UI
+### selfHeal deadlock (manual apply reverts immediately)
+
 ```bash
-# Verify pods running
-kubectl get pods -n platform
-
-# Check ingress (should be in argocd namespace)
-kubectl get ingress -n platform
-
-# Verify service
-kubectl get svc -n platform argocd-server
-
-# Test from within cluster
-kubectl run curl --image=curlimages/curl -it --rm -- \
-  curl -s http://argocd-server.argocd.svc.cluster.local
-
-# If ingress exists but not working, check nginx-ingress controller
-kubectl get pods -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx
-kubectl logs -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx --tail=50
+# Disable selfHeal, fix the resource, re-enable (see Common Operations above)
 ```
 
-### Ingress Conflicts
+### Finalizer blocking deletion
 
-If you see validation webhook errors about duplicate ingress:
 ```bash
-# List all ingress resources
-kubectl get ingress -A
-
-# Delete old manual ingress if it exists
-kubectl delete ingress <old-ingress-name> -n <namespace>
-
-# Sync ArgoCD to recreate Helm-managed ingress
-argocd app sync argocd
+kubectl patch application <app-name> -n argocd \
+  --type json \
+  -p '[{"op":"remove","path":"/metadata/finalizers"}]'
+kubectl delete application <app-name> -n argocd
 ```
+
+### Nil pointer dereference on sync
+
+ArgoCD v3.2.3 triggers a nil pointer error when syncing Namespace resources. Namespaces are managed via `bootstrap/namespaces/` — never via ArgoCD.
+
+### API timeout during sync (NetworkPolicy deadlock)
+
+Check that the `argocd` namespace NetworkPolicy allows egress to both Kubernetes API IPs:
+- `10.96.0.1/32:443` (ClusterIP)
+- `192.168.178.34:6443` (control plane, post-Calico DNAT)
+
+See `platform/networking/network-policies/argocd-netpol.yaml`.
 
 ## Bootstrap Recovery
 
-If ArgoCD needs to be reinstalled:
+If ArgoCD needs to be reinstalled from scratch:
+
 ```bash
-# 1. Delete existing installation
-kubectl delete namespace platform
+# 1. Re-apply bootstrap namespaces
+kubectl apply -f bootstrap/namespaces/
 
-# 2. Reinstall via Helm
-helm repo add argo https://argoproj.github.io/argo-helm
-helm repo update
+# 2. Re-install ArgoCD from raw manifest
+kubectl apply -n argocd \
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.2.3/manifests/install.yaml
 
-helm install argocd argo/argo-cd \
-  --namespace platform \
-  --create-namespace \
-  --values platform/argocd/values.yaml
+# 3. Wait for pods to be ready
+kubectl wait --for=condition=available deployment/argocd-server \
+  -n argocd --timeout=120s
 
-# 3. Wait for pods
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server \
-  -n platform --timeout=120s
-
-# 4. Apply root-app to bootstrap App-of-Apps
+# 4. Re-apply root-app to restore the App-of-Apps
 kubectl apply -f platform/argocd/root-app.yaml
 
-# 5. ArgoCD rebuilds all applications from Git
-# Monitor progress:
-argocd app list
+# ArgoCD will rediscover and sync all applications from Git
+kubectl get applications -n argocd -w
 ```
+
+Full rebuild procedure: [`docs/runbooks/cluster-rebuild.md`](../../docs/runbooks/cluster-rebuild.md)
 
 ## Related Documentation
 
-- [Platform Services Overview](../README.md)
+- [Platform README](../README.md)
 - [ADR-006: GitOps Tool Selection](../../docs/adr/ADR-006-gitops-tool.md)
 - [ADR-008: App-of-Apps Pattern](../../docs/adr/ADR-008-app-of-apps-pattern.md)
-- [ArgoCD Official Docs](https://argo-cd.readthedocs.io/)
+- [Cluster Rebuild Runbook](../../docs/runbooks/cluster-rebuild.md)
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** April 2026
