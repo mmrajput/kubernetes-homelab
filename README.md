@@ -42,39 +42,47 @@ This repo is the **foundation**. The next iteration — [**kubernetes-platform-e
 The diagram above illustrates the full platform architecture of the Kubernetes Homelab, deployed on a three-node kubeadm v1.31 cluster with Calico CNI. The platform is organised into six functional concern groups, all managed declaratively via GitOps.
 
 ### External Layer
-The platform engineer interacts with the cluster exclusively through Git. Code changes are pushed to GitHub (github.com/mmrajput), which triggers the CI/CD pipeline. All external access to cluster services is routed through Cloudflare Tunnel / DNS, providing secure ingress without exposing ports directly to the internet. Cloudflare also handles DNS-01 certificate challenges for TLS automation.
+- The platform engineer interacts with the cluster exclusively through Git — all changes are commits, never direct `kubectl apply`
+- Code pushed to GitHub triggers the CI/CD pipeline via ARC self-hosted runners
+- All external access is routed through **Cloudflare Tunnel**, providing secure ingress without any open inbound ports on the home network
+- Cloudflare DNS handles DNS-01 challenges for automated TLS certificate issuance via cert-manager
 
 ### Networking · TLS · GitOps managed
-ingress-nginx serves as the cluster ingress controller, routing external traffic to internal services. cert-manager, integrated with Cloudflare DNS-01, automates TLS certificate issuance and renewal for all exposed endpoints. NetworkPolicies enforce a default-deny posture across every namespace — all inter-service traffic is explicitly declared, preventing lateral movement between platform components and workloads. This layer is fully GitOps managed.
+- **ingress-nginx** routes all external HTTPS traffic to internal services using host-based Ingress rules
+- **cert-manager** automates wildcard TLS certificate issuance and renewal via Cloudflare DNS-01 — all services share one `*.mmrajputhomelab.org` certificate
+- **NetworkPolicies** enforce default-deny across every namespace — all inter-service communication is explicitly declared, preventing lateral movement between platform components and workloads
 
 ### CI/CD · GitOps managed
-ARC (Actions Runner Controller) provides self-hosted GitHub Actions runners inside the cluster, operating in webhook-based scale-to-zero mode. ArgoCD operates in poll-based mode, continuously reconciling cluster state against the Git repository. ARC runners pull upstream images from Docker Hub, scan them with Trivy, mirror them to ghcr.io via crane, and update the pinned image tag in the Git values file. ArgoCD detects the tag change and syncs the cluster — no custom images are built.
+- **ARC (Actions Runner Controller)** runs self-hosted GitHub Actions runners inside the cluster in webhook-based scale-to-zero mode
+- **ArgoCD** continuously reconciles cluster state against Git in poll mode (every 120s)
+- The CI pipeline pulls upstream images from Docker Hub, scans them with Trivy, mirrors them to ghcr.io via crane, and commits the updated image tag to the Git values file — no custom images are built
+- ArgoCD detects the tag change in Git and syncs the cluster automatically
 
 ### Workloads · GitOps managed
-Nextcloud is the primary platform workload, deployed for sovereign file sharing. It integrates with three data-layer services, each serving a distinct purpose: **CloudNativePG** manages the PostgreSQL database that stores Nextcloud's metadata, user accounts, and application state; **Longhorn** provides the replicated persistent volume for user file storage; and **Redis** handles session caching and file-locking to prevent write conflicts under concurrent access. SSO is provided by Keycloak. Nextcloud was chosen as the reference workload because it exercises every platform layer simultaneously — storage, databases, identity, secrets, observability, backup, and networking.
+- **Nextcloud** is the primary platform workload, deployed for sovereign file sharing
+- **CloudNativePG** manages the PostgreSQL database storing Nextcloud's metadata, user accounts, and application state
+- **Longhorn** provides the replicated persistent volume (RF=2) for user file storage
+- **Redis** handles session caching and file-locking to prevent write conflicts under concurrent access
+- **Keycloak** provides SSO for Nextcloud via the `user_oidc` app, configured through the Nextcloud Admin UI
+- Nextcloud was chosen as the reference workload because it exercises every platform layer simultaneously — storage, databases, identity, secrets, observability, backup, and networking
 
 ### Data · Storage · Backup · GitOps managed
-This is the most interconnected layer of the platform:
-
-Longhorn v1.7.2 (RF=2) is the default StorageClass, providing replicated block storage across worker nodes.
-CloudNativePG (CNPG) manages PostgreSQL clusters for stateful workloads. It ships WAL archives continuously to MinIO via Barman, enabling point-in-time recovery.
-MinIO (S3-compatible) serves as the central object store, backing Loki log storage, Velero backup storage, and CNPG WAL archiving.
-Velero handles filesystem-level backup of persistent volumes (via Kopia as the backup uploader), storing snapshots in MinIO.
-Redis provides caching and file-locking for Nextcloud.
-A scheduled CronJob runs rclone to sync MinIO data offsite to OneDrive, providing a 3-2-1 backup posture with an offsite DR copy.
+- **Longhorn v1.7.2** (RF=2) is the default StorageClass, providing replicated block storage across worker nodes
+- **CloudNativePG (CNPG)** manages PostgreSQL clusters, continuously archiving WAL to MinIO via Barman for point-in-time recovery
+- **MinIO** (S3-compatible) is the central object store, backing Loki log storage, Velero backup snapshots, and CNPG WAL archives
+- **Velero** backs up Kubernetes resources and persistent volumes via Kopia, storing snapshots in MinIO
+- **rclone** runs as a nightly CronJob, syncing both MinIO buckets to OneDrive for an offsite DR copy — completing the 3-2-1 backup posture
 
 ### Security · Identity · GitOps managed
-
-HashiCorp Vault (KV v2) is the secrets backend, storing all platform secrets under component-namespaced paths.
-External Secrets Operator (ESO) bridges Vault and Kubernetes, synchronising secrets into workloads, databases, and platform services as native Kubernetes Secret objects — no application reads from Vault directly.
-Keycloak 26 (SSO / OIDC) provides centralised identity for the platform, with SSO integrated across ArgoCD and Grafana via the homelab realm. Nextcloud SSO is configured in the production instance via the Nextcloud Admin UI using the `user_oidc` app — it is not managed through the Helm chart.
+- **HashiCorp Vault** (KV v2) is the secrets backend, storing all platform secrets under component-namespaced paths
+- **External Secrets Operator (ESO)** synchronises secrets from Vault into workloads, databases, and platform services as native Kubernetes Secret objects — no application reads from Vault directly
+- **Keycloak 26** provides centralised OIDC identity for the platform, with SSO integrated across ArgoCD and Grafana via the homelab realm
 
 ### Observability · GitOps managed
-
-Prometheus & Alertmanager scrape metrics from all platform components and manage alerting rules.
-Grafana visualises metrics from Prometheus and log data from Loki on unified dashboards.
-Loki aggregates logs from across the cluster, backed by MinIO for durable log chunk storage.
-Promtail (deployed as a DaemonSet) runs on every node, collecting and shipping container and system logs to Loki.
+- **Prometheus & Alertmanager** scrape metrics from all platform components and manage alerting rules
+- **Grafana** visualises metrics from Prometheus and log data from Loki on unified dashboards
+- **Loki** aggregates logs from across the cluster, backed by MinIO for durable log chunk storage
+- **Promtail** runs as a DaemonSet on every node, collecting and shipping container and system logs to Loki
 
 ### Data Flow Summary
 
