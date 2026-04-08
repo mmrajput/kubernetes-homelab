@@ -45,7 +45,7 @@ The diagram above illustrates the full platform architecture of the Kubernetes H
 The platform engineer interacts with the cluster exclusively through Git. Code changes are pushed to GitHub (github.com/mmrajput), which triggers the CI/CD pipeline. All external access to cluster services is routed through Cloudflare Tunnel / DNS, providing secure ingress without exposing ports directly to the internet. Cloudflare also handles DNS-01 certificate challenges for TLS automation.
 
 ### Networking · TLS · GitOps managed
-ingress-nginx serves as the cluster ingress controller, routing external traffic to internal services. cert-manager, integrated with Cloudflare DNS-01, automates TLS certificate issuance and renewal for all exposed endpoints. This layer is fully GitOps managed.
+ingress-nginx serves as the cluster ingress controller, routing external traffic to internal services. cert-manager, integrated with Cloudflare DNS-01, automates TLS certificate issuance and renewal for all exposed endpoints. NetworkPolicies enforce a default-deny posture across every namespace — all inter-service traffic is explicitly declared, preventing lateral movement between platform components and workloads. This layer is fully GitOps managed.
 
 ### CI/CD · GitOps managed
 ARC (Actions Runner Controller) provides self-hosted GitHub Actions runners inside the cluster, operating in webhook-based scale-to-zero mode. ArgoCD operates in poll-based mode, continuously reconciling cluster state against the Git repository. ARC runners pull upstream images from Docker Hub, scan them with Trivy, mirror them to ghcr.io via crane, and update the pinned image tag in the Git values file. ArgoCD detects the tag change and syncs the cluster — no custom images are built.
