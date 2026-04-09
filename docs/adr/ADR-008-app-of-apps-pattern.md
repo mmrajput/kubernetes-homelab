@@ -2,11 +2,12 @@
 
 ## Status
 
-Accepted
+Accepted — Updated Phase 8 (ApplicationSets adopted for category management)
 
 ## Date
 
-2026-01-12
+2026-01-12 — Initial decision (App-of-Apps, individual Application files)
+2026-03-01 — Updated: ApplicationSets adopted per category; App-of-Apps retained for bootstrap
 
 ## Context
 
@@ -25,7 +26,11 @@ Options evaluated:
 
 ## Decision
 
-Implement **App-of-Apps pattern** with a root application watching `platform/argocd/apps/` directory.
+Implement a **hybrid App-of-Apps + ApplicationSets pattern**:
+
+- A single root `Application` (`argocd-app.yaml`) bootstraps ArgoCD's self-management and watches `platform/argocd/apps/` via directory recursion.
+- Within that directory, each platform category (`networking`, `security`, `data`, `observability`, `ci-cd`, `workloads`) is managed by an `ApplicationSet`, not individual `Application` files.
+- ApplicationSets were initially rejected (see below) but adopted in Phase 8 once the per-category list pattern made the value clear.
 
 ## Rationale
 
@@ -51,40 +56,48 @@ Implement **App-of-Apps pattern** with a root application watching `platform/arg
 ## Implementation
 
 ```
-root-app (manually bootstrapped once)
+root-app (manually bootstrapped once via kubectl apply)
     │
-    └── watches: platform/argocd/apps/
+    └── watches: platform/argocd/apps/ (recurse: true)
             │
-            ├── argocd-app.yaml ────────→ ArgoCD (self-managed)
-            ├── nginx-ingress-app.yaml ─→ nginx-ingress
-            └── [future-service].yaml ──→ Auto-discovered
+            ├── argocd-app.yaml              → ArgoCD self-managed (Application)
+            ├── networking/
+            │   └── networking-appset.yaml   → nginx-ingress, cert-manager, network-policies (ApplicationSet)
+            ├── security/
+            │   └── security-appset.yaml     → vault, external-secrets, keycloak (ApplicationSet)
+            ├── data/
+            │   └── data-appset.yaml         → cnpg, longhorn, minio, velero, rclone (ApplicationSet)
+            ├── observability/
+            │   └── observability-appset.yaml → prometheus, grafana, loki, promtail (ApplicationSet)
+            ├── ci-cd/
+            │   └── ci-cd-appset.yaml        → arc-systems, arc-runners (ApplicationSet)
+            └── workloads/
+                └── workloads-appset.yaml    → nextcloud, homepage (ApplicationSet)
 ```
 
-**Workflow to add new service:**
+**Workflow to add a service to an existing category:**
 ```bash
-# 1. Create Application manifest
-cat > platform/argocd/apps/prometheus-app.yaml << EOF
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: prometheus
-  namespace: platform
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/mmrajput/kubernetes-homelab.git
-    targetRevision: main
-    path: observability/prometheus
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring
-EOF
+# Add an element to the list generator in the relevant AppSet
+vim platform/argocd/apps/observability/observability-appset.yaml
 
-# 2. Commit and push
-git add -A && git commit -m "feat(observability): add prometheus application"
+# Commit and push
+git commit -m "feat(observability): add tempo tracing"
 git push
+# ArgoCD detects the ApplicationSet change and creates the new Application automatically
+```
 
-# 3. ArgoCD auto-discovers and deploys (no manual intervention)
+**All Applications use multi-source pattern** — Helm chart from the upstream Helm repo, values file from this Git repository:
+```yaml
+sources:
+  - repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 65.8.1
+    helm:
+      valueFiles:
+        - $values/platform/observability/prometheus/values.yaml
+  - repoURL: https://github.com/mmrajput/kubernetes-homelab
+    targetRevision: HEAD
+    ref: values
 ```
 
 ## Consequences
@@ -119,14 +132,11 @@ Rejected due to:
 - No audit trail in Git
 - Doesn't scale beyond a few applications
 
-### ApplicationSets
+### ApplicationSets (standalone)
 
-Rejected due to:
-- Generator templates add complexity
-- Overkill for current homelab scale
-- Less explicit than individual Application files
+Initially rejected as "overkill" — the list generator pattern adds a template layer that obscures individual services. However, ApplicationSets were adopted in Phase 8 for category management. The hybrid pattern (App-of-Apps bootstrap + ApplicationSets per category) provides the benefits of both: a clear directory-based overview via the root app, and a scalable list-based pattern for adding services within a category.
 
-**Note:** ApplicationSets are excellent for multi-cluster or multi-tenant scenarios with predictable patterns.
+ApplicationSets remain inappropriate as the sole top-level pattern — a root ApplicationSet that auto-discovers all services loses the explicit overview that App-of-Apps provides.
 
 ### Helm Umbrella Chart
 
