@@ -6,8 +6,8 @@ HashiCorp Vault deployed as the centralised secrets backend for the homelab clus
 
 | Property | Value |
 |----------|-------|
-| Chart | hashicorp/vault |
-| Version | 0.32.0 (Vault 1.21.2) |
+| Chart | hashicorp/vault 0.32.0 |
+| App version | Vault 1.21.2 |
 | Namespace | `vault` |
 | PSS | restricted |
 | Mode | Standalone |
@@ -18,17 +18,42 @@ HashiCorp Vault deployed as the centralised secrets backend for the homelab clus
 
 Vault runs in standalone mode backed by a Longhorn persistent volume. The Vault agent injector is disabled — External Secrets Operator is the sole secret delivery mechanism. Applications consume standard Kubernetes Secrets and have no direct dependency on Vault.
 
+```
+Vault KV v2 (source of truth)
+    ↓
+ESO ClusterSecretStore (vault-backend, Kubernetes auth)
+    ↓
+ExternalSecret resources (one per service)
+    ↓
+Kubernetes Secrets (consumed by pods)
+```
+
 ## Secrets Engine
 
-| Engine | Path | Version |
-|--------|------|---------|
+| Engine | Mount path | Version |
+|--------|-----------|---------|
 | KV | `secret/` | v2 |
 
-Secret paths follow this convention:
+### Secret Path Conventions
+
+Paths are organised by category:
+
 ```
-secret/platform/<service>/<secret-name>   # Platform services
-secret/apps/<app>/<secret-name>           # Application secrets
+secret/argocd/oidc                    # Keycloak OIDC client for ArgoCD
+secret/grafana/oidc                   # Keycloak OIDC client for Grafana
+secret/keycloak/admin                 # Keycloak admin credentials
+secret/databases/keycloak             # keycloak-db CNPG initdb credentials
+secret/databases/nextcloud            # nextcloud-db CNPG initdb credentials
+secret/minio/cnpg                     # CNPG Barman WAL archiving credentials
+secret/minio/loki                     # Loki S3 credentials
+secret/minio/velero                   # Velero S3 credentials
+secret/minio/rclone                   # rclone MinIO source credentials
+secret/operators/rclone-onedrive      # rclone OneDrive destination credentials
+secret/nextcloud/admin                # Nextcloud admin credentials
 ```
+
+**CLI path:** `secret/<path>`
+**ESO `remoteRef.key`:** `secret/data/<path>` (KV v2 requires the `data/` segment)
 
 ## Authentication
 
@@ -59,20 +84,44 @@ Unseal keys and root token are stored in `vault-init.json` locally — this file
 
 ## Operational Notes
 
-**Unsealing after restart:** Vault does not auto-unseal. If the pod restarts, Vault will start in a sealed state and must be manually unsealed:
+**Unsealing after restart:** Vault does not auto-unseal. If the pod restarts, Vault starts sealed and must be manually unsealed:
+
 ```bash
 kubectl exec -it -n vault vault-0 -- vault operator unseal
 # Run twice with two different unseal keys
 ```
 
+Check seal status:
+```bash
+kubectl exec -n vault vault-0 -- vault status
+```
+
 **Adding a new secret:**
 ```bash
 kubectl exec -it -n vault vault-0 -- /bin/sh
-vault login
-vault kv put secret/platform/<service>/<name> key="value"
+vault login   # use root token or an admin token
+vault kv put secret/databases/myapp username="myuser" password="mypass"
+```
+
+**Reading a secret (to verify it exists before creating an ExternalSecret):**
+```bash
+vault kv get secret/databases/myapp
 ```
 
 **Checking secret versions:**
 ```bash
-vault kv metadata get secret/platform/<service>/<name>
+vault kv metadata get secret/databases/myapp
 ```
+
+> **Security boundary:** Never run `vault kv get` or `kubectl get secret` to verify secrets in normal operations. Instead, verify the ExternalSecret status:
+> ```bash
+> kubectl get externalsecret <name> -n <namespace>
+> # STATUS must be SecretSynced
+> ```
+
+## Related Documentation
+
+- [External Secrets Operator README](../external-secrets/README.md)
+- [ADR-012: Secret Management Strategy](../../docs/adr/ADR-012-secret-management.md)
+- [Data Layer Reference](../../docs/reference/data-layer.md) — full secrets inventory
+- [Vault Operations Runbook](../../docs/runbooks/vault-operations.md)
