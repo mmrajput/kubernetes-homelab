@@ -2,11 +2,14 @@
 
 ## Status
 
-Accepted
+Accepted — Updated Phase 7 (TLS), Phase 9 (Cloudflare Tunnel), Phase 10 (ClusterIP)
 
 ## Date
 
-2026-01-10
+2026-01-10 — Initial decision (nginx-ingress + NodePort)
+2026-02-15 — Updated: cert-manager TLS implemented (Phase 7)
+2026-03-20 — Updated: Cloudflare Tunnel external access + custom domain (Phase 9)
+2026-04-09 — Updated: service type changed from NodePort to ClusterIP (Phase 10)
 
 ## Context
 
@@ -50,30 +53,32 @@ Use **nginx-ingress controller** with **NodePort backend** (ports 30080/30443).
 
 ## Implementation
 
+**All access via Cloudflare Tunnel (Phase 10+):**
 ```
-Internet/LAN → NodePort (30080/30443) → nginx-ingress → Ingress → Service → Pods
+Internet → Cloudflare CDN/WAF → Cloudflare Tunnel (outbound) → ingress-nginx ClusterIP → Ingress → Service → Pods
 ```
 
-DNS resolution via `/etc/hosts`:
-```
-192.168.178.34  argocd.homelab.local
-192.168.178.34  grafana.homelab.local
-```
+The `cloudflared` daemon initiates an outbound connection to Cloudflare and routes traffic directly to the ingress-nginx ClusterIP service (`http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`). No open inbound ports on the router or cluster nodes. Public services are authenticated via Cloudflare Access before traffic reaches the cluster.
+
+Domain: `mmrajputhomelab.org` (e.g., `argocd.mmrajputhomelab.org`, `grafana.mmrajputhomelab.org`).
+
+**Service type:** `ClusterIP` — NodePort was used in Phases 1–9 for direct LAN access and as a fallback. Removed in Phase 10 once Cloudflare Tunnel was confirmed to use the ClusterIP URL directly, enforcing consistent zero-trust access for all clients.
 
 ## Consequences
 
 ### Positive
 
 - Production-equivalent Ingress resource definitions
-- Easy to add new services (create Ingress manifest, add hosts entry)
-- TLS termination ready (cert-manager integration in future)
-- Skills transfer directly to cloud Ingress patterns
+- Easy to add new services (create Ingress manifest)
+- TLS termination via cert-manager wildcard certificate (`wildcard-homelab-tls`)
+- Cloudflare WAF + Access provides zero-trust external access with no open inbound ports
+- Skills transfer directly to cloud Ingress patterns (ALB Ingress, GKE Ingress)
 
 ### Negative
 
-- Non-standard ports (30080 instead of 80)
-- Manual `/etc/hosts` management for DNS
-- No automatic failover (single ingress controller replica)
+- Single ingress controller replica — no HA (acceptable for homelab)
+- Cloudflare Tunnel adds an external dependency — if Cloudflare is unreachable, use `kubectl port-forward` for emergency access
+- No direct LAN access without `kubectl port-forward`
 
 ## Alternatives Considered
 
@@ -101,11 +106,12 @@ Rejected due to:
 
 **Note:** MetalLB is appropriate for multi-replica ingress controllers or services requiring dedicated IPs.
 
-## Future Considerations
+## Implementation History
 
-- **cert-manager** — Automate TLS certificates with Let's Encrypt
-- **External DNS** — Automate DNS records (if using Pi-hole or similar)
-- **MetalLB** — Revisit if adding HA ingress or dedicated service IPs
+- **cert-manager (Phase 7)** — Wildcard TLS certificate via Cloudflare DNS-01 challenge. Shared `wildcard-homelab-tls` secret distributed to all ingress namespaces.
+- **Cloudflare Tunnel (Phase 9)** — Zero-trust external access without open inbound ports. `cloudflared` runs as a Deployment (2 replicas) in the `cloudflare` namespace.
+- **ClusterIP service (Phase 10)** — Service type changed from NodePort to ClusterIP. NodePort was unnecessary once the tunnel was confirmed to use the ClusterIP URL directly.
+- **MetalLB** — Not adopted; Cloudflare Tunnel satisfies the external access requirement without an additional IP management layer.
 
 ## References
 

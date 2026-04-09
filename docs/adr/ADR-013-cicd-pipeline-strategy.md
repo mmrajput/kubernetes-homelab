@@ -19,7 +19,7 @@ selection through to production. The platform already has ArgoCD managing all Gi
 deployments. The pipeline must integrate with this existing pattern rather than bypass it.
 
 Two categories of workload exist in this homelab:
-- Upstream third-party applications (Wiki.js, Nextcloud) — no custom image build required
+- Upstream third-party applications (Nextcloud, Homepage) — no custom image build required
 - Future custom application images — would require a build stage
 
 For upstream applications, the deployment artifact is a Helm values file with a pinned
@@ -46,7 +46,7 @@ CI/CD infrastructure may need to remain fully on-premises.
 
 ### Pipeline Model: Upstream Image Promotion (Not Build-From-Source)
 
-Wiki.js and Nextcloud publish versioned images to Docker Hub. Building wrapper images adds
+Nextcloud and Homepage publish versioned images to Docker Hub. Building wrapper images adds
 operational risk (base image maintenance, custom layer CVEs) with no functional benefit.
 The pipeline treats version selection as the trigger: an operator selects a target version,
 the pipeline scans the upstream image, and on success mirrors it to the internal registry

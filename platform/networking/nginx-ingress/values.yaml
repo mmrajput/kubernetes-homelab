@@ -20,10 +20,7 @@ controller:
     proxy-buffers: "4 16k"
 
   service:
-    type: NodePort
-    nodePorts:
-      http: 30080
-      https: 30443
+    type: ClusterIP
 
   ingressClassResource:
     default: true
