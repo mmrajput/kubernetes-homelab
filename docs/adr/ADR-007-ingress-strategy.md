@@ -2,13 +2,14 @@
 
 ## Status
 
-Accepted — Updated Phase 7 (TLS), Phase 9 (Cloudflare Tunnel)
+Accepted — Updated Phase 7 (TLS), Phase 9 (Cloudflare Tunnel), Phase 10 (ClusterIP)
 
 ## Date
 
 2026-01-10 — Initial decision (nginx-ingress + NodePort)
 2026-02-15 — Updated: cert-manager TLS implemented (Phase 7)
 2026-03-20 — Updated: Cloudflare Tunnel external access + custom domain (Phase 9)
+2026-04-09 — Updated: service type changed from NodePort to ClusterIP (Phase 10)
 
 ## Context
 
@@ -52,25 +53,16 @@ Use **nginx-ingress controller** with **NodePort backend** (ports 30080/30443).
 
 ## Implementation
 
-**Internal LAN access (Phases 1–6):**
+**All access via Cloudflare Tunnel (Phase 10+):**
 ```
-LAN client → NodePort (30443) → nginx-ingress → Ingress → Service → Pods
-```
-
-DNS via `/etc/hosts` (development only):
-```
-192.168.178.34  argocd.homelab.local
-192.168.178.34  grafana.homelab.local
+Internet → Cloudflare CDN/WAF → Cloudflare Tunnel (outbound) → ingress-nginx ClusterIP → Ingress → Service → Pods
 ```
 
-**External access via Cloudflare Tunnel (Phase 9+):**
-```
-Internet → Cloudflare CDN/WAF → Cloudflare Tunnel (outbound) → nginx-ingress → Ingress → Service → Pods
-```
-
-The `cloudflared` daemon initiates an outbound connection to Cloudflare — no open inbound ports on the router. Public services are authenticated via Cloudflare Access before traffic reaches the cluster.
+The `cloudflared` daemon initiates an outbound connection to Cloudflare and routes traffic directly to the ingress-nginx ClusterIP service (`http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`). No open inbound ports on the router or cluster nodes. Public services are authenticated via Cloudflare Access before traffic reaches the cluster.
 
 Domain: `mmrajputhomelab.org` (e.g., `argocd.mmrajputhomelab.org`, `grafana.mmrajputhomelab.org`).
+
+**Service type:** `ClusterIP` — NodePort was used in Phases 1–9 for direct LAN access and as a fallback. Removed in Phase 10 once Cloudflare Tunnel was confirmed to use the ClusterIP URL directly, enforcing consistent zero-trust access for all clients.
 
 ## Consequences
 
@@ -84,9 +76,9 @@ Domain: `mmrajputhomelab.org` (e.g., `argocd.mmrajputhomelab.org`, `grafana.mmra
 
 ### Negative
 
-- Non-standard NodePort (30443 instead of 443) on the internal path
 - Single ingress controller replica — no HA (acceptable for homelab)
-- Cloudflare Tunnel adds an external dependency for public access
+- Cloudflare Tunnel adds an external dependency — if Cloudflare is unreachable, use `kubectl port-forward` for emergency access
+- No direct LAN access without `kubectl port-forward`
 
 ## Alternatives Considered
 
@@ -117,8 +109,9 @@ Rejected due to:
 ## Implementation History
 
 - **cert-manager (Phase 7)** — Wildcard TLS certificate via Cloudflare DNS-01 challenge. Shared `wildcard-homelab-tls` secret distributed to all ingress namespaces.
-- **Cloudflare Tunnel (Phase 9)** — Zero-trust external access without open inbound ports. `cloudflared` runs as a Deployment in the `cloudflared` namespace.
-- **MetalLB** — Not adopted; NodePort + Cloudflare Tunnel satisfies the external access requirement without an additional IP management layer.
+- **Cloudflare Tunnel (Phase 9)** — Zero-trust external access without open inbound ports. `cloudflared` runs as a Deployment (2 replicas) in the `cloudflare` namespace.
+- **ClusterIP service (Phase 10)** — Service type changed from NodePort to ClusterIP. NodePort was unnecessary once the tunnel was confirmed to use the ClusterIP URL directly.
+- **MetalLB** — Not adopted; Cloudflare Tunnel satisfies the external access requirement without an additional IP management layer.
 
 ## References
 
