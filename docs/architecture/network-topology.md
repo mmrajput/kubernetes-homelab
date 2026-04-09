@@ -85,10 +85,10 @@ Browser (HTTPS, port 443)
 Cloudflare Edge (*.mmrajputhomelab.org)
     │  Outbound-only tunnel (initiated by cloudflared pod)
     ▼
-cloudflared pod (cloudflare namespace, DaemonSet)
+cloudflared Deployment (cloudflare namespace, 2 replicas)
     │
     ▼
-nginx-ingress NodePort Service (port 30443)
+ingress-nginx-controller ClusterIP Service (:80)
     │
     ▼
 nginx-ingress Controller pod
@@ -97,7 +97,7 @@ nginx-ingress Controller pod
 ClusterIP Service → Application pod
 ```
 
-`cloudflared` maintains a persistent outbound connection to Cloudflare's edge. No firewall rules or port forwarding are needed on the router.
+`cloudflared` maintains a persistent outbound connection to Cloudflare's edge and routes traffic directly to `ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`. No firewall rules or port forwarding are needed on the router. The ingress-nginx service is type `ClusterIP` — there are no NodePorts exposed on cluster nodes.
 
 ### TLS
 
@@ -190,7 +190,7 @@ External Access Layer:
   Cloudflare DNS → Cloudflare Tunnel → cloudflared pod
 
 Ingress Layer:
-  nginx-ingress (NodePort 30443) → Ingress resources → Services
+  nginx-ingress (ClusterIP :80) → Ingress resources → Services
 
 Platform Services:
   argocd, cert-manager, vault, external-secrets, keycloak
