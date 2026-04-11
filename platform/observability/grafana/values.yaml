@@ -141,9 +141,14 @@ dashboards:
       datasource: Prometheus
 
 # Plugins to install
+# grafana-piechart-panel removed: Angular-based, disabled in Grafana 10.x
+#   ("Refusing to initialize plugin because it's using Angular")
+# grafana-lokiexplore-app: bundled with Grafana 10.x; listing it here prevents
+#   the background installer from trying to download it and failing with
+#   "cannot recognize as plugin folder" against the embedded binary path
 plugins:
-  - grafana-piechart-panel
   - grafana-clock-panel
+  - grafana-lokiexplore-app
 
 # ServiceMonitor for Prometheus
 serviceMonitor:
