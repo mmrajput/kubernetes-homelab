@@ -72,7 +72,7 @@ datasources:
         jsonData:
           maxLines: 1000
 
-# Dashboard providers - auto-import dashboards
+# Dashboard providers
 dashboardProviders:
   dashboardproviders.yaml:
     apiVersion: 1
@@ -85,28 +85,43 @@ dashboardProviders:
         editable: true
         options:
           path: /var/lib/grafana/dashboards/default
+      # Sidecar-managed folder: receives kube-prometheus-stack ConfigMap dashboards
+      - name: 'kube-prometheus-stack'
+        orgId: 1
+        folder: 'Kubernetes'
+        type: file
+        disableDeletion: false
+        editable: false
+        options:
+          path: /tmp/dashboards
+
+# Sidecar: watches for ConfigMaps labelled grafana_dashboard=1 across all
+# namespaces and drops them into /tmp/dashboards for the provider above.
+# kube-prometheus-stack creates these ConfigMaps via forceDeployDashboards.
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    searchNamespace: ALL
+    folderAnnotation: grafana_folder
+    provider:
+      foldersFromFilesStructure: false
+      allowUiUpdates: false
 
 # Pre-installed dashboards
+# kubernetes-cluster (7249) and kubernetes-pods (6417) removed — both used
+# deprecated container_name/pod_name labels (pre-k8s 1.20 cAdvisor API).
+# Kubernetes dashboards are now served by the sidecar from kube-prometheus-stack
+# ConfigMaps (forceDeployDashboards: true in prometheus/values.yaml).
 dashboards:
   default:
-    # Kubernetes cluster monitoring
-    kubernetes-cluster:
-      gnetId: 7249
-      revision: 1
-      datasource: Prometheus
-    
-    # Kubernetes pod monitoring
-    kubernetes-pods:
-      gnetId: 6417
-      revision: 1
-      datasource: Prometheus
-    
-    # Node exporter full
+    # Node exporter full — uses node_ metrics; label names unchanged
     node-exporter:
       gnetId: 1860
       revision: 37
       datasource: Prometheus
-    
+
     # Loki logs dashboard
     loki-logs:
       gnetId: 13639
