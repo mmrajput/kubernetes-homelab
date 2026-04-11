@@ -14,11 +14,13 @@ affinity:
 
 resources:
   requests:
-    cpu: "1"
-    memory: 2.5Gi
+    # worker-01 has ~905m free CPU; worker-02 is near-full — keep request low
+    # Ollama is idle between inference calls; CPU bursts only during generation
+    cpu: 500m
+    memory: 2Gi
   limits:
     cpu: "2"
-    memory: 4Gi
+    memory: 3Gi
 
 persistence:
   enabled: true
