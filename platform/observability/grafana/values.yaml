@@ -195,9 +195,11 @@ grafana.ini:
     role_attribute_strict: false
     allow_assign_grafana_admin: true
 
-# RBAC hardening - Grafana has no need to talk to Kubernetes API
+# Token mounting required: the grafana-sc-dashboard sidecar uses the in-cluster
+# Kubernetes client to watch ConfigMaps (grafana_dashboard=1) across all namespaces.
+# Without the token the sidecar exits immediately with "Service token file does not exist."
 serviceAccount:
   create: true
-  automountServiceAccountToken: false  # ServiceAccount level: default for any pod using this SA
+  automountServiceAccountToken: true
 
-automountServiceAccountToken: false  # Pod spec level: explicit override, takes precedence over SA setting
+automountServiceAccountToken: true
