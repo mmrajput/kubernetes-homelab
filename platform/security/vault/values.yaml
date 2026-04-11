@@ -83,10 +83,6 @@ server:
       - host: vault.mmrajputhomelab.org
         paths:
           - /
-    tls:
-      - hosts:
-          - vault.mmrajputhomelab.org
-        secretName: wildcard-homelab-tls
 
 ui:
   enabled: true

@@ -115,10 +115,6 @@ ingress:
     # Extended timeouts for large file transfers
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-  tls:
-    - secretName: wildcard-homelab-tls
-      hosts:
-        - nextcloud-staging.mmrajputhomelab.org
 
 # -- Resources
 # Staging: minimum footprint — pipeline testing only, not load-bearing.
