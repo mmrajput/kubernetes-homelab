@@ -9,8 +9,10 @@ spec:
   ai:
     enabled: true
     model: qwen2.5:3b
-    backend: ollama
-    baseUrl: http://ollama.k8sgpt.svc.cluster.local:11434
+    # "ollama" is not a valid enum in operator 0.2.27; use "localai" which
+    # targets any OpenAI-compatible API — Ollama's /v1 endpoint qualifies
+    backend: localai
+    baseUrl: http://ollama.k8sgpt.svc.cluster.local:11434/v1
   noCache: false
   # filters: [] means all default analyzers run (Pods, Services, Ingress, etc.)
   filters: []
