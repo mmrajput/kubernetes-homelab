@@ -31,10 +31,6 @@ prometheus:
     paths:
       - /
     pathType: Prefix
-    tls:
-      - hosts:
-          - prometheus.mmrajputhomelab.org
-        secretName: wildcard-homelab-tls
 
   prometheusSpec:
     # Resource limits for homelab
@@ -79,10 +75,6 @@ alertmanager:
     paths:
       - /
     pathType: Prefix
-    tls:
-      - hosts:
-          - alertmanager.mmrajputhomelab.org
-        secretName: wildcard-homelab-tls
 
   alertmanagerSpec:
     automountServiceAccountToken: false  # Pod spec level: explicit override, takes precedence over SA setting

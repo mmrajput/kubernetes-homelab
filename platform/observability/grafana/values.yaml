@@ -49,10 +49,6 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
   hosts:
     - grafana.mmrajputhomelab.org
-  tls:
-    - hosts:
-        - grafana.mmrajputhomelab.org
-      secretName: wildcard-homelab-tls
   path: /
   pathType: Prefix
   

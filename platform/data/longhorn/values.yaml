@@ -22,8 +22,6 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
   host: longhorn.mmrajputhomelab.org
-  tls: true
-  tlsSecret: wildcard-homelab-tls
 
 metrics:
   serviceMonitor:

@@ -16,11 +16,6 @@ server:
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     path: /
     pathType: Prefix
-    tls: true
-    extraTls:
-      - hosts:
-          - argocd.mmrajputhomelab.org
-        secretName: wildcard-homelab-tls
 
   extraArgs:
     - --insecure
