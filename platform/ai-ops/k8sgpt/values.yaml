@@ -1,0 +1,14 @@
+# k8sgpt-operator Helm values
+# Chart: https://charts.k8sgpt.ai/ — k8sgpt-operator
+# The operator installs the K8sGPT CRD and controller only.
+# The K8sGPT CR (AI backend config) is applied separately via ai-ops-git AppSet.
+
+controllerManager:
+  manager:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 128Mi

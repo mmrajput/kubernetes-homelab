@@ -1,0 +1,154 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: k8sgpt-default-deny
+  namespace: k8sgpt
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# k8sgpt-operator controller-manager
+# Label: control-plane=controller-manager (standard kubebuilder pattern)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: k8sgpt-operator-allow
+  namespace: k8sgpt
+spec:
+  podSelector:
+    matchLabels:
+      control-plane: controller-manager
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow Prometheus to scrape operator metrics (port 8080, controller-runtime default)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 8080
+          protocol: TCP
+  egress:
+    # DNS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Kubernetes API — ClusterIP (Calico evaluates before DNAT, both IPs required)
+    - to:
+        - ipBlock:
+            cidr: 10.96.0.1/32
+      ports:
+        - port: 443
+          protocol: TCP
+    # Kubernetes API — control plane direct
+    - to:
+        - ipBlock:
+            cidr: 192.168.178.34/32
+      ports:
+        - port: 6443
+          protocol: TCP
+    # Ollama inference API (pod port, same namespace)
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ollama
+      ports:
+        - port: 11434
+          protocol: TCP
+---
+# Ollama inference server
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: k8sgpt-ollama-allow
+  namespace: k8sgpt
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: ollama
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow k8sgpt-operator to call the Ollama inference API
+    - from:
+        - podSelector:
+            matchLabels:
+              control-plane: controller-manager
+      ports:
+        - port: 11434
+          protocol: TCP
+    # Allow model-pull Job to call the Ollama pull API
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: model-pull
+      ports:
+        - port: 11434
+          protocol: TCP
+  egress:
+    # DNS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Model registry pull triggered via Ollama pull API (registry.ollama.ai, HTTPS)
+    # Can be removed after initial model download if you prefer stricter egress
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - port: 443
+          protocol: TCP
+---
+# ollama-model-pull-job PostSync hook pod
+# Calls Ollama's pull API in-cluster; Ollama handles its own internet egress
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: k8sgpt-model-pull-allow
+  namespace: k8sgpt
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: model-pull
+  policyTypes:
+    - Egress
+  egress:
+    # DNS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Ollama pull API (in-cluster, pod port)
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ollama
+      ports:
+        - port: 11434
+          protocol: TCP

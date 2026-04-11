@@ -1,0 +1,32 @@
+# Ollama Helm values
+# Chart: https://cowboysysop.github.io/charts/ — ollama 3.0.0 (Ollama 0.9.3)
+# CPU-only inference; no GPU. qwen2.5:3b default quantization is Q4_K_M (~2 GB loaded).
+# Model is pulled via PostSync Job (platform/ai-ops/k8sgpt/config/ollama-model-pull-job.yaml).
+
+# Worker-node affinity: control-plane has 6 GB RAM, not enough alongside other pods
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: node-role.kubernetes.io/control-plane
+              operator: DoesNotExist
+
+resources:
+  requests:
+    cpu: "1"
+    memory: 2.5Gi
+  limits:
+    cpu: "2"
+    memory: 4Gi
+
+persistence:
+  enabled: true
+  # Longhorn for model persistence across pod restarts
+  storageClass: longhorn
+  size: 10Gi
+
+service:
+  type: ClusterIP
+  ports:
+    http: 11434

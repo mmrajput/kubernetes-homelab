@@ -1,0 +1,16 @@
+apiVersion: core.k8sgpt.ai/v1alpha1
+kind: K8sGPT
+metadata:
+  name: k8sgpt
+  namespace: k8sgpt
+spec:
+  # AI backend: Ollama running qwen2.5:3b in the same namespace
+  # Model is pulled on first startup via ollama-model-pull-job PostSync hook
+  ai:
+    enabled: true
+    model: qwen2.5:3b
+    backend: ollama
+    baseUrl: http://ollama.k8sgpt.svc.cluster.local:11434
+  noCache: false
+  # filters: [] means all default analyzers run (Pods, Services, Ingress, etc.)
+  filters: []
