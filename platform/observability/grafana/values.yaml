@@ -1,6 +1,12 @@
 # Grafana Helm Values for Homelab
 # Chart: grafana/grafana
 
+# Recreate strategy: terminate old pod before starting new one.
+# Required for RWO Longhorn volumes — RollingUpdate causes Multi-Attach deadlock
+# when the new pod schedules on a different node than the old pod.
+deploymentStrategy:
+  type: Recreate
+
 # Admin credentials
 adminUser: admin
 adminPassword: admin  # Change this in production!
