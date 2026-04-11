@@ -46,15 +46,46 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: monitoring
-    # Allow scraping metrics from all namespaces
+    # Allow scraping metrics from pod IPs across all namespaces
     - to:
         - namespaceSelector: {}
       ports:
-        - port: 9100   # node-exporter
+        - port: 9100   # node-exporter (pod-IP path; hostNetwork pods need ipBlock below)
+          protocol: TCP
+        - port: 9153   # coredns metrics
+          protocol: TCP
+        - port: 9402   # cert-manager metrics
           protocol: TCP
         - port: 10254  # ingress-nginx metrics
           protocol: TCP
         - port: 3101   # promtail metrics
+          protocol: TCP
+    # Kubelet, node-exporter, kube-proxy — run on host network; target IP is the node IP,
+    # not a pod overlay IP, so namespaceSelector cannot match them
+    - to:
+        - ipBlock:
+            cidr: 192.168.178.34/32  # k8s-cp-01
+        - ipBlock:
+            cidr: 192.168.178.35/32  # k8s-worker-01
+        - ipBlock:
+            cidr: 192.168.178.36/32  # k8s-worker-02
+      ports:
+        - port: 10250  # kubelet metrics + /metrics/cadvisor
+          protocol: TCP
+        - port: 9100   # node-exporter (hostNetwork)
+          protocol: TCP
+        - port: 10249  # kube-proxy metrics
+          protocol: TCP
+    # Control-plane-only host processes
+    - to:
+        - ipBlock:
+            cidr: 192.168.178.34/32  # k8s-cp-01
+      ports:
+        - port: 10257  # kube-controller-manager metrics (HTTPS)
+          protocol: TCP
+        - port: 10259  # kube-scheduler metrics (HTTPS)
+          protocol: TCP
+        - port: 2381   # kube-etcd metrics (HTTP)
           protocol: TCP
     # Allow reaching Kubernetes API for service discovery
     - to:
