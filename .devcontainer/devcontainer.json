@@ -29,7 +29,10 @@
     "source=${localEnv:HOME}/.gitconfig,target=/home/${localEnv:CONTAINER_USERNAME:rajput}/.gitconfig,readonly,type=bind",
     
     // Tool configurations (writable) - k9s, argocd, etc.
-    "source=${localWorkspaceFolder}/.config,target=/home/${localEnv:CONTAINER_USERNAME:rajput}/.config,type=bind"
+    "source=${localWorkspaceFolder}/.config,target=/home/${localEnv:CONTAINER_USERNAME:rajput}/.config,type=bind",
+
+    // Ollama model storage — bind-mounted from WSL host so models survive container rebuilds
+    "source=${localEnv:HOME}/.ollama,target=/home/${localEnv:CONTAINER_USERNAME:rajput}/.ollama,type=bind"
   ],
 
   // Use host network to access Kubernetes cluster on local network

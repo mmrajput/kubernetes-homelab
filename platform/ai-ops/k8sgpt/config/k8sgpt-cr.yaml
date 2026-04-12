@@ -4,20 +4,11 @@ metadata:
   name: k8sgpt
   namespace: k8sgpt
 spec:
-  # AI backend: Ollama running qwen2.5:3b in the same namespace
-  # Model is pulled on first startup via ollama-model-pull-job PostSync hook
+  # AI backend disabled — runner scans the cluster and stores raw Result CRs
+  # without AI explanation. Use scripts/explain-result.sh or scripts/explain-log.sh
+  # to send findings to Ollama running locally in the devcontainer.
   ai:
-    enabled: true
-    model: qwen2.5:3b
-    # "ollama" is not a valid enum in operator 0.2.27; use "localai" which
-    # targets any OpenAI-compatible API — Ollama's /v1 endpoint qualifies
-    backend: localai
-    baseUrl: http://ollama.k8sgpt.svc.cluster.local:11434/v1
-    # Secret is mandatory for k8sgpt runner auth config; Ollama needs no real
-    # credentials so a dummy key is used
-    secret:
-      name: k8sgpt-ollama-secret
-      key: openai-api-key
+    enabled: false
   # version is required — specifies the ghcr.io/k8sgpt-ai/k8sgpt image tag
   version: v0.3.48
   noCache: false

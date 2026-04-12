@@ -17,13 +17,6 @@ spec:
             namespace: k8sgpt
             valuesFile: platform/ai-ops/k8sgpt/values.yaml
 
-          # Ollama: local LLM inference server, runs qwen2.5:3b (CPU, Q4 default)
-          - name: ollama
-            helmRepoURL: https://cowboysysop.github.io/charts/
-            chart: ollama
-            chartVersion: 3.0.0
-            namespace: k8sgpt
-            valuesFile: platform/ai-ops/ollama/values.yaml
 
   template:
     metadata:

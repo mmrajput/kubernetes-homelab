@@ -20,6 +20,10 @@ ARG ETCD_VERSION=3.5.17
 ARG CRICTL_VERSION=1.31.1
 ARG YQ_VERSION=4.44.6
 ARG DIAGRAMS_VERSION=0.24.4
+ARG OLLAMA_VERSION=0.9.3
+# Default model — change via devcontainer build arg or pull a different one after setup.
+# Suggestions by available RAM:  8 GB → qwen2.5:7b   16 GB → qwen2.5:14b   32 GB → qwen2.5:32b
+ARG OLLAMA_MODEL=qwen2.5:7b
 
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -138,6 +142,15 @@ RUN pip3 install --no-cache-dir --break-system-packages \
 RUN pip3 install --no-cache-dir --break-system-packages \
     diagrams==${DIAGRAMS_VERSION}
 
+# Install Ollama (local LLM inference — used by explain-log.sh / explain-result.sh)
+ARG OLLAMA_VERSION
+ARG OLLAMA_MODEL
+RUN curl -fsSL "https://github.com/ollama/ollama/releases/download/v${OLLAMA_VERSION}/ollama-linux-amd64.tgz" \
+    -o /tmp/ollama.tgz \
+    && tar -xzf /tmp/ollama.tgz -C /usr/local \
+    && rm /tmp/ollama.tgz
+ENV OLLAMA_MODEL=${OLLAMA_MODEL}
+
 # Enable bash completion for kubectl
 RUN kubectl completion bash > /etc/bash_completion.d/kubectl
 
@@ -156,7 +169,12 @@ RUN chmod +x /home/${USERNAME}/.devcontainer/post-create.sh
 RUN echo 'source <(kubectl completion bash)' >> ~/.bashrc \
     && echo 'alias k=kubectl' >> ~/.bashrc \
     && echo 'complete -o default -F __start_kubectl k' >> ~/.bashrc \
-    && echo 'export EDITOR=vim' >> ~/.bashrc
+    && echo 'export EDITOR=vim' >> ~/.bashrc \
+    && echo '' >> ~/.bashrc \
+    && echo '# Auto-start Ollama inference server if not already running' >> ~/.bashrc \
+    && echo 'if command -v ollama &>/dev/null && ! pgrep -x ollama >/dev/null 2>&1; then' >> ~/.bashrc \
+    && echo '  ollama serve >/tmp/ollama.log 2>&1 &' >> ~/.bashrc \
+    && echo 'fi' >> ~/.bashrc
 
 # Set up custom colorful prompt
 RUN cat >> ~/.bashrc << 'PROMPT_EOF'
