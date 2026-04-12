@@ -13,6 +13,11 @@ spec:
     # targets any OpenAI-compatible API — Ollama's /v1 endpoint qualifies
     backend: localai
     baseUrl: http://ollama.k8sgpt.svc.cluster.local:11434/v1
+    # Secret is mandatory for k8sgpt runner auth config; Ollama needs no real
+    # credentials so a dummy key is used
+    secret:
+      name: k8sgpt-ollama-secret
+      key: openai-api-key
   # version is required — specifies the ghcr.io/k8sgpt-ai/k8sgpt image tag
   version: v0.3.48
   noCache: false

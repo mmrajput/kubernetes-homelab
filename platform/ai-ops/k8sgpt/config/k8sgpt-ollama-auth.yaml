@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: k8sgpt-ollama-secret
+  namespace: k8sgpt
+type: Opaque
+stringData:
+  # Ollama requires no authentication; this dummy value satisfies k8sgpt's
+  # mandatory secret reference for the localai backend provider configuration.
+  openai-api-key: notused
