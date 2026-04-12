@@ -82,6 +82,36 @@ mkdir -p ~/.config/k9s
 mkdir -p ~/.config/argocd
 echo "✅ Config directories created"
 
+# Set up Ollama
+echo ""
+echo "🤖 Setting up Ollama..."
+MODEL="${OLLAMA_MODEL:-qwen2.5:7b}"
+
+# Start Ollama server temporarily to pull the model
+if command -v ollama &> /dev/null; then
+    ollama serve > /tmp/ollama-setup.log 2>&1 &
+    OLLAMA_PID=$!
+
+    # Wait for Ollama to be ready
+    for i in $(seq 1 30); do
+        if curl -sf http://localhost:11434/api/tags > /dev/null 2>&1; then
+            break
+        fi
+        sleep 1
+    done
+
+    if curl -sf http://localhost:11434/api/tags > /dev/null 2>&1; then
+        echo "Pulling model ${MODEL} (this may take a few minutes on first setup)..."
+        ollama pull "${MODEL}" && echo "✅ Model ${MODEL} ready" || echo "⚠️  Model pull failed — run: ollama pull ${MODEL}"
+    else
+        echo "⚠️  Ollama did not start in time — run manually: ollama pull ${MODEL}"
+    fi
+
+    kill "${OLLAMA_PID}" 2>/dev/null || true
+else
+    echo "⚠️  Ollama binary not found"
+fi
+
 # Display helpful information
 echo ""
 echo "=============================================="
