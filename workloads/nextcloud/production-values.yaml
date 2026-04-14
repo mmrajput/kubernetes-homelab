@@ -126,6 +126,11 @@ cronjob:
     schedule: "*/5 * * * *"
     successfulJobsHistoryLimit: 3
     failedJobsHistoryLimit: 3
+    # cron.php must run as www-data (uid 33) — running as root causes:
+    # "Console has to be executed with the user that owns config/config.php"
+    securityContext:
+      runAsUser: 33
+      runAsGroup: 33
     affinity:
       podAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
