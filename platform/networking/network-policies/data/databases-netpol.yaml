@@ -74,6 +74,12 @@ spec:
       ports:
         - port: 8000
           protocol: TCP
+    # Allow intra-namespace CNPG instance health checks (failsafe endpoint)
+    - from:
+        - podSelector: {}
+      ports:
+        - port: 8000
+          protocol: TCP
   egress:
     # Allow DNS resolution
     - to:
@@ -98,6 +104,12 @@ spec:
         - podSelector: {}
       ports:
         - port: 5432
+          protocol: TCP
+    # Allow intra-namespace CNPG instance health checks (failsafe endpoint)
+    - to:
+        - podSelector: {}
+      ports:
+        - port: 8000
           protocol: TCP
     # Allow Kubernetes API server access (CNPG operator communication)
     - to:

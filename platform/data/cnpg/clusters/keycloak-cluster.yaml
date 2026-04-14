@@ -14,24 +14,20 @@ metadata:
     # snapshots of live PostgreSQL data directories.
     backup.velero.io/backup-volumes-excludes: pgdata
 spec:
-  # instances: 1 — homelab resource optimization
+  # instances: 2 — primary + 1 hot standby replica
   #
-  # Production pattern: instances: 2 or 3
-  #   - 1 primary (read/write) + 1 or 2 standby replicas (hot standby)
-  #   - CNPG automatically promotes standby to primary on failure
-  #   - podAntiAffinityType: required ensures primary and standby land on separate nodes
-  #   - Each instance gets its own PVC — Longhorn replication factor 2 means
-  #     2 instances × 2 replicas = 4x physical storage consumption
+  # podAntiAffinityType: required ensures CNPG schedules primary and standby
+  # on different nodes (k8s-worker-01 and k8s-worker-02).
+  # If only one worker is available, the replica pod will stay Pending rather
+  # than co-locate with the primary — correct behaviour for a HA cluster.
   #
-  # Homelab trade-off:
-  #   - Single physical host (Beelink SER5 Pro) means a full node failure
-  #     takes down the control plane regardless of PostgreSQL HA configuration
-  #   - Longhorn replication factor 2 across both workers provides storage-level
-  #     protection against single node failure
-  #   - MinIO WAL archiving + base backups provide PITR and corruption recovery
-  #   - PostgreSQL-level automatic failover is not justified given the hardware constraints
-  #   - Storage saved: 5Gi PVC × 2 Longhorn replicas = 10Gi reclaimed per database cluster
-  instances: 1
+  # Avoids the RWO Multi-Attach issue where a restarted single-instance pod
+  # gets scheduled on a different node than its existing PVC attachment.
+  instances: 2
+
+  affinity:
+    podAntiAffinityType: required
+    topologyKey: kubernetes.io/hostname
 
   postgresql:
     parameters:
@@ -44,19 +40,6 @@ spec:
       owner: keycloak
       secret:
         name: keycloak-initdb-secret
-
-  # affinity:
-  #   podAntiAffinityType: required
-  #
-  # Production pattern: enable with instances: 2 or 3
-  #   - required: enforces strict scheduling — primary and standby on separate nodes
-  #   - If only one worker is available, second pod stays pending rather than
-  #     scheduling on the same node as the primary
-  #   - Prevents a single node failure from taking down both primary and standby
-  #
-  # Homelab trade-off:
-  #   - Single instance makes podAntiAffinity redundant — no standby to separate
-  #   - Enable alongside instances: 2 when hardware capacity allows
 
   storage:
     storageClass: longhorn
