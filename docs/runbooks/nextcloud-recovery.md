@@ -280,7 +280,37 @@ kubectl exec -n nextcloud-production <pod> -- \
   chmod 0640 /var/www/html/config/config.php
 ```
 
-### Step 8 — Verify
+### Step 8 — Reinstall Talk (Nextcloud Spreed)
+
+Talk app files do not survive a fresh install — reinstall from the archive:
+
+```bash
+# Copy archive into pod (archive ~50 MB — download from GitHub Releases if not locally available)
+# https://github.com/nextcloud-releases/spreed/releases/tag/v23.0.3
+kubectl cp resources/spreed-v23.0.3.tar.gz \
+  nextcloud-production/<pod>:/var/www/html/custom_apps/spreed-v23.0.3.tar.gz
+
+kubectl exec -n nextcloud-production <pod> -- sh -c '
+  cd /var/www/html/custom_apps &&
+  tar xzf spreed-v23.0.3.tar.gz &&
+  rm spreed-v23.0.3.tar.gz &&
+  chown -R www-data:www-data spreed
+'
+```
+
+Enable the app and configure STUN (the `talk-enable` initContainer does this automatically
+on the next pod restart, but run it now to avoid waiting):
+
+```bash
+kubectl exec -n nextcloud-production <pod> -- \
+  php /var/www/html/occ app:enable spreed
+
+kubectl exec -n nextcloud-production <pod> -- \
+  php /var/www/html/occ config:app:set spreed stun_servers \
+    --value='["stun.l.google.com:19302"]'
+```
+
+### Step 9 — Verify
 
 ```bash
 kubectl exec -n nextcloud-production <pod> -- curl -sf http://localhost/status.php
@@ -322,6 +352,52 @@ velero restore describe nextcloud-restore-<timestamp> --details
 ```bash
 kubectl exec -n nextcloud-production <pod> -- cat /var/www/html/config/config.php
 kubectl exec -n nextcloud-production <pod> -- curl -sf http://localhost/status.php
+```
+
+---
+
+## Talk app reinstallation
+
+Talk (spreed) app files live at `/var/www/html/custom_apps/spreed` on the Longhorn PVC.
+They survive pod restarts and most failure scenarios. Reinstall is only needed after:
+
+- Scenario C — fresh install (PVC wiped or database unrecoverable)
+- Scenario D — PVC lost (Velero restore may not include custom_apps if the backup
+  predates the Talk installation)
+
+The `talk-enable` initContainer in `production-values.yaml` automatically runs
+`occ app:enable spreed` and sets the STUN server on every pod start — but only if the
+app files are already present. It cannot install the archive itself.
+
+### Download the archive
+
+Talk v23.0.3 is compatible with Nextcloud 33.0.0.
+Download from GitHub Releases if not available locally:
+
+```bash
+curl -L -o spreed-v23.0.3.tar.gz \
+  https://github.com/nextcloud-releases/spreed/releases/download/v23.0.3/spreed-v23.0.3.tar.gz
+```
+
+### Install into the running pod
+
+```bash
+kubectl cp spreed-v23.0.3.tar.gz \
+  nextcloud-production/<pod>:/var/www/html/custom_apps/spreed-v23.0.3.tar.gz
+
+kubectl exec -n nextcloud-production <pod> -- sh -c '
+  cd /var/www/html/custom_apps &&
+  tar xzf spreed-v23.0.3.tar.gz &&
+  rm spreed-v23.0.3.tar.gz &&
+  chown -R www-data:www-data spreed
+'
+
+kubectl exec -n nextcloud-production <pod> -- \
+  php /var/www/html/occ app:enable spreed
+
+kubectl exec -n nextcloud-production <pod> -- \
+  php /var/www/html/occ config:app:set spreed stun_servers \
+    --value='["stun.l.google.com:19302"]'
 ```
 
 ---
