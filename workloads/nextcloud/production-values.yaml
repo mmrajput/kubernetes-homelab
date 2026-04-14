@@ -114,6 +114,29 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 
+# -- Background jobs
+# type: cronjob — Kubernetes CronJob runs occ cron.php every 5 minutes.
+# The sidecar alternative requires root; CronJob is cleaner for production.
+# podAffinity is required: Longhorn RWO PVC can only be mounted on one node,
+# so the cron pod must land on the same node as the Nextcloud pod.
+cronjob:
+  enabled: true
+  type: cronjob
+  cronjob:
+    schedule: "*/5 * * * *"
+    successfulJobsHistoryLimit: 3
+    failedJobsHistoryLimit: 3
+    affinity:
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - nextcloud
+            topologyKey: kubernetes.io/hostname
+
 # -- Resources
 # Production: higher requests for consistent performance under load
 resources:
