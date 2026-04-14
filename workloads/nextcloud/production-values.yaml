@@ -53,6 +53,34 @@ nextcloud:
         'forwarded_for_headers' => ['HTTP_X_FORWARDED_FOR'],
       );
 
+  # -- Talk (Nextcloud Spreed) — app enable + STUN config
+  # Runs on every pod start before the main container.  Idempotent — safe to run
+  # when Talk is already enabled.  Two early-exit guards keep this a no-op during
+  # fresh installs (config.php absent) or after a PVC loss (custom_apps/spreed absent).
+  #
+  # Talk app files must be present at /var/www/html/custom_apps/spreed.
+  # They are installed manually and persist on the Longhorn PVC across restarts.
+  # On PVC loss, reinstall the archive first:
+  #   see docs/runbooks/nextcloud-recovery.md — "Talk app reinstallation"
+  extraInitContainers:
+    - name: talk-enable
+      image: nextcloud:33.0.0
+      securityContext:
+        runAsUser: 33
+        runAsGroup: 33
+      command:
+        - /bin/sh
+        - -c
+        - |
+          [ -f /var/www/html/config/config.php ] || exit 0
+          [ -d /var/www/html/custom_apps/spreed ] || exit 0
+          php /var/www/html/occ app:enable spreed
+          php /var/www/html/occ config:app:set spreed stun_servers \
+            --value='["stun.l.google.com:19302"]'
+      volumeMounts:
+        - name: nextcloud-main
+          mountPath: /var/www/html
+
 # -- Disable internal SQLite database
 internalDatabase:
   enabled: false
