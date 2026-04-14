@@ -78,8 +78,21 @@ nextcloud:
           php /var/www/html/occ config:app:set spreed stun_servers \
             --value='["stun.l.google.com:19302"]'
       volumeMounts:
+        # Mirror the main container's subPath mounts so occ sees the same layout.
+        # The chart splits the PVC into named subPaths; mounting the PVC root would
+        # put occ at /var/www/html/html/occ (wrong path).
         - name: nextcloud-main
           mountPath: /var/www/html
+          subPath: html
+        - name: nextcloud-main
+          mountPath: /var/www/html/config
+          subPath: config
+        - name: nextcloud-main
+          mountPath: /var/www/html/custom_apps
+          subPath: custom_apps
+        - name: nextcloud-main
+          mountPath: /var/www/html/data
+          subPath: data
 
 # -- Disable internal SQLite database
 internalDatabase:
