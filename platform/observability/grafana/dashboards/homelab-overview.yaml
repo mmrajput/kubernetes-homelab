@@ -276,7 +276,7 @@ data:
           },
           "targets": [
             {
-              "expr": "count(longhorn_volume_robustness == 1) or vector(0)",
+              "expr": "count(longhorn_volume_robustness == 0) or vector(0)",
               "legendFormat": "Degraded",
               "refId": "A"
             }
@@ -308,7 +308,7 @@ data:
           },
           "targets": [
             {
-              "expr": "count(longhorn_volume_robustness == 2)",
+              "expr": "count(longhorn_volume_robustness == 1)",
               "legendFormat": "Healthy",
               "refId": "A"
             }
