@@ -72,3 +72,51 @@ spec:
             duration: 5s
             factor: 2
             maxDuration: 3m
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: observability-git
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          # Grafana dashboards: ConfigMaps labelled grafana_dashboard=1
+          - name: grafana-dashboards
+            path: platform/observability/grafana/dashboards
+            namespace: monitoring
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: observability
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/mmrajput/kubernetes-homelab
+        targetRevision: HEAD
+        path: "{{ .path }}"
+        directory:
+          recurse: true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false
+          - ServerSideApply=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
