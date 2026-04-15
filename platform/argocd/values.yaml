@@ -6,6 +6,13 @@ global:
   domain: argocd.mmrajputhomelab.org
 
 server:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: monitoring
+      additionalLabels:
+        release: prometheus
   ingress:
     enabled: true
     ingressClassName: nginx
@@ -16,10 +23,8 @@ server:
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     path: /
     pathType: Prefix
-
   extraArgs:
     - --insecure
-  
   resources:
     limits:
       cpu: 500m
@@ -32,8 +37,14 @@ redis:
   enabled: true
 
 repoServer:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: monitoring
+      additionalLabels:
+        release: prometheus
   volumes: []
-  
   resources:
     limits:
       cpu: 500m
@@ -45,7 +56,11 @@ repoServer:
 controller:
   metrics:
     enabled: true
-  
+    serviceMonitor:
+      enabled: true
+      namespace: monitoring
+      additionalLabels:
+        release: prometheus
   resources:
     limits:
       cpu: 1000m
@@ -53,8 +68,6 @@ controller:
     requests:
       cpu: 250m
       memory: 512Mi
-  
-  # Sync every 2 minutes
   extraArgs:
     - --app-resync=120
 
