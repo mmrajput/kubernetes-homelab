@@ -245,23 +245,19 @@ data:
         {
           "id": 7,
           "title": "Longhorn storage",
-          "type": "bargauge",
+          "type": "stat",
           "gridPos": { "x": 16, "y": 4, "w": 8, "h": 6 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "horizontal",
-            "displayMode": "gradient",
-            "valueMode": "color",
-            "showUnfilled": true,
-            "minVizWidth": 8,
-            "namePlacement": "auto"
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "background",
+            "graphMode": "none"
           },
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
-              "min": 0,
-              "max": 1,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -269,24 +265,13 @@ data:
                   { "color": "yellow", "value": 0.70 },
                   { "color": "red", "value": 0.90 }
                 ]
-              },
-              "custom": {
-                "fillOpacity": 80
               }
-            },
-            "overrides": [
-              {
-                "matcher": { "id": "byName", "options": "Total used" },
-                "properties": [
-                  { "id": "displayName", "value": "Total used  ·  RF=2  ·  ${__value.numeric:.0%} used  ·  8 volumes healthy  ·  0 degraded" }
-                ]
-              }
-            ]
+            }
           },
           "targets": [
             {
               "expr": "sum(longhorn_node_storage_usage_bytes) / sum(longhorn_node_storage_capacity_bytes)",
-              "legendFormat": "Total used",
+              "legendFormat": "Total used  |  RF=2  |  8 volumes healthy  |  0 degraded",
               "refId": "A"
             }
           ]
