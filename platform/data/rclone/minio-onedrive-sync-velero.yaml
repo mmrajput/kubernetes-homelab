@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minio-onedrive-sync-velero
+  namespace: velero
+spec:
+  # Run at 4:00 AM daily — after Velero nightly-full (2 AM) and
+  # CNPG base backup (3:30 AM) have both completed
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: rclone
+              image: rclone/rclone:1.68
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  echo "=== Syncing velero bucket ==="
+                  rclone sync \
+                    --config=/config/rclone.conf \
+                    --transfers=4 \
+                    --log-level=INFO \
+                    minio:velero onedrive:homelab-backups/velero
+                  echo "=== Sync complete ==="
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: 1000
+                runAsGroup: 1000
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: rclone-config
+                  mountPath: /config
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 64Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
+          volumes:
+            - name: rclone-config
+              secret:
+                secretName: rclone-config
+                items:
+                  - key: rclone.conf
+                    path: rclone.conf
