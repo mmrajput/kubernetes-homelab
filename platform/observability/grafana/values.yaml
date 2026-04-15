@@ -9,7 +9,7 @@ deploymentStrategy:
 
 # Admin credentials
 adminUser: admin
-adminPassword: admin  # Change this in production!
+adminPassword: CHANGEME
 
 # Resource limits
 resources:
@@ -51,13 +51,12 @@ ingress:
     - grafana.mmrajputhomelab.org
   path: /
   pathType: Prefix
-  
+
 # Data sources - automatically configured
 datasources:
   datasources.yaml:
     apiVersion: 1
     datasources:
-      # Prometheus data source
       - name: Prometheus
         type: prometheus
         url: http://prometheus-prometheus:9090
@@ -65,8 +64,6 @@ datasources:
         isDefault: true
         jsonData:
           timeInterval: 30s
-      
-      # Loki data source
       - name: Loki
         type: loki
         url: http://loki:3100
@@ -87,15 +84,19 @@ dashboardProviders:
         editable: true
         options:
           path: /var/lib/grafana/dashboards/default
-      # Sidecar-managed folder: receives kube-prometheus-stack ConfigMap dashboards
-      - name: 'kube-prometheus-stack'
+      # Sidecar-managed provider: foldersFromFilesStructure maps subdirectory names
+      # to Grafana folders automatically.
+      # e.g. /tmp/dashboards/Public → Public folder
+      #      /tmp/dashboards/Kubernetes → Kubernetes folder
+      - name: 'sidecar'
         orgId: 1
-        folder: 'Kubernetes'
+        folder: ''
         type: file
         disableDeletion: false
         editable: false
         options:
           path: /tmp/dashboards
+          foldersFromFilesStructure: true
 
 # Sidecar: watches for ConfigMaps labelled grafana_dashboard=1 across all
 # namespaces and drops them into /tmp/dashboards for the provider above.
@@ -108,42 +109,13 @@ sidecar:
     searchNamespace: ALL
     folderAnnotation: grafana_folder
     provider:
-      foldersFromFilesStructure: false
+      foldersFromFilesStructure: true
       allowUiUpdates: false
 
-# Pre-installed dashboards
-# kubernetes-cluster (7249) and kubernetes-pods (6417) removed — both used
-# deprecated container_name/pod_name labels (pre-k8s 1.20 cAdvisor API).
-# Kubernetes dashboards are now served by the sidecar from kube-prometheus-stack
-# ConfigMaps (forceDeployDashboards: true in prometheus/values.yaml).
-dashboards:
-  default:
-    # Node exporter full — uses node_ metrics; label names unchanged
-    node-exporter:
-      gnetId: 1860
-      revision: 37
-      datasource: Prometheus
-
-    # Loki logs dashboard
-    loki-logs:
-      gnetId: 13639
-      revision: 2
-      datasource: Loki
-
-    # Longhorn storage monitoring
-    longhorn:
-      gnetId: 16888
-      revision: 9
-      datasource: Prometheus
-
-# Plugins to install
-# grafana-piechart-panel removed: Angular-based, disabled in Grafana 10.x
-#   ("Refusing to initialize plugin because it's using Angular")
-# grafana-lokiexplore-app: bundled with Grafana 10.x; listing it here prevents
-#   the background installer from trying to download it and failing with
-#   "cannot recognize as plugin folder" against the embedded binary path
+# grafana-lokiexplore-app: bundled with Grafana 10.x — listed here to prevent
+# the background installer from trying to download it and failing with
+# "cannot recognize as plugin folder" against the embedded binary path
 plugins:
-  - grafana-clock-panel
   - grafana-lokiexplore-app
 
 # ServiceMonitor for Prometheus
