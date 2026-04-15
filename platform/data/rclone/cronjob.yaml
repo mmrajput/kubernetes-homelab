@@ -18,15 +18,8 @@ spec:
           containers:
             - name: rclone
               image: rclone/rclone:1.68
-              args:
-                - sync
-                - --config=/config/rclone.conf
-                - --transfers=4
-                - --checkers=8
-                - --log-level=INFO
-                - --stats=30s
-                # Sync both backup buckets to OneDrive under homelab-backups/
-                # Run as two sequential syncs in a single container via sh -c
+              # Sync both backup buckets to OneDrive under homelab-backups/
+              # Run as two sequential syncs in a single container via sh -c
               command:
                 - /bin/sh
                 - -c
