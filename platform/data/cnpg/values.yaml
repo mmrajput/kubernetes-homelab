@@ -19,3 +19,5 @@ monitoring:
   enabled: true
   podMonitor:
     enabled: true
+    additionalLabels:
+      release: prometheus
