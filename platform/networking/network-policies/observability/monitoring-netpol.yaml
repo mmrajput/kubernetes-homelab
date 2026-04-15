@@ -122,3 +122,15 @@ spec:
       ports:
         - port: 9500
           protocol: TCP
+    # Allow Prometheus to scrape ArgoCD metrics
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: argocd
+      ports:
+        - port: 8082  # argocd-application-controller metrics
+          protocol: TCP
+        - port: 8083  # argocd-server metrics
+          protocol: TCP
+        - port: 8084  # argocd-repo-server metrics
+          protocol: TCP
