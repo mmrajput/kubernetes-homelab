@@ -246,7 +246,7 @@ data:
           "id": 7,
           "title": "Longhorn storage used",
           "type": "stat",
-          "gridPos": { "x": 16, "y": 4, "w": 4, "h": 3 },
+          "gridPos": { "x": 16, "y": 4, "w": 4, "h": 6 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -280,7 +280,7 @@ data:
           "id": 8,
           "title": "Longhorn volumes",
           "type": "stat",
-          "gridPos": { "x": 20, "y": 4, "w": 4, "h": 3 },
+          "gridPos": { "x": 20, "y": 4, "w": 4, "h": 6 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
