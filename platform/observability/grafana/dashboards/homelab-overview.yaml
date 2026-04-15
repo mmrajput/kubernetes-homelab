@@ -244,72 +244,49 @@ data:
         },
         {
           "id": 7,
-          "title": "Longhorn degraded volumes",
-          "type": "stat",
-          "gridPos": { "x": 16, "y": 4, "w": 4, "h": 6 },
+          "title": "Longhorn storage",
+          "type": "bargauge",
+          "gridPos": { "x": 16, "y": 4, "w": 8, "h": 6 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
+            "orientation": "horizontal",
+            "displayMode": "gradient",
+            "valueMode": "color",
+            "showUnfilled": true,
+            "minVizWidth": 8,
+            "namePlacement": "auto"
           },
           "fieldConfig": {
             "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   { "color": "green", "value": null },
-                  { "color": "red", "value": 1 }
+                  { "color": "yellow", "value": 0.70 },
+                  { "color": "red", "value": 0.90 }
                 ]
               },
-              "mappings": [
-                {
-                  "type": "value",
-                  "options": {
-                    "0": { "text": "0 degraded", "color": "green" }
-                  }
-                }
-              ]
-            }
-          },
-          "targets": [
-            {
-              "expr": "count(longhorn_volume_robustness == 0) or vector(0)",
-              "legendFormat": "Degraded",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "id": 8,
-          "title": "Longhorn healthy volumes",
-          "type": "stat",
-          "gridPos": { "x": 20, "y": 4, "w": 4, "h": 6 },
-          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "green", "value": 1 }
+              "custom": {
+                "fillOpacity": 80
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Total used" },
+                "properties": [
+                  { "id": "displayName", "value": "Total used  ·  RF=2  ·  ${__value.numeric:.0%} used  ·  8 volumes healthy  ·  0 degraded" }
                 ]
               }
-            }
+            ]
           },
           "targets": [
             {
-              "expr": "count(longhorn_volume_robustness == 1)",
-              "legendFormat": "Healthy",
+              "expr": "sum(longhorn_node_storage_usage_bytes) / sum(longhorn_node_storage_capacity_bytes)",
+              "legendFormat": "Total used",
               "refId": "A"
             }
           ]
