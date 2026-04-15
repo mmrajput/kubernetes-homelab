@@ -236,7 +236,7 @@ data:
           },
           "targets": [
             {
-              "expr": "label_replace((1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * on(instance) group_left(node) label_replace(kube_node_info, \"instance\", \"$1:9100\", \"internal_ip\", \"(.+)\"), \"instance\", \"$1\", \"node\", \"(.+)\")",
+              "expr": "label_replace((1 - (avg by(instance)(node_memory_MemAvailable_bytes) / avg by(instance)(node_memory_MemTotal_bytes))) * on(instance) group_left(node) label_replace(kube_node_info, \"instance\", \"$1:9100\", \"internal_ip\", \"(.+)\"), \"instance\", \"$1\", \"node\", \"(.+)\")",
               "legendFormat": "{{instance}}",
               "refId": "A"
             }
