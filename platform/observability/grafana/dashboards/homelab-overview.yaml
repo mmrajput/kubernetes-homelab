@@ -198,8 +198,8 @@ data:
           },
           "targets": [
             {
-              "expr": "100 - (avg by(instance)(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
-              "legendFormat": "{{instance}}",
+              "expr": "(100 - (avg by(instance)(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)) * on(instance) group_left(node) label_replace(kube_node_info, \"instance\", \"$1:9100\", \"internal_ip\", \"(.+)\")",
+              "legendFormat": "{{node}}",
               "refId": "A"
             }
           ]
@@ -236,8 +236,8 @@ data:
           },
           "targets": [
             {
-              "expr": "1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)",
-              "legendFormat": "{{instance}}",
+              "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * on(instance) group_left(node) label_replace(kube_node_info, \"instance\", \"$1:9100\", \"internal_ip\", \"(.+)\")",
+              "legendFormat": "{{node}}",
               "refId": "A"
             }
           ]
