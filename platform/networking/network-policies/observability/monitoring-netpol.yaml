@@ -134,3 +134,11 @@ spec:
           protocol: TCP
         - port: 8084  # argocd-repo-server metrics
           protocol: TCP
+    # Allow Prometheus to scrape CloudNativePG operator metrics
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cnpg-system
+      ports:
+        - port: 8080  # cnpg operator metrics
+          protocol: TCP   
