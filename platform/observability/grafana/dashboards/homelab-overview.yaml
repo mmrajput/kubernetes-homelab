@@ -38,7 +38,7 @@ data:
             "type": "datasource",
             "query": "prometheus",
             "label": "Datasource",
-            "current": { "selected": false, "text": "Prometheus", "value": "default" },
+            "current": { "selected": true, "text": "Prometheus", "value": "PBFA97CFB590B2093" },
             "hide": 0,
             "refresh": 1,
             "options": [],
