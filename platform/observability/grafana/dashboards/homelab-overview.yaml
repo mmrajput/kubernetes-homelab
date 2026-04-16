@@ -476,9 +476,9 @@ data:
         },
         {
           "id": 15,
-          "title": "Velero storage location",
+          "title": "Velero — MinIO (default)",
           "type": "stat",
-          "gridPos": { "x": 0, "y": 16, "w": 6, "h": 4 },
+          "gridPos": { "x": 0, "y": 16, "w": 3, "h": 6 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -513,112 +513,228 @@ data:
         },
         {
           "id": 16,
-          "title": "Velero last backup",
-          "type": "stat",
-          "gridPos": { "x": 6, "y": 16, "w": 6, "h": 4 },
+          "title": "Velero backups",
+          "type": "table",
+          "gridPos": { "x": 3, "y": 16, "w": 7, "h": 6 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
+            "showHeader": true,
+            "sortBy": [{ "displayName": "Schedule", "desc": false }]
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "short",
-              "mappings": [
-                { "type": "value", "options": { "1": { "text": "All Succeeded", "color": "green" } } },
-                { "type": "value", "options": { "0": { "text": "Failed", "color": "red" } } }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "green", "value": 1 }
+              "custom": {
+                "align": "left",
+                "displayMode": "auto"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Status" },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      { "type": "value", "options": { "1": { "text": "Succeeded", "color": "green" } } },
+                      { "type": "value", "options": { "0": { "text": "Failed", "color": "red" } } }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Last Success" },
+                "properties": [
+                  { "id": "unit", "value": "dateTimeFromNow" }
                 ]
               }
-            }
+            ]
           },
+          "transformations": [
+            {
+              "id": "joinByLabels",
+              "options": { "join": "schedule" }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "renameByName": {
+                  "schedule": "Schedule",
+                  "Value #A": "Status",
+                  "Value #B": "Last Success"
+                },
+                "excludeByName": {}
+              }
+            }
+          ],
           "targets": [
             {
-              "expr": "min(velero_backup_last_status{schedule=~\"velero-nightly-full|velero-nextcloud-files\"})",
-              "legendFormat": "Schedules",
-              "refId": "A"
+              "expr": "velero_backup_last_status{schedule=~\"velero-nightly-full|velero-nextcloud-files\"}",
+              "legendFormat": "{{schedule}}",
+              "refId": "A",
+              "instant": true
+            },
+            {
+              "expr": "velero_backup_last_successful_timestamp{schedule=~\"velero-nightly-full|velero-nextcloud-files\"}",
+              "legendFormat": "{{schedule}}",
+              "refId": "B",
+              "instant": true
             }
           ]
         },
         {
           "id": 17,
           "title": "CNPG WAL archiving",
-          "type": "stat",
-          "gridPos": { "x": 12, "y": 16, "w": 6, "h": 4 },
+          "type": "table",
+          "gridPos": { "x": 10, "y": 16, "w": 7, "h": 6 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
+            "showHeader": true,
+            "sortBy": [{ "displayName": "Cluster", "desc": false }]
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "short",
-              "mappings": [
-                { "type": "value", "options": { "0": { "text": "No Backlog", "color": "green" } } }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "green", "value": null },
-                  { "color": "yellow", "value": 1 },
-                  { "color": "red", "value": 5 }
+              "custom": {
+                "align": "left",
+                "displayMode": "auto"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Pending" },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        { "color": "green", "value": null },
+                        { "color": "yellow", "value": 1 },
+                        { "color": "red", "value": 5 }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
                 ]
               }
-            }
+            ]
           },
+          "transformations": [
+            {
+              "id": "joinByLabels",
+              "options": { "join": "cluster" }
+            },
+            {
+              "id": "filterByValue",
+              "options": {
+                "filters": [
+                  {
+                    "fieldName": "cluster",
+                    "config": {
+                      "id": "regex",
+                      "options": { "value": "nextcloud-prod-db|keycloak-db" }
+                    }
+                  }
+                ],
+                "match": "any",
+                "type": "include"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "Value #A": "Archived",
+                  "Value #B": "Pending"
+                },
+                "excludeByName": {}
+              }
+            }
+          ],
           "targets": [
             {
-              "expr": "sum(cnpg_collector_pg_wal_archive_status{cluster=~\"nextcloud-prod-db|keycloak-db\",value=\"ready\"}) or vector(0)",
-              "legendFormat": "WAL ready",
-              "refId": "A"
+              "expr": "sum by (cluster) (cnpg_collector_pg_wal_archive_status{value=\"done\"})",
+              "legendFormat": "{{cluster}}",
+              "refId": "A",
+              "instant": true
+            },
+            {
+              "expr": "sum by (cluster) (cnpg_collector_pg_wal_archive_status{value=\"ready\"})",
+              "legendFormat": "{{cluster}}",
+              "refId": "B",
+              "instant": true
             }
           ]
         },
         {
           "id": 18,
           "title": "OneDrive sync",
-          "type": "stat",
-          "gridPos": { "x": 18, "y": 16, "w": 6, "h": 4 },
+          "type": "table",
+          "gridPos": { "x": 17, "y": 16, "w": 7, "h": 6 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
+            "showHeader": true,
+            "sortBy": [{ "displayName": "Target", "desc": false }]
           },
           "fieldConfig": {
             "defaults": {
-              "unit": "short",
-              "mappings": [
-                { "type": "value", "options": { "1": { "text": "Synced", "color": "green" } } },
-                { "type": "value", "options": { "0": { "text": "Failed", "color": "red" } } }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "green", "value": 1 }
+              "custom": {
+                "align": "left",
+                "displayMode": "auto"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Status" },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      { "type": "value", "options": { "1": { "text": "Synced", "color": "green" } } },
+                      { "type": "value", "options": { "0": { "text": "Failed", "color": "red" } } }
+                    ]
+                  }
                 ]
               }
-            }
+            ]
           },
+          "transformations": [
+            {
+              "id": "joinByLabels",
+              "options": { "join": "sync_target" }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "renameByName": {
+                  "sync_target": "Target",
+                  "Value #A": "Status"
+                },
+                "excludeByName": {}
+              }
+            }
+          ],
           "targets": [
             {
-              "expr": "min(kube_job_status_succeeded{namespace=\"velero\",job_name=~\"minio-onedrive-sync-.+\"})",
-              "legendFormat": "rclone",
-              "refId": "A"
+              "expr": "max by (sync_target) (label_replace(kube_job_status_succeeded{namespace=\"velero\",job_name=~\"minio-onedrive-sync-.+\"}, \"sync_target\", \"$1\", \"job_name\", \"minio-onedrive-sync-([a-z]+)-.*\"))",
+              "legendFormat": "{{sync_target}}",
+              "refId": "A",
+              "instant": true
             }
           ]
         }
