@@ -75,7 +75,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"true\"})",
+              "expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"true\"}) or vector(0)",
               "legendFormat": "Nodes ready",
               "refId": "A"
             }
@@ -179,7 +179,7 @@ data:
           },
           "targets": [
             {
-              "expr": "avg(avg_over_time(kube_node_status_condition{condition=\"Ready\",status=\"true\"}[30d]))",
+              "expr": "min(avg_over_time(kube_node_status_condition{condition=\"Ready\",status=\"true\"}[30d]))",
               "legendFormat": "Uptime",
               "refId": "A"
             }
@@ -215,7 +215,7 @@ data:
           },
           "targets": [
             {
-              "expr": "count(ALERTS{alertstate=\"firing\",severity=\"critical\"}) or vector(0)",
+              "expr": "count(ALERTS{alertstate=\"firing\",severity=\"critical\",alertname!~\"KubeControllerManagerDown|KubeSchedulerDown|KubeProxyDown|etcdInsufficientMembers\"}) or vector(0)",
               "legendFormat": "Critical",
               "refId": "A"
             }
@@ -456,7 +456,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(longhorn_node_storage_usage_bytes) / sum(longhorn_node_storage_capacity_bytes)",
+              "expr": "(sum(longhorn_node_storage_usage_bytes) or vector(0)) / (sum(longhorn_node_storage_capacity_bytes) or vector(1))",
               "legendFormat": "Storage used",
               "refId": "A"
             }
@@ -793,7 +793,7 @@ data:
           },
           "targets": [
             {
-              "expr": "max(vault_core_unsealed{job=~\"vault.*\"}) or kube_pod_status_ready{namespace=\"vault\",pod=\"vault-0\",condition=\"true\"}",
+              "expr": "max(vault_core_unsealed{job=~\"vault.*\"}) or max(kube_pod_status_ready{namespace=\"vault\",pod=\"vault-0\",condition=\"true\"})",
               "legendFormat": "Vault",
               "refId": "A"
             }
@@ -1084,7 +1084,7 @@ data:
           },
           "targets": [
             {
-              "expr": "max by (sync_target) (label_replace(kube_job_status_succeeded{namespace=\"velero\",job_name=~\"minio-onedrive-sync-.+\"}, \"sync_target\", \"$1\", \"job_name\", \"minio-onedrive-sync-([a-z]+)-.*\"))",
+              "expr": "max by (sync_target) (label_replace(kube_job_status_succeeded{namespace=\"velero\",job_name=~\"minio-onedrive-sync-.+\"}, \"sync_target\", \"$1\", \"job_name\", \"minio-onedrive-sync-([a-z]+)-.*\")) or vector(0)",
               "legendFormat": "{{sync_target}}",
               "refId": "A"
             }
@@ -1211,7 +1211,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(rate(nginx_ingress_controller_requests[5m]))",
+              "expr": "sum(rate(nginx_ingress_controller_requests[5m])) or vector(0)",
               "legendFormat": "req/s",
               "refId": "A"
             }
@@ -1245,7 +1245,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(nginx_ingress_controller_nginx_process_connections{state=\"active\"})",
+              "expr": "sum(nginx_ingress_controller_nginx_process_connections{state=\"active\"}) or vector(0)",
               "legendFormat": "Active",
               "refId": "A"
             }
@@ -1315,7 +1315,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(rate(nginx_ingress_controller_requests{status=~\"2..\"}[5m])) / sum(rate(nginx_ingress_controller_requests[5m]))",
+              "expr": "(sum(rate(nginx_ingress_controller_requests{status=~\"2..\"}[5m])) or vector(0)) / (sum(rate(nginx_ingress_controller_requests[5m])) or vector(1))",
               "legendFormat": "Success rate",
               "refId": "A"
             }
