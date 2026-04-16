@@ -55,6 +55,12 @@ nodeAgent:
       cpu: 500m
       memory: 512Mi
 
+metrics:
+  serviceMonitor:
+    enabled: true
+  nodeAgentPodMonitor:
+    enabled: true
+
 schedules:
   # Schedule 1 — nightly full namespace backup (2:00 AM)
   # Covers: Kubernetes objects + PVCs for all critical namespaces
