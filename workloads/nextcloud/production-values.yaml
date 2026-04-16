@@ -168,9 +168,9 @@ cronjob:
     successfulJobsHistoryLimit: 3
     failedJobsHistoryLimit: 3
     securityContext:
-    runAsUser: 33
-    runAsGroup: 33
-    fsGroup: 33
+      runAsUser: 33
+      runAsGroup: 33
+      runAsNonRoot: true
     affinity:
       podAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
