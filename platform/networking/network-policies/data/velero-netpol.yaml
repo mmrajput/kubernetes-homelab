@@ -23,6 +23,14 @@ spec:
     # Allow intra-namespace traffic (velero server ↔ node-agent coordination)
     - from:
         - podSelector: {}
+    # Allow Prometheus to scrape Velero metrics
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 8085
+          protocol: TCP
   egress:
     # Allow DNS resolution
     - to:

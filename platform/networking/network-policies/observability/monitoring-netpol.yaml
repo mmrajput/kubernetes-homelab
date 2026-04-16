@@ -149,4 +149,12 @@ spec:
               kubernetes.io/metadata.name: databases
       ports:
         - port: 9187  # cnpg per-instance metrics exporter
+          protocol: TCP
+    # Allow Prometheus to scrape Velero metrics
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: velero
+      ports:
+        - port: 8085  # velero metrics
           protocol: TCP   
