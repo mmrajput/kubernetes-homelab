@@ -74,6 +74,14 @@ spec:
       ports:
         - port: 8000
           protocol: TCP
+    # Allow Prometheus to scrape CNPG instance metrics
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - port: 9187
+          protocol: TCP
     # Allow intra-namespace CNPG instance health checks (failsafe endpoint)
     - from:
         - podSelector: {}

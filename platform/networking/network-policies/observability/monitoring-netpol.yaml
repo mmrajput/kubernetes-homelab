@@ -141,4 +141,12 @@ spec:
               kubernetes.io/metadata.name: cnpg-system
       ports:
         - port: 8080  # cnpg operator metrics
+          protocol: TCP
+    # Allow Prometheus to scrape CNPG instance metrics in databases namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: databases
+      ports:
+        - port: 9187  # cnpg per-instance metrics exporter
           protocol: TCP   
