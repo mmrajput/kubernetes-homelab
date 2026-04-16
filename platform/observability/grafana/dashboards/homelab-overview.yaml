@@ -555,18 +555,21 @@ data:
           },
           "transformations": [
             {
-              "id": "joinByLabels",
-              "options": { "join": "schedule" }
+              "id": "merge",
+              "options": {}
             },
             {
               "id": "organize",
               "options": {
                 "renameByName": {
+                  "Time": "",
                   "schedule": "Schedule",
                   "Value #A": "Status",
                   "Value #B": "Last Success"
                 },
-                "excludeByName": {}
+                "excludeByName": {
+                  "Time": true
+                }
               }
             }
           ],
@@ -631,34 +634,29 @@ data:
           },
           "transformations": [
             {
-              "id": "joinByLabels",
-              "options": { "join": "cluster" }
-            },
-            {
-              "id": "filterByValue",
-              "options": {
-                "filters": [
-                  {
-                    "fieldName": "cluster",
-                    "config": {
-                      "id": "regex",
-                      "options": { "value": "nextcloud-prod-db|keycloak-db" }
-                    }
-                  }
-                ],
-                "match": "any",
-                "type": "include"
-              }
+              "id": "merge",
+              "options": {}
             },
             {
               "id": "organize",
               "options": {
                 "renameByName": {
+                  "Time": "",
                   "cluster": "Cluster",
                   "Value #A": "Archived",
                   "Value #B": "Pending"
                 },
-                "excludeByName": {}
+                "excludeByName": {
+                  "Time": true,
+                  "container": true,
+                  "endpoint": true,
+                  "instance": true,
+                  "job": true,
+                  "namespace": true,
+                  "pod": true,
+                  "service": true,
+                  "value": true
+                }
               }
             }
           ],
@@ -715,17 +713,28 @@ data:
           },
           "transformations": [
             {
-              "id": "joinByLabels",
-              "options": { "join": "sync_target" }
+              "id": "merge",
+              "options": {}
             },
             {
               "id": "organize",
               "options": {
                 "renameByName": {
+                  "Time": "",
                   "sync_target": "Target",
                   "Value #A": "Status"
                 },
-                "excludeByName": {}
+                "excludeByName": {
+                  "Time": true,
+                  "container": true,
+                  "endpoint": true,
+                  "instance": true,
+                  "job": true,
+                  "namespace": true,
+                  "pod": true,
+                  "service": true,
+                  "job_name": true
+                }
               }
             }
           ],
