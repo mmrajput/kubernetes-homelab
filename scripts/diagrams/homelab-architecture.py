@@ -143,10 +143,6 @@ with Diagram(
         # ── Workloads ─────────────────────────────────────────────────────────
         with Cluster("Workloads  ·  GitOps managed", graph_attr=cluster_attr):
             nextcloud = Nextcloud("Nextcloud\n(File Sharing)")
-            # Phase 11 — AI Stack (not yet implemented)
-            # with Cluster("AI Stack", graph_attr=inner_cluster):
-            #     ollama = Hadoop("Ollama\nllama3.2:3b")
-            #     k8sgpt = CRD("K8sGPT\nOperator")
 
         # ── Data · Storage · Backup ───────────────────────────────────────────
         with Cluster("Data  ·  Storage  ·  Backup  ·  GitOps managed", graph_attr=cluster_attr):
