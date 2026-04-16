@@ -466,6 +466,161 @@ data:
               "refId": "A"
             }
           ]
+        },
+        {
+          "id": 14,
+          "title": "Backup Pipeline",
+          "type": "row",
+          "gridPos": { "x": 0, "y": 15, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "id": 15,
+          "title": "Velero storage location",
+          "type": "stat",
+          "gridPos": { "x": 0, "y": 16, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "mappings": [
+                { "type": "value", "options": { "1": { "text": "Available", "color": "green" } } },
+                { "type": "value", "options": { "0": { "text": "Unavailable", "color": "red" } } }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "velero_backup_location_status_gauge{backup_location_name=\"default\"}",
+              "legendFormat": "MinIO",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "title": "Velero last backup",
+          "type": "stat",
+          "gridPos": { "x": 6, "y": 16, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "mappings": [
+                { "type": "value", "options": { "1": { "text": "All Succeeded", "color": "green" } } },
+                { "type": "value", "options": { "0": { "text": "Failed", "color": "red" } } }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "min(velero_backup_last_status{schedule=~\"velero-nightly-full|velero-nextcloud-files\"})",
+              "legendFormat": "Schedules",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "title": "CNPG WAL archiving",
+          "type": "stat",
+          "gridPos": { "x": 12, "y": 16, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "mappings": [
+                { "type": "value", "options": { "0": { "text": "No Backlog", "color": "green" } } }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 5 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "sum(cnpg_collector_pg_wal_archive_status{cluster=~\"nextcloud-prod-db|keycloak-db\",value=\"ready\"})",
+              "legendFormat": "WAL ready",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "title": "OneDrive sync",
+          "type": "stat",
+          "gridPos": { "x": 18, "y": 16, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "mappings": [
+                { "type": "value", "options": { "1": { "text": "Synced", "color": "green" } } },
+                { "type": "value", "options": { "0": { "text": "Failed", "color": "red" } } }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "min(kube_job_status_succeeded{namespace=\"velero\",job_name=~\"minio-onedrive-sync-.+\"})",
+              "legendFormat": "rclone",
+              "refId": "A"
+            }
+          ]
         }
       ]
     }
