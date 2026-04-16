@@ -197,7 +197,7 @@ data:
             "orientation": "auto",
             "textMode": "auto",
             "colorMode": "background",
-            "graphMode": "area"
+            "graphMode": "none"
           },
           "fieldConfig": {
             "defaults": {
@@ -233,7 +233,7 @@ data:
             "orientation": "auto",
             "textMode": "auto",
             "colorMode": "background",
-            "graphMode": "area"
+            "graphMode": "none"
           },
           "fieldConfig": {
             "defaults": {
