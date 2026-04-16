@@ -1084,7 +1084,7 @@ data:
           },
           "targets": [
             {
-              "expr": "max by (sync_target) (label_replace(kube_job_status_succeeded{namespace=\"velero\",job_name=~\"minio-onedrive-sync-.+\"}, \"sync_target\", \"$1\", \"job_name\", \"minio-onedrive-sync-([a-z]+)-.*\")) or vector(0)",
+              "expr": "max by (sync_target) (label_replace(kube_job_status_succeeded{namespace=\"velero\",job_name=~\"minio-onedrive-sync-.+\"}, \"sync_target\", \"$1\", \"job_name\", \"minio-onedrive-sync-([a-z]+)-.*\"))",
               "legendFormat": "{{sync_target}}",
               "refId": "A"
             }
