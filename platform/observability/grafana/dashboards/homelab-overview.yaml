@@ -579,7 +579,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(cnpg_collector_pg_wal_archive_status{cluster=~\"nextcloud-prod-db|keycloak-db\",value=\"ready\"})",
+              "expr": "sum(cnpg_collector_pg_wal_archive_status{cluster=~\"nextcloud-prod-db|keycloak-db\",value=\"ready\"}) or vector(0)",
               "legendFormat": "WAL ready",
               "refId": "A"
             }
