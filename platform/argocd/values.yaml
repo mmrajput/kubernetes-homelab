@@ -79,6 +79,9 @@ dex:
 
 configs:
   cm:
+    # Empty string removes the default Endpoints exclusion — needed so ArgoCD can track
+    # the Endpoints objects created by kube-prometheus-stack for control plane scraping.
+    resource.exclusions: ""
     oidc.config: |
       name: Keycloak
       issuer: https://keycloak.mmrajputhomelab.org/realms/homelab
