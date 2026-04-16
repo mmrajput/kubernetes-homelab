@@ -59,7 +59,6 @@ datasources:
     datasources:
       - name: Prometheus
         type: prometheus
-        uid: prometheus
         url: http://prometheus-prometheus:9090
         access: proxy
         isDefault: true
