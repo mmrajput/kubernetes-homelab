@@ -1289,7 +1289,7 @@ data:
         {
           "id": 46,
           "title": "HTTP success rate",
-          "description": "Fraction of requests returning 2xx. SLO target ≥ 99.9%.",
+          "description": "Fraction of requests returning 2xx or 3xx (including 304 cache hits). SLO target ≥ 99.9%.",
           "type": "stat",
           "gridPos": { "x": 18, "y": 36, "w": 6, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
@@ -1315,7 +1315,7 @@ data:
           },
           "targets": [
             {
-              "expr": "(sum(rate(nginx_ingress_controller_requests{status=~\"2..\"}[5m])) or vector(0)) / (sum(rate(nginx_ingress_controller_requests[5m])) or vector(1))",
+              "expr": "(sum(rate(nginx_ingress_controller_requests{status=~\"[23]..\"}[5m])) or vector(0)) / (sum(rate(nginx_ingress_controller_requests[5m])) or vector(1))",
               "legendFormat": "Success rate",
               "refId": "A"
             }
