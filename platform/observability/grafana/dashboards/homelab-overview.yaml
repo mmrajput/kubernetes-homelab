@@ -569,47 +569,11 @@ data:
           ]
         },
         {
-          "id": 35,
-          "title": "PVCs not bound",
-          "description": "PersistentVolumeClaims not in Bound phase. Unbound PVCs block pod scheduling.",
-          "type": "stat",
-          "gridPos": { "x": 8, "y": 11, "w": 4, "h": 4 },
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "green", "value": null },
-                  { "color": "red", "value": 1 }
-                ]
-              },
-              "mappings": [
-                { "type": "value", "options": { "0": { "text": "All bound", "color": "green" } } }
-              ]
-            }
-          },
-          "targets": [
-            {
-              "expr": "count(kube_persistentvolumeclaim_status_phase{phase!=\"Bound\"}) or vector(0)",
-              "legendFormat": "Unbound PVCs",
-              "refId": "A"
-            }
-          ]
-        },
-        {
           "id": 36,
           "title": "API server 5xx rate",
           "description": "Rate of 5xx responses from kube-apiserver. Non-zero values indicate control plane instability.",
           "type": "stat",
-          "gridPos": { "x": 12, "y": 11, "w": 4, "h": 4 },
+          "gridPos": { "x": 8, "y": 11, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -647,7 +611,7 @@ data:
           "title": "Container restarts (1h)",
           "description": "Total container restart increments across the cluster in the last hour. Elevated counts indicate a crash loop.",
           "type": "stat",
-          "gridPos": { "x": 16, "y": 11, "w": 4, "h": 4 },
+          "gridPos": { "x": 12, "y": 11, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -684,7 +648,7 @@ data:
           "title": "Pods failed / unknown",
           "description": "Pods in Failed or Unknown phase. Should always be zero in a healthy cluster.",
           "type": "stat",
-          "gridPos": { "x": 20, "y": 11, "w": 4, "h": 4 },
+          "gridPos": { "x": 16, "y": 11, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
