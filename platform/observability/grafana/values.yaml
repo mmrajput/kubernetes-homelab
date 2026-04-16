@@ -130,7 +130,8 @@ envFromSecret: grafana-oidc-secret
 grafana.ini:
   server:
     root_url: https://grafana.mmrajputhomelab.org
-
+  public_dashboards:
+    enabled: true
   security:
     allow_embedding: true
     cookie_secure: true
