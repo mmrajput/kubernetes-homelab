@@ -167,6 +167,10 @@ cronjob:
     schedule: "*/5 * * * *"
     successfulJobsHistoryLimit: 3
     failedJobsHistoryLimit: 3
+    securityContext:
+    runAsUser: 33
+    runAsGroup: 33
+    fsGroup: 33
     affinity:
       podAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
