@@ -38,7 +38,7 @@ data:
             "type": "datasource",
             "query": "prometheus",
             "label": "Datasource",
-            "current": {},
+            "current": { "selected": false, "text": "Prometheus", "value": "default" },
             "hide": 0,
             "refresh": 1,
             "options": [],
