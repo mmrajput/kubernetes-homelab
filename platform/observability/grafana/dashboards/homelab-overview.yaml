@@ -26,7 +26,7 @@ data:
       "uid": "homelab-overview",
       "schemaVersion": 38,
       "version": 2,
-      "refresh": "30s",
+      "refresh": "60s",
       "time": { "from": "now-24h", "to": "now" },
       "timezone": "browser",
       "tags": ["homelab", "kubernetes", "sre"],
@@ -151,8 +151,8 @@ data:
         },
         {
           "id": 4,
-          "title": "Cluster uptime (90d)",
-          "description": "Fraction of time all nodes reported Ready over the rolling 90-day window. Fixed window — independent of dashboard time range.",
+          "title": "Cluster uptime (30d)",
+          "description": "Fraction of time all nodes reported Ready over the rolling 30-day window. Fixed window — independent of dashboard time range.",
           "type": "stat",
           "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
@@ -178,7 +178,7 @@ data:
           },
           "targets": [
             {
-              "expr": "avg(avg_over_time(kube_node_status_condition{condition=\"Ready\",status=\"true\"}[90d]))",
+              "expr": "avg(avg_over_time(kube_node_status_condition{condition=\"Ready\",status=\"true\"}[30d]))",
               "legendFormat": "Uptime",
               "refId": "A"
             }
@@ -726,7 +726,7 @@ data:
           "id": 10,
           "title": "Nextcloud",
           "type": "stat",
-          "gridPos": { "x": 0, "y": 16, "w": 4, "h": 4 },
+          "gridPos": { "x": 0, "y": 16, "w": 6, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -760,51 +760,10 @@ data:
           ]
         },
         {
-          "id": 11,
-          "title": "CNPG prod clusters",
-          "type": "stat",
-          "gridPos": { "x": 4, "y": 16, "w": 4, "h": 4 },
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "mappings": [
-                { "type": "value", "options": { "4": { "text": "4 / 4 Healthy", "color": "green" } } },
-                { "type": "value", "options": { "3": { "text": "3 / 4 Degraded", "color": "yellow" } } },
-                { "type": "value", "options": { "2": { "text": "2 / 4 Degraded", "color": "yellow" } } },
-                { "type": "value", "options": { "1": { "text": "1 / 4 Critical", "color": "red" } } },
-                { "type": "value", "options": { "0": { "text": "Down", "color": "red" } } }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "yellow", "value": 1 },
-                  { "color": "green", "value": 4 }
-                ]
-              }
-            }
-          },
-          "targets": [
-            {
-              "expr": "count(cnpg_collector_up{cluster=~\"nextcloud-prod-db|keycloak-db\"})",
-              "legendFormat": "Instances up",
-              "refId": "A"
-            }
-          ]
-        },
-        {
           "id": 12,
           "title": "Keycloak",
           "type": "stat",
-          "gridPos": { "x": 8, "y": 16, "w": 4, "h": 4 },
+          "gridPos": { "x": 6, "y": 16, "w": 6, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -842,7 +801,7 @@ data:
           "title": "Vault",
           "description": "Vault seal status via vault_core_unsealed metric. Requires Vault telemetry with Prometheus listener enabled.",
           "type": "stat",
-          "gridPos": { "x": 12, "y": 16, "w": 4, "h": 4 },
+          "gridPos": { "x": 12, "y": 16, "w": 6, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -880,7 +839,7 @@ data:
           "title": "ESO operator",
           "description": "External Secrets Operator pods in Ready state. ESO failing means secrets cannot sync from Vault.",
           "type": "stat",
-          "gridPos": { "x": 16, "y": 16, "w": 4, "h": 4 },
+          "gridPos": { "x": 18, "y": 16, "w": 6, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -905,44 +864,6 @@ data:
             {
               "expr": "count(kube_pod_status_ready{namespace=\"external-secrets\",condition=\"true\"})",
               "legendFormat": "ESO pods ready",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "id": 38,
-          "title": "ARC runners",
-          "description": "GitHub Actions runner pods ready in arc-runners namespace. Zero means no CI capacity.",
-          "type": "stat",
-          "gridPos": { "x": 20, "y": 16, "w": 4, "h": 4 },
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "yellow", "value": 1 },
-                  { "color": "green", "value": 2 }
-                ]
-              },
-              "mappings": [
-                { "type": "value", "options": { "0": { "text": "No runners", "color": "red" } } }
-              ]
-            }
-          },
-          "targets": [
-            {
-              "expr": "count(kube_pod_status_ready{namespace=\"arc-runners\",condition=\"true\"}) or vector(0)",
-              "legendFormat": "Runners ready",
               "refId": "A"
             }
           ]
