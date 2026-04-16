@@ -307,6 +307,147 @@ data:
               "refId": "A"
             }
           ]
+        },
+        {
+          "id": 9,
+          "title": "Application Health",
+          "type": "row",
+          "gridPos": { "x": 0, "y": 10, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "id": 10,
+          "title": "Nextcloud",
+          "type": "stat",
+          "gridPos": { "x": 0, "y": 11, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 0.5 },
+                  { "color": "green", "value": 1.0 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "count(kube_pod_status_ready{namespace=\"nextcloud-production\",condition=\"true\"}) / count(kube_pod_status_ready{namespace=\"nextcloud-production\"})",
+              "legendFormat": "Pods ready",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "title": "CNPG prod clusters",
+          "type": "stat",
+          "gridPos": { "x": 6, "y": 11, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "green", "value": 4 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "count(cnpg_collector_up{cluster=~\"nextcloud-prod-db|keycloak-db\"})",
+              "legendFormat": "Instances up",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "title": "Keycloak",
+          "type": "stat",
+          "gridPos": { "x": 12, "y": 11, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "count(kube_pod_status_ready{namespace=\"keycloak\",condition=\"true\"})",
+              "legendFormat": "Pods ready",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "title": "Vault",
+          "type": "stat",
+          "gridPos": { "x": 18, "y": 11, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "kube_pod_status_ready{namespace=\"vault\",pod=\"vault-0\",condition=\"true\"}",
+              "legendFormat": "Vault unsealed",
+              "refId": "A"
+            }
+          ]
         }
       ]
     }
