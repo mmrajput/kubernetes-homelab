@@ -32,6 +32,14 @@ spec:
             namespace: nextcloud-production
             valuesFile: workloads/nextcloud/production-values.yaml
 
+          # Uptime Kuma: self-hosted uptime monitoring with public status page
+          - name: uptime-kuma
+            helmRepoURL: https://helm.irsigler.cloud
+            chart: uptime-kuma
+            chartVersion: 4.0.0
+            namespace: uptime-kuma
+            valuesFile: workloads/uptime-kuma/values.yaml
+
   template:
     metadata:
       name: "{{ .name }}"
