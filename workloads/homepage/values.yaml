@@ -119,7 +119,7 @@ config:
 
     - Observability:
         - Grafana:
-            href: https://grafana.mmrajputhomelab.org
+            href: https://grafana.mmrajputhomelab.org/public-dashboards/dcd767cc02104739a6075887aa2451ce
             description: Metrics and log dashboards
             icon: grafana.png
         - Prometheus:
