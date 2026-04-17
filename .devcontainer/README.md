@@ -1,164 +1,179 @@
-# DevContainer Configuration
+# DevContainer — Homelab Infrastructure Manager
 
-This directory contains the DevContainer configuration for the Homelab Infrastructure Manager.
+Isolated CLI environment for Kubernetes cluster management, matching the Ubuntu 24.04 LTS base of the cluster VMs.
 
-## Quick Start
+---
 
-### First Time Setup
+## Prerequisites
 
-1. **Copy environment template:**
+| Requirement | Notes |
+|-------------|-------|
+| Docker Desktop (Windows) or Docker Engine (Linux) | Must be running before starting the container |
+| `devcontainer` CLI | `npm install -g @devcontainers/cli` |
+| WSL2 (Windows) | Required for bind-mounting `~/.kube`, `~/.ssh`, `~/.gitconfig` |
+| `~/.kube/config` on the host | Needed to reach the cluster from inside the container |
+
+---
+
+## First-Time Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repo-url>
+   cd kubernetes-homelab-01
+   ```
+
+2. **Copy the environment template:**
    ```bash
    cp .devcontainer/.env.example .devcontainer/.env
    ```
 
-2. **Edit `.devcontainer/.env` with your values:**
+3. **Fill in your values** — find them with:
    ```bash
-   # Find your username
-   whoami
-   
-   # Find your UID and GID
-   id -u
-   id -g
-   
-   # Edit .env file
-   vim .devcontainer/.env
+   whoami   # → CONTAINER_USERNAME
+   id -u    # → CONTAINER_USER_UID
+   id -g    # → CONTAINER_USER_GID
    ```
 
-3. **Build and start:**
+   Edit `.devcontainer/.env`:
+   ```env
+   CONTAINER_USERNAME=yourname
+   CONTAINER_USER_UID=1000
+   CONTAINER_USER_GID=1000
+   CONTAINER_HOSTNAME=homelab-devcontainer   # optional, used in shell prompt
+   ```
+
+4. **Build and start the container:**
    ```bash
    devcontainer build --workspace-folder .
    devcontainer up --workspace-folder .
-   ./scripts/dev-shell.sh
+   devcontainer exec --workspace-folder . bash
    ```
 
-## Configuration Files
+   First build takes ~5–10 min. `post-create.sh` runs automatically after the container starts.
 
-### `.env` (Personal, not in git)
-Contains your personal configuration:
-- `CONTAINER_USERNAME` - Your WSL username
-- `CONTAINER_USER_UID` - Your user ID (1000)
-- `CONTAINER_USER_GID` - Your group ID (1000)
-- `CONTAINER_HOSTNAME` - Container hostname for prompt
-
-### `.env.example` (Template, in git)
-Template file showing all available options with documentation.
-Copy this to `.env` and customize.
-
-### `devcontainer.json`
-Main DevContainer specification. Uses environment variables from `.env`:
-- Build arguments (username, UID, GID)
-- Mount points (kubeconfig, SSH, git config)
-- Network settings
-- Environment variables
-
-### `Dockerfile`
-Builds the container image with all infrastructure tools:
-- Ubuntu 24.04 LTS base
-- kubectl, kubeadm, k9s (CKA-aligned versions)
-- helm, argocd, ansible
-- etcdctl, crictl, jq, yq
-- Starship prompt
-
-### `config/starship.toml`
-Starship prompt configuration for beautiful, informative shell prompt.
-
-### `post-create.sh`
-Post-creation script that runs after container is built:
-- Verifies all tools installed correctly
-- Checks configuration mounts
-- Tests cluster connectivity
-
-## Sharing This Setup
-
-### To Share With Others
-
-1. **Commit these files to git:**
-   - `.devcontainer/devcontainer.json`
-   - `.devcontainer/Dockerfile`
-   - `.devcontainer/.env.example`
-   - `.devcontainer/config/starship.toml`
-   - `.devcontainer/post-create.sh`
-
-2. **Never commit:**
-   - `.devcontainer/.env` (personal config)
-
-3. **Recipients should:**
+5. **Verify the setup** (optional, inside the container):
    ```bash
-   git clone <your-repo>
-   cd <repo>
-   cp .devcontainer/.env.example .devcontainer/.env
-   # Edit .env with their values
-   devcontainer build --workspace-folder .
+   bash ~/.devcontainer/verify-tools.sh
+   kubectl get nodes
    ```
 
-## Environment Variables
+---
 
-All environment variables support fallback defaults:
+## Installed Tools
 
-```json
-"${localEnv:CONTAINER_USERNAME:rajput}"
+| Tool | Version | Purpose |
+|------|---------|---------|
+| kubectl | 1.31.4 | Kubernetes CLI |
+| kubeadm | 1.31.4 | Cluster bootstrap / operations |
+| k9s | 0.32.7 | TUI for Kubernetes |
+| helm | 3.16.3 | Package manager |
+| argocd | 2.13.2 | GitOps CLI |
+| etcdctl | 3.5.17 | etcd management |
+| crictl | 1.31.1 | Container runtime CLI |
+| yq | 4.44.6 | YAML processor |
+| jq | system | JSON processor |
+| ansible | 10.7.0 / core 2.17.7 | Config management |
+| python3 | system | Runtime for Ansible + kubernetes/jmespath libs |
+| diagrams | 0.24.4 | Architecture-as-code (requires graphviz) |
+| graphviz | system | Graph rendering backend for diagrams |
+| ollama | 0.9.3 | Local LLM inference |
+| ping, dig, nc, traceroute | system | Network diagnostics |
+
+---
+
+## Directory Contents
+
+```
+.devcontainer/
+├── devcontainer.json       # Container spec (mounts, env, postCreate)
+├── Dockerfile              # Container image definition
+├── .env.example            # Template — copy to .env and customize
+├── .env                    # Personal config (gitignored)
+├── post-create.sh          # Runs after build: verifies tools, checks mounts, pulls Ollama model
+├── verify-tools.sh         # Manual tool verification script
+└── cleanup-devcontainer.sh # Docker cleanup: removes old images, build cache
 ```
 
-This means:
-1. Try to read `CONTAINER_USERNAME` from environment
-2. If not set, use `rajput` as default
+---
 
-This allows the DevContainer to work even without `.env` file.
+## Host Directory Mounts
 
-## Customization
+| Host path (WSL) | Container path | Mode |
+|-----------------|----------------|------|
+| `~/.kube` | `~/.kube` | read-only |
+| `~/.ssh` | `~/.ssh` | read-only |
+| `~/.gitconfig` | `~/.gitconfig` | read-only |
+| `~/.ollama` | `~/.ollama` | read-write (model storage) |
+| `.config/` (repo root) | `~/.config` | read-write (k9s, argocd configs) |
 
-### Change Username
-Edit `.devcontainer/.env`:
-```env
-CONTAINER_USERNAME=yourname
+---
+
+## Ollama (Local LLM)
+
+Ollama is installed and starts automatically when you open a terminal. The default model (`qwen2.5:7b`) is pulled during `post-create.sh`.
+
+To change the model, set `OLLAMA_MODEL` as a build arg before rebuilding:
+```bash
+# In .devcontainer/.env or as an env var:
+OLLAMA_MODEL=qwen2.5:14b
 ```
 
-### Change Tool Versions
-Edit `.devcontainer/Dockerfile`:
-```dockerfile
-ARG KUBECTL_VERSION=1.32.0
+Suggested models by available RAM: `8 GB → qwen2.5:7b` · `16 GB → qwen2.5:14b` · `32 GB → qwen2.5:32b`
+
+To pull a model manually inside the container:
+```bash
+ollama pull qwen2.5:14b
 ```
 
-Then rebuild:
+---
+
+## Rebuilding
+
+After changing the `Dockerfile` or tool versions:
+
 ```bash
 devcontainer build --workspace-folder . --no-cache
+devcontainer up --workspace-folder .
 ```
 
-### Customize Prompt
-Edit `.devcontainer/config/starship.toml`, then rebuild.
+---
+
+## Maintenance
+
+**Clean up old Docker images and build cache** (run from the WSL host, not inside the container):
+```bash
+bash .devcontainer/cleanup-devcontainer.sh
+```
+
+Keeps the two newest DevContainer images and the `ubuntu:24.04` base; removes stopped containers and build cache.
+
+---
 
 ## Troubleshooting
 
-### "Permission denied" errors
-Check your UID/GID in `.env` matches WSL:
+**"Permission denied" in the container**
+Your UID/GID in `.env` must match your WSL user:
 ```bash
-id -u  # Should match CONTAINER_USER_UID
-id -g  # Should match CONTAINER_USER_GID
+id -u   # must equal CONTAINER_USER_UID
+id -g   # must equal CONTAINER_USER_GID
 ```
 
-### Username mismatch
-Ensure `CONTAINER_USERNAME` in `.env` matches `whoami` output.
+**`kubectl` cannot reach the cluster**
+`~/.kube/config` is bind-mounted read-only. If the file doesn't exist on the WSL host, create or copy it there before rebuilding. Verify inside the container:
+```bash
+kubectl cluster-info
+```
 
-### File not found errors
-Check that `.env` file exists and is properly formatted.
+**Tools show wrong versions**
+Run `verify-tools.sh` to get a full report, then rebuild without cache if versions mismatch.
 
-## Best Practices
+**`.env` not picked up**
+Ensure the file is at `.devcontainer/.env` (not `.env` at repo root) and contains no Windows-style line endings (`\r\n`).
 
-1. ✅ **Always use `.env` for personal settings**
-2. ✅ **Commit `.env.example` with documentation**
-3. ✅ **Never commit `.env` to git**
-4. ✅ **Use fallback defaults in `devcontainer.json`**
-5. ✅ **Document all environment variables**
+---
 
-## Architecture Decision
+## Further Reading
 
-This configuration uses environment variables instead of hardcoded values to make the DevContainer:
-- **Portable** - Works for anyone with their own username/UID
-- **Maintainable** - Single place to update user config
-- **Shareable** - Easy to distribute and customize
-- **Secure** - Personal configs stay out of git
-
-### Documentation
-
-- **ADR**: See `docs/adr/ADR-004-devcontainer.md` for architectural decisions
-- **Detail Guide**: See `docs/devcontainer.md`
+- **ADR:** `docs/adr/ADR-005-devcontainer.md` — architectural decisions behind this setup
+- **Setup guide:** `docs/guides/devcontainer-setup.md` — detailed walkthrough
