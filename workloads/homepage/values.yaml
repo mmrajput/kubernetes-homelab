@@ -86,6 +86,7 @@ config:
     layout:
       Platform:
       Observability:
+      Workloads:
       Storage:
 
   bookmarks:
@@ -130,6 +131,12 @@ config:
             href: https://alertmanager.mmrajputhomelab.org
             description: Alert routing and silencing
             icon: alertmanager.png
+
+    - Workloads:
+        - Nextcloud:
+            href: https://nextcloud.mmrajputhomelab.org/login
+            description: File sync and collaboration
+            icon: nextcloud.png
 
     - Storage:
         - Longhorn:
