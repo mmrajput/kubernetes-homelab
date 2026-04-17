@@ -27,7 +27,7 @@ This repo is the **foundation**. The next iteration — [**kubernetes-platform-e
 
 ## Architecture
 
-![Platform Architecture](resources/images/platform-architecture.png)
+![Platform Architecture](docs/architecture/platform-architecture.png)
 
 ### Legends
 - Grey solid                User request traffic (Cloudflare → ingress → workload)
