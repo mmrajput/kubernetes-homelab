@@ -33,7 +33,7 @@ This repo is the **foundation**. The next iteration — [**kubernetes-platform-e
 - Grey solid                User request traffic (Cloudflare → ingress → workload)
 - Grey dashed               Backup and DR flows (Velero → MinIO → rclone → OneDrive)
 - Blue dashed               GitOps reconciliation (GitHub → ArgoCD → cluster)
-- Purple dashed             TLS certificate issuance and SSO authentication
+- Purple dashed             Webhook certificate provisioning and SSO authentication
 - Red dashed                Secret injection (Vault → ESO → workloads)
 - Green dashed              Metrics scraping and log shipping (Promtail → Loki)
 - Green solid               Dashboard query flows (Grafana → Prometheus / Loki)
@@ -46,11 +46,11 @@ The diagram above illustrates the full platform architecture of the Kubernetes H
 - Code changes are pushed to GitHub as the single source of truth — ArgoCD reconciles the cluster state from there continuously
 - Image promotion workflows are triggered manually via GitHub Actions, executed by ARC self-hosted runners running inside the cluster
 - All external access is routed through **Cloudflare Tunnel**, providing secure ingress without any open inbound ports on the home network
-- Cloudflare DNS handles DNS-01 challenges for automated TLS certificate issuance via cert-manager
+- TLS is terminated at the Cloudflare edge — no inbound ports are exposed on the home network
 
-### Networking · TLS · GitOps managed
-- **ingress-nginx** routes all external HTTPS traffic to internal services using host-based Ingress rules
-- **cert-manager** automates wildcard TLS certificate issuance and renewal via Cloudflare DNS-01 — all services share one `*.mmrajputhomelab.org` certificate
+### Networking · GitOps managed
+- **ingress-nginx** routes all external traffic to internal services using host-based Ingress rules
+- **cert-manager** manages TLS certificates for operator admission webhooks (CNPG, ESO) — TLS for external traffic is terminated at the Cloudflare edge
 - **NetworkPolicies** enforce default-deny across every namespace — all inter-service communication is explicitly declared, preventing lateral movement between platform components and workloads
 
 ### CI/CD · GitOps managed
