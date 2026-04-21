@@ -129,10 +129,10 @@ with Diagram(
             argocd = ArgoCD("ArgoCD\n(poll-based)")
             arc    = GithubActions("ARC Runners\n(webhook-based)")
 
-        # ── Networking · TLS ─────────────────────────────────────────────────
-        with Cluster("Networking  ·  TLS  ·  GitOps managed", graph_attr=cluster_attr):
+        # ── Networking ────────────────────────────────────────────────────────
+        with Cluster("Networking  ·  GitOps managed", graph_attr=cluster_attr):
             ingress     = Nginx("ingress-nginx")
-            certmanager = CertManager("cert-manager\n+ Cloudflare DNS-01")
+            certmanager = CertManager("cert-manager\n(webhook certs)")
 
         # ── Security · Identity ───────────────────────────────────────────────
         with Cluster("Security  ·  Identity  ·  GitOps managed", graph_attr=cluster_attr):
@@ -179,8 +179,7 @@ with Diagram(
     ingress           >> e_traffic()  >> argocd        # Argocd UI via ingress
 
     # ── PKI / TLS ─────────────────────────────────────────────────────────────
-    ingress     >> e_pki()              >> certmanager
-    certmanager >> e_pki(taillabel="DNS-01", labeldistance="5.0")              >> cloudflare    # ACME DNS-01 challenge
+    ingress     >> e_pki()     >> certmanager    # webhook cert provisioning
 
     # ── GitOps — ArgoCD syncs all clusters ───────────────────────────────────
     github >> e_gitops(headlabel="polls", labeldistance="10.0")    >> argocd     # GitOps source
