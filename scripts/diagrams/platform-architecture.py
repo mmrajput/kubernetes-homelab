@@ -1,7 +1,7 @@
 """
 Homelab Kubernetes Platform — Architecture Diagram
 ===================================================
-Generates: resources/images/homelab-architecture.png
+Generates: docs/architecture/platform-architecture.png
 
 Design principles:
   - Left-to-right flow: external traffic enters left, data persists right
@@ -17,7 +17,7 @@ Edge colour legend:
   Green  #38a169 — Observability plane   (metrics, logs)
 
 Run from repo root:
-    python3 scripts/diagrams/homelab-architecture.py
+    python3 scripts/diagrams/platform-architecture.py
 """
 
 from diagrams import Diagram, Cluster, Edge
@@ -106,7 +106,7 @@ def e_telemetry(label="", headlabel="", taillabel="", solid=False, labeldistance
 
 with Diagram(
     "Kubernetes Homelab Platform",
-    filename="resources/images/homelab-architecture",
+    filename="docs/architecture/platform-architecture",
     outformat="png",
     show=False,
     direction="LR",
