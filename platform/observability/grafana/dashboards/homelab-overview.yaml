@@ -1311,126 +1311,17 @@ data:
         {
           "id": 23,
           "title": "Security",
-          "description": "TLS certificate lifecycle, days until expiry and scheduled renewal, and total NetworkPolicy coverage count.",
+          "description": "Total NetworkPolicy coverage across all namespaces.",
           "type": "row",
           "gridPos": { "x": 0, "y": 40, "w": 24, "h": 1 },
           "collapsed": false
-        },
-        {
-          "id": 24,
-          "title": "TLS certificate status",
-          "type": "stat",
-          "gridPos": { "x": 0, "y": 41, "w": 6, "h": 4 },
-          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "mappings": [
-                { "type": "value", "options": { "1": { "text": "Ready", "color": "green" } } },
-                { "type": "value", "options": { "0": { "text": "Not Ready", "color": "red" } } }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "green", "value": 1 }
-                ]
-              }
-            }
-          },
-          "targets": [
-            {
-              "expr": "certmanager_certificate_ready_status{condition=\"True\",name=\"wildcard-homelab-tls\"}",
-              "legendFormat": "wildcard-homelab-tls",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "id": 25,
-          "title": "Certificate expiry",
-          "description": "Days until the wildcard TLS certificate expires. cert-manager auto-renews at 2/3 of lifetime.",
-          "type": "stat",
-          "gridPos": { "x": 6, "y": 41, "w": 6, "h": 4 },
-          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "d",
-              "decimals": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "yellow", "value": 14 },
-                  { "color": "green", "value": 30 }
-                ]
-              }
-            }
-          },
-          "targets": [
-            {
-              "expr": "(certmanager_certificate_expiration_timestamp_seconds{name=\"wildcard-homelab-tls\"} - time()) / 86400",
-              "legendFormat": "Days until expiry",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "id": 26,
-          "title": "Certificate renewal in",
-          "description": "Days until cert-manager schedules the next automatic renewal. Low values are normal — renewal is imminent.",
-          "type": "stat",
-          "gridPos": { "x": 12, "y": 41, "w": 6, "h": 4 },
-          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
-          "options": {
-            "reduceOptions": { "calcs": ["lastNotNull"] },
-            "orientation": "auto",
-            "textMode": "auto",
-            "colorMode": "background",
-            "graphMode": "none"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "d",
-              "decimals": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  { "color": "red", "value": null },
-                  { "color": "yellow", "value": 3 },
-                  { "color": "green", "value": 7 }
-                ]
-              }
-            }
-          },
-          "targets": [
-            {
-              "expr": "(certmanager_certificate_renewal_timestamp_seconds{name=\"wildcard-homelab-tls\"} - time()) / 86400",
-              "legendFormat": "Days until renewal",
-              "refId": "A"
-            }
-          ]
         },
         {
           "id": 27,
           "title": "NetworkPolicy count",
           "description": "Total NetworkPolicies across all namespaces. Every namespace runs default-deny; this count reflects active policy coverage.",
           "type": "stat",
-          "gridPos": { "x": 18, "y": 41, "w": 6, "h": 4 },
+          "gridPos": { "x": 0, "y": 41, "w": 6, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "options": {
             "reduceOptions": { "calcs": ["lastNotNull"] },

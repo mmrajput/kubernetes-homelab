@@ -1,7 +1,7 @@
 """
 Homelab Kubernetes Platform — Architecture Diagram
 ===================================================
-Generates: resources/images/homelab-architecture.png
+Generates: docs/architecture/platform-architecture.png
 
 Design principles:
   - Left-to-right flow: external traffic enters left, data persists right
@@ -17,7 +17,7 @@ Edge colour legend:
   Green  #38a169 — Observability plane   (metrics, logs)
 
 Run from repo root:
-    python3 scripts/diagrams/homelab-architecture.py
+    python3 scripts/diagrams/platform-architecture.py
 """
 
 from diagrams import Diagram, Cluster, Edge
@@ -106,7 +106,7 @@ def e_telemetry(label="", headlabel="", taillabel="", solid=False, labeldistance
 
 with Diagram(
     "Kubernetes Homelab Platform",
-    filename="resources/images/homelab-architecture",
+    filename="docs/architecture/platform-architecture",
     outformat="png",
     show=False,
     direction="LR",
@@ -129,10 +129,10 @@ with Diagram(
             argocd = ArgoCD("ArgoCD\n(poll-based)")
             arc    = GithubActions("ARC Runners\n(webhook-based)")
 
-        # ── Networking · TLS ─────────────────────────────────────────────────
-        with Cluster("Networking  ·  TLS  ·  GitOps managed", graph_attr=cluster_attr):
+        # ── Networking ────────────────────────────────────────────────────────
+        with Cluster("Networking  ·  GitOps managed", graph_attr=cluster_attr):
             ingress     = Nginx("ingress-nginx")
-            certmanager = CertManager("cert-manager\n+ Cloudflare DNS-01")
+            certmanager = CertManager("cert-manager\n(webhook certs)")
 
         # ── Security · Identity ───────────────────────────────────────────────
         with Cluster("Security  ·  Identity  ·  GitOps managed", graph_attr=cluster_attr):
@@ -179,8 +179,8 @@ with Diagram(
     ingress           >> e_traffic()  >> argocd        # Argocd UI via ingress
 
     # ── PKI / TLS ─────────────────────────────────────────────────────────────
-    ingress     >> e_pki()              >> certmanager
-    certmanager >> e_pki(taillabel="DNS-01", labeldistance="5.0")              >> cloudflare    # ACME DNS-01 challenge
+    ingress     >> e_pki()     >> certmanager    # webhook cert provisioning
+    certmanager >> e_invis()   >> cloudflare     # preserve layout anchor (replaced DNS-01 edge)
 
     # ── GitOps — ArgoCD syncs all clusters ───────────────────────────────────
     github >> e_gitops(headlabel="polls", labeldistance="10.0")    >> argocd     # GitOps source

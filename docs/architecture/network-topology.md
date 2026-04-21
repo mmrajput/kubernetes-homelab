@@ -101,16 +101,16 @@ ClusterIP Service → Application pod
 
 ### TLS
 
-TLS is terminated at nginx-ingress using a wildcard certificate `*.mmrajputhomelab.org` issued by cert-manager via Cloudflare DNS-01 challenge. The certificate is stored as `wildcard-homelab-tls` in the `ingress-nginx` namespace and shared by all Ingress resources.
+TLS is terminated at the Cloudflare edge. The `cloudflared` pod connects to `ingress-nginx` over plain HTTP inside the cluster — no TLS certificate is required on the nginx side.
 
 ```
-cert-manager → Cloudflare API (DNS-01 challenge) → Let's Encrypt
-                                                          │
-                                                          ▼
-                                             wildcard-homelab-tls (Secret)
-                                                          │
-                                                    nginx-ingress
+Browser → Cloudflare Edge (TLS terminated, Cloudflare-managed cert)
+               │  outbound tunnel
+               ▼
+          cloudflared pod → ingress-nginx (HTTP)
 ```
+
+cert-manager remains in the stack solely to provision webhook TLS certificates for cluster operators (CNPG, ESO, etc.).
 
 ---
 
