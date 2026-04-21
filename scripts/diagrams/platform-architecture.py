@@ -180,6 +180,7 @@ with Diagram(
 
     # ── PKI / TLS ─────────────────────────────────────────────────────────────
     ingress     >> e_pki()     >> certmanager    # webhook cert provisioning
+    certmanager >> e_invis()   >> cloudflare     # preserve layout anchor (replaced DNS-01 edge)
 
     # ── GitOps — ArgoCD syncs all clusters ───────────────────────────────────
     github >> e_gitops(headlabel="polls", labeldistance="10.0")    >> argocd     # GitOps source
