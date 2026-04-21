@@ -8,7 +8,7 @@ spec:
   generators:
     - list:
         elements:
-          # cert-manager: TLS certificate lifecycle via Cloudflare DNS-01
+          # cert-manager: webhook certificate management for cluster operators
           - name: cert-manager
             chart: cert-manager
             helmRepoURL: https://charts.jetstack.io

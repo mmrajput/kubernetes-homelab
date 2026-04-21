@@ -2,8 +2,6 @@
 # Chart: ingress-nginx
 
 controller:
-  extraArgs:
-    default-ssl-certificate: "ingress-nginx/wildcard-homelab-tls"
   admissionWebhooks:
     enabled: false
 
