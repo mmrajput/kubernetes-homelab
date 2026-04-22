@@ -27,6 +27,7 @@ spec:
                   rclone sync \
                     --config=/config/rclone.conf \
                     --transfers=4 \
+                    --buffer-size 8M \
                     --log-level=INFO \
                     minio:velero onedrive:homelab-backups/velero
                   echo "=== Sync complete ==="
@@ -48,7 +49,7 @@ spec:
                   memory: 64Mi
                 limits:
                   cpu: 500m
-                  memory: 256Mi
+                  memory: 512Mi
           volumes:
             - name: rclone-config
               secret:
