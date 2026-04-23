@@ -188,3 +188,11 @@ spec:
       ports:
         - port: 80  # Nextcloud pod port
           protocol: TCP
+    # Allow forwarding to uptime-kuma namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: uptime-kuma
+      ports:
+        - port: 3001  # Uptime Kuma pod port
+          protocol: TCP
