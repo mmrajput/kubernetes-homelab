@@ -8,33 +8,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap');
 
 :root {
-  --bg: #080b12;
-  --surface: #0d1118;
-  --surface2: #111720;
-  --border: #1c2333;
+  --bg: #0a1628;
+  --surface: #112240;
+  --surface2: #0d1b33;
+  --border: #1e3a5f;
   --text: #cdd6f4;
-  --muted: #6c7086;
-  --dim: #313244;
+  --muted: #7a9cc0;
+  --dim: #2a4a6e;
 
-  --virt: #89b4fa;
-  --gitops: #a6e3a1;
-  --obs: #f9e2af;
-  --sec: #f38ba8;
-  --stor: #94e2d5;
-  --id: #cba6f7;
-  --app: #89dceb;
-  --cicd: #fab387;
-  --future: #b4befe;
+  --virt: #7eb8f7;
+  --gitops: #7de8a0;
+  --obs: #ffd080;
+  --sec: #ff7096;
+  --stor: #5ee8d8;
+  --id: #c59dff;
+  --app: #5ed8f0;
+  --cicd: #ffb067;
+  --future: #a0aaff;
 
-  --virt-bg: rgba(137,180,250,0.06);
-  --gitops-bg: rgba(166,227,161,0.06);
-  --obs-bg: rgba(249,226,175,0.06);
-  --sec-bg: rgba(243,139,168,0.06);
-  --stor-bg: rgba(148,226,213,0.06);
-  --id-bg: rgba(203,166,247,0.06);
-  --app-bg: rgba(137,220,235,0.06);
-  --cicd-bg: rgba(250,179,135,0.06);
-  --future-bg: rgba(180,190,254,0.04);
+  --virt-bg: rgba(126,184,247,0.07);
+  --gitops-bg: rgba(125,232,160,0.07);
+  --obs-bg: rgba(255,208,128,0.07);
+  --sec-bg: rgba(255,112,150,0.07);
+  --stor-bg: rgba(94,232,216,0.07);
+  --id-bg: rgba(197,157,255,0.07);
+  --app-bg: rgba(94,216,240,0.07);
+  --cicd-bg: rgba(255,176,103,0.07);
+  --future-bg: rgba(160,170,255,0.05);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,29 +49,29 @@ body {
   overflow-x: hidden;
 }
 
-/* Animated grid background */
+/* Subtle grid background */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(137,180,250,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(137,180,250,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(126,184,247,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126,184,247,0.04) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Glow orbs */
+/* Glow orb */
 body::after {
   content: '';
   position: fixed;
-  width: 600px;
-  height: 600px;
-  top: -200px;
+  width: 700px;
+  height: 700px;
+  top: -250px;
   left: 50%;
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(137,180,250,0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(126,184,247,0.07) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -99,8 +99,8 @@ header {
   background: var(--surface);
   padding: 5px 14px;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.15em;
+  font-size: 12px;
+  letter-spacing: 0.12em;
   color: var(--muted);
   text-transform: uppercase;
   margin-bottom: 16px;
@@ -121,7 +121,7 @@ h1 {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: linear-gradient(135deg, #fff 30%, var(--virt) 100%);
+  background: linear-gradient(135deg, #e8f0ff 30%, var(--virt) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -131,8 +131,8 @@ h1 {
 
 .subtitle {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.3em;
+  font-size: 13px;
+  letter-spacing: 0.25em;
   color: var(--muted);
   text-transform: uppercase;
   margin-bottom: 20px;
@@ -148,7 +148,7 @@ h1 {
 .hw-chip {
   padding: 5px 12px;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   border-right: 1px solid var(--border);
   background: var(--surface);
@@ -171,15 +171,15 @@ h1 {
   animation: fadeUp 0.6s ease both;
 }
 
-.layer:nth-child(1)  { animation-delay: 0.1s; border-color: rgba(137,180,250,0.35); }
-.layer:nth-child(2)  { animation-delay: 0.15s; border-color: rgba(166,227,161,0.35); }
-.layer:nth-child(3)  { animation-delay: 0.2s; border-color: rgba(249,226,175,0.35); }
-.layer:nth-child(4)  { animation-delay: 0.25s; border-color: rgba(243,139,168,0.35); }
-.layer:nth-child(5)  { animation-delay: 0.3s; border-color: rgba(148,226,213,0.35); }
-.layer:nth-child(6)  { animation-delay: 0.35s; border-color: rgba(203,166,247,0.35); }
-.layer:nth-child(7)  { animation-delay: 0.4s; border-color: rgba(137,220,235,0.35); }
-.layer:nth-child(8)  { animation-delay: 0.45s; border-color: rgba(250,179,135,0.35); }
-.layer:nth-child(9)  { animation-delay: 0.5s; border-color: rgba(180,190,254,0.25); }
+.layer:nth-child(1)  { animation-delay: 0.1s; border-color: rgba(126,184,247,0.4); }
+.layer:nth-child(2)  { animation-delay: 0.15s; border-color: rgba(125,232,160,0.4); }
+.layer:nth-child(3)  { animation-delay: 0.2s; border-color: rgba(255,208,128,0.4); }
+.layer:nth-child(4)  { animation-delay: 0.25s; border-color: rgba(255,112,150,0.4); }
+.layer:nth-child(5)  { animation-delay: 0.3s; border-color: rgba(94,232,216,0.4); }
+.layer:nth-child(6)  { animation-delay: 0.35s; border-color: rgba(197,157,255,0.4); }
+.layer:nth-child(7)  { animation-delay: 0.4s; border-color: rgba(94,216,240,0.4); }
+.layer:nth-child(8)  { animation-delay: 0.45s; border-color: rgba(255,176,103,0.4); }
+.layer:nth-child(9)  { animation-delay: 0.5s; border-color: rgba(160,170,255,0.3); }
 
 .layer-header {
   display: flex;
@@ -192,7 +192,7 @@ h1 {
   transition: background 0.2s;
 }
 
-.layer-header:hover { background: rgba(255,255,255,0.02); }
+.layer-header:hover { background: rgba(255,255,255,0.03); }
 
 .layer-title-group {
   display: flex;
@@ -209,17 +209,17 @@ h1 {
 
 .layer-name {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .layer-phase {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 
 .layer-toggle {
@@ -288,77 +288,78 @@ h1 {
 
 .card-name {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .card-desc {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
-  line-height: 1.5;
-  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.6;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 400;
 }
 
 .card-tag {
   display: inline-block;
-  margin-top: 6px;
-  font-size: 8px;
-  letter-spacing: 0.1em;
+  margin-top: 7px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border: 1px solid;
   font-family: 'Share Tech Mono', monospace;
-  opacity: 0.6;
+  opacity: 0.75;
 }
 
 /* Layer-colored accents */
 .l-virt  .card::before { background: var(--virt); }
-.l-virt  .card:hover   { border-color: rgba(137,180,250,0.4); box-shadow: 0 6px 24px rgba(137,180,250,0.1); }
+.l-virt  .card:hover   { border-color: rgba(126,184,247,0.5); box-shadow: 0 6px 24px rgba(126,184,247,0.12); }
 .l-virt  .card-name    { color: var(--virt); }
-.l-virt  .card-tag     { border-color: rgba(137,180,250,0.3); color: var(--virt); }
+.l-virt  .card-tag     { border-color: rgba(126,184,247,0.4); color: var(--virt); }
 
 .l-gitops .card::before { background: var(--gitops); }
-.l-gitops .card:hover   { border-color: rgba(166,227,161,0.4); box-shadow: 0 6px 24px rgba(166,227,161,0.1); }
+.l-gitops .card:hover   { border-color: rgba(125,232,160,0.5); box-shadow: 0 6px 24px rgba(125,232,160,0.12); }
 .l-gitops .card-name    { color: var(--gitops); }
-.l-gitops .card-tag     { border-color: rgba(166,227,161,0.3); color: var(--gitops); }
+.l-gitops .card-tag     { border-color: rgba(125,232,160,0.4); color: var(--gitops); }
 
 .l-obs .card::before { background: var(--obs); }
-.l-obs .card:hover   { border-color: rgba(249,226,175,0.4); box-shadow: 0 6px 24px rgba(249,226,175,0.1); }
+.l-obs .card:hover   { border-color: rgba(255,208,128,0.5); box-shadow: 0 6px 24px rgba(255,208,128,0.12); }
 .l-obs .card-name    { color: var(--obs); }
-.l-obs .card-tag     { border-color: rgba(249,226,175,0.3); color: var(--obs); }
+.l-obs .card-tag     { border-color: rgba(255,208,128,0.4); color: var(--obs); }
 
 .l-sec .card::before { background: var(--sec); }
-.l-sec .card:hover   { border-color: rgba(243,139,168,0.4); box-shadow: 0 6px 24px rgba(243,139,168,0.1); }
+.l-sec .card:hover   { border-color: rgba(255,112,150,0.5); box-shadow: 0 6px 24px rgba(255,112,150,0.12); }
 .l-sec .card-name    { color: var(--sec); }
-.l-sec .card-tag     { border-color: rgba(243,139,168,0.3); color: var(--sec); }
+.l-sec .card-tag     { border-color: rgba(255,112,150,0.4); color: var(--sec); }
 
 .l-stor .card::before { background: var(--stor); }
-.l-stor .card:hover   { border-color: rgba(148,226,213,0.4); box-shadow: 0 6px 24px rgba(148,226,213,0.1); }
+.l-stor .card:hover   { border-color: rgba(94,232,216,0.5); box-shadow: 0 6px 24px rgba(94,232,216,0.12); }
 .l-stor .card-name    { color: var(--stor); }
-.l-stor .card-tag     { border-color: rgba(148,226,213,0.3); color: var(--stor); }
+.l-stor .card-tag     { border-color: rgba(94,232,216,0.4); color: var(--stor); }
 
 .l-id .card::before { background: var(--id); }
-.l-id .card:hover   { border-color: rgba(203,166,247,0.4); box-shadow: 0 6px 24px rgba(203,166,247,0.1); }
+.l-id .card:hover   { border-color: rgba(197,157,255,0.5); box-shadow: 0 6px 24px rgba(197,157,255,0.12); }
 .l-id .card-name    { color: var(--id); }
-.l-id .card-tag     { border-color: rgba(203,166,247,0.3); color: var(--id); }
+.l-id .card-tag     { border-color: rgba(197,157,255,0.4); color: var(--id); }
 
 .l-app .card::before { background: var(--app); }
-.l-app .card:hover   { border-color: rgba(137,220,235,0.4); box-shadow: 0 6px 24px rgba(137,220,235,0.1); }
+.l-app .card:hover   { border-color: rgba(94,216,240,0.5); box-shadow: 0 6px 24px rgba(94,216,240,0.12); }
 .l-app .card-name    { color: var(--app); }
-.l-app .card-tag     { border-color: rgba(137,220,235,0.3); color: var(--app); }
+.l-app .card-tag     { border-color: rgba(94,216,240,0.4); color: var(--app); }
 
 .l-cicd .card::before { background: var(--cicd); }
-.l-cicd .card:hover   { border-color: rgba(250,179,135,0.4); box-shadow: 0 6px 24px rgba(250,179,135,0.1); }
+.l-cicd .card:hover   { border-color: rgba(255,176,103,0.5); box-shadow: 0 6px 24px rgba(255,176,103,0.12); }
 .l-cicd .card-name    { color: var(--cicd); }
-.l-cicd .card-tag     { border-color: rgba(250,179,135,0.3); color: var(--cicd); }
+.l-cicd .card-tag     { border-color: rgba(255,176,103,0.4); color: var(--cicd); }
 
 .l-future .card::before { background: var(--future); }
-.l-future .card:hover   { border-color: rgba(180,190,254,0.3); box-shadow: 0 6px 24px rgba(180,190,254,0.08); }
+.l-future .card:hover   { border-color: rgba(160,170,255,0.4); box-shadow: 0 6px 24px rgba(160,170,255,0.1); }
 .l-future .card-name    { color: var(--future); }
-.l-future .card-tag     { border-color: rgba(180,190,254,0.2); color: var(--future); }
-.l-future .card          { opacity: 0.7; border-style: dashed; }
+.l-future .card-tag     { border-color: rgba(160,170,255,0.3); color: var(--future); }
+.l-future .card          { opacity: 0.75; border-style: dashed; }
 
 /* CI/CD pipeline row */
 .pipeline-row {
@@ -370,10 +371,32 @@ h1 {
   padding-bottom: 4px;
 }
 
+.pipe-flow-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  padding: 2px 8px;
+  display: inline-block;
+  border-left: 3px solid;
+}
+
+.pipe-flow-label.staging { color: var(--gitops); border-color: var(--gitops); background: rgba(26,122,74,0.06); }
+.pipe-flow-label.production { color: var(--id); border-color: var(--id); background: rgba(107,63,160,0.06); }
+
+.pipe-step.prod {
+  border-color: rgba(197,157,255,0.3);
+  background: var(--surface);
+}
+.pipe-step.prod:hover { background: rgba(197,157,255,0.08); border-color: rgba(197,157,255,0.55); }
+.pipe-step.prod .pipe-label { color: var(--id); }
+
 .pipe-step {
   flex: 1;
   min-width: 100px;
-  border: 1px solid rgba(250,179,135,0.3);
+  border: 1px solid rgba(255,176,103,0.25);
   background: var(--surface);
   padding: 8px 10px;
   text-align: center;
@@ -383,12 +406,12 @@ h1 {
 }
 
 .pipe-step:hover {
-  background: rgba(250,179,135,0.08);
-  border-color: rgba(250,179,135,0.6);
+  background: rgba(255,176,103,0.08);
+  border-color: rgba(255,176,103,0.5);
 }
 
-.pipe-step.danger { border-color: rgba(243,139,168,0.5); background: rgba(243,139,168,0.04); }
-.pipe-step.danger:hover { background: rgba(243,139,168,0.1); }
+.pipe-step.danger { border-color: rgba(255,112,150,0.4); background: rgba(255,112,150,0.05); }
+.pipe-step.danger:hover { background: rgba(255,112,150,0.12); }
 
 .pipe-arrow {
   color: var(--muted);
@@ -399,7 +422,7 @@ h1 {
 
 .pipe-label {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--cicd);
   letter-spacing: 0.05em;
@@ -410,7 +433,7 @@ h1 {
 
 .pipe-sub {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
+  font-size: 10px;
   color: var(--muted);
   display: block;
   margin-top: 2px;
@@ -418,14 +441,14 @@ h1 {
 
 .pipe-note {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 8px;
   padding: 6px 10px;
   border: 1px solid var(--border);
   background: var(--surface2);
   letter-spacing: 0.03em;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* Flow connector between layers */
@@ -461,7 +484,7 @@ h1 {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(5,12,24,0.75);
   z-index: 200;
   opacity: 0;
   pointer-events: none;
@@ -515,8 +538,8 @@ h1 {
 
 .modal-layer-tag {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.2em;
+  font-size: 11px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
@@ -536,8 +559,8 @@ h1 {
 
 .modal-section-title {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.2em;
+  font-size: 11px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 8px;
@@ -546,17 +569,18 @@ h1 {
 }
 
 .modal-text {
-  font-size: 13px;
-  line-height: 1.7;
-  color: #9399b2;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--muted);
 }
 
 .modal-text code {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
+  font-size: 12px;
   padding: 1px 5px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(126,184,247,0.1);
   border: 1px solid var(--border);
+  color: var(--virt);
 }
 
 .tag-row {
@@ -568,7 +592,7 @@ h1 {
 
 .m-tag {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-size: 11px;
   padding: 3px 8px;
   border: 1px solid var(--border);
   color: var(--muted);
@@ -585,8 +609,8 @@ h1 {
 
 .pt-title {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.2em;
+  font-size: 11px;
+  letter-spacing: 0.18em;
   color: var(--muted);
   text-transform: uppercase;
   margin-bottom: 14px;
@@ -609,7 +633,7 @@ h1 {
   transition: all 0.2s;
 }
 
-.pt-phase:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); }
+.pt-phase:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
 
 .pt-num {
   font-family: 'Rajdhani', sans-serif;
@@ -620,7 +644,7 @@ h1 {
 
 .pt-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
+  font-size: 9px;
   color: var(--muted);
   letter-spacing: 0.05em;
   display: block;
@@ -636,9 +660,9 @@ footer {
   margin-top: 32px;
   text-align: center;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  color: var(--dim);
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
   animation: fadeUp 0.6s ease 0.7s both;
 }
 
@@ -663,7 +687,7 @@ footer a:hover { text-decoration: underline; }
 
 @keyframes flowPulse {
   0%, 100% { background: var(--dim); transform: scale(1); }
-  50% { background: var(--virt); transform: scale(1.4); }
+  50% { background: var(--virt); transform: scale(1.5); }
 }
 
 /* Scrollbar */
@@ -679,7 +703,7 @@ footer a:hover { text-decoration: underline; }
 
   <!-- HEADER -->
   <header>
-    <div class="header-badge">github.com/mmrajput/kubernetes-homelab</div>
+    <a href="https://github.com/mmrajput/kubernetes-homelab" target="_blank" rel="noopener" style="text-decoration:none;"><div class="header-badge">github.com/mmrajput/kubernetes-homelab</div></a>
     <h1>Kubernetes Homelab</h1>
     <p class="subtitle">Platform Engineering · Logical Architecture · All Phases Complete</p>
     <div class="hw-bar">
@@ -810,8 +834,8 @@ footer a:hover { text-decoration: underline; }
         <div class="cards cards-4">
           <div class="card" onclick="openModal('certmanager')">
             <div class="card-name">cert-manager</div>
-            <div class="card-desc">TLS · Cloudflare DNS-01<br>Let's Encrypt</div>
-            <span class="card-tag">ACME</span>
+            <div class="card-desc">Webhook TLS for CNPG &amp; ESO<br>External TLS terminated at Cloudflare</div>
+            <span class="card-tag">Webhooks</span>
           </div>
           <div class="card" onclick="openModal('netpol')">
             <div class="card-name">NetworkPolicies</div>
@@ -905,7 +929,7 @@ footer a:hover { text-decoration: underline; }
             <span class="card-tag">v26.x</span>
           </div>
           <div class="card" onclick="openModal('argocd-sso')">
-            <div class="card-name">ArgoCD SSO</div>
+            <div class="card-name">ArgoCD + SSO</div>
             <div class="card-desc">OIDC Login via Keycloak<br>Group-based RBAC</div>
             <span class="card-tag">OIDC client</span>
           </div>
@@ -920,7 +944,7 @@ footer a:hover { text-decoration: underline; }
             <span class="card-tag">Vault KV v2</span>
           </div>
           <div class="card" onclick="openModal('grafana-sso')">
-            <div class="card-name">Grafana SSO</div>
+            <div class="card-name">Grafana + SSO</div>
             <div class="card-desc">OIDC Login via Keycloak<br>Group membership mapper</div>
             <span class="card-tag">OIDC client</span>
           </div>
@@ -947,10 +971,10 @@ footer a:hover { text-decoration: underline; }
       </div>
       <div class="layer-body">
         <div class="cards cards-2">
-          <div class="card" onclick="openModal('wikijs')">
-            <div class="card-name">Wiki.js</div>
-            <div class="card-desc">Knowledge Management Platform<br>PostgreSQL via CloudNativePG · TLS<br>Keycloak SSO · Longhorn · Full CI/CD pipeline</div>
-            <span class="card-tag">Production</span>
+          <div class="card" onclick="openModal('homepage')">
+            <div class="card-name">Homepage Dashboard</div>
+            <div class="card-desc">Service overview dashboard<br>Single pane of glass for the homelab<br>jameswynn Helm chart · Cloudflare Access</div>
+            <span class="card-tag">apps ns</span>
           </div>
           <div class="card" onclick="openModal('nextcloud')">
             <div class="card-name">Nextcloud</div>
@@ -958,21 +982,16 @@ footer a:hover { text-decoration: underline; }
             <span class="card-tag">DSGVO</span>
           </div>
         </div>
-        <div class="cards cards-3" style="margin-top:8px">
+        <div class="cards cards-2" style="margin-top:8px">
           <div class="card" onclick="openModal('ollama')">
             <div class="card-name">Ollama + LLMs</div>
             <div class="card-desc">CPU-only LLM serving<br>Deployment + Longhorn PVC</div>
-            <span class="card-tag">Phase 11</span>
+            <span class="card-tag" style="border-color:var(--obs);color:var(--obs)">Tested · Not Active</span>
           </div>
           <div class="card" onclick="openModal('k8sgpt')">
             <div class="card-name">K8sGPT + HolmesGPT</div>
             <div class="card-desc">AI-powered cluster analysis<br>Ollama backend integration</div>
-            <span class="card-tag">Phase 11</span>
-          </div>
-          <div class="card" onclick="openModal('homepage')">
-            <div class="card-name">Homepage Dashboard</div>
-            <div class="card-desc">Service overview dashboard<br>jameswynn Helm chart</div>
-            <span class="card-tag">apps ns</span>
+            <span class="card-tag" style="border-color:var(--obs);color:var(--obs)">Tested · Not Active</span>
           </div>
         </div>
       </div>
@@ -986,20 +1005,17 @@ footer a:hover { text-decoration: underline; }
         <div class="layer-title-group">
           <div class="layer-dot" style="background:var(--cicd)"></div>
           <span class="layer-name">CI/CD Layer</span>
-          <span class="layer-phase">Phase 10 · GitHub Actions → ghcr.io → ArgoCD · Full GitOps promotion pipeline</span>
+          <span class="layer-phase">Phase 10 · Staging: automated promotion · Production: manual Git tag gate</span>
         </div>
         <span class="layer-toggle">▾</span>
       </div>
       <div class="layer-body">
+
+        <div class="pipe-flow-label staging">↓ Staging · Automated</div>
         <div class="pipeline-row">
-          <div class="pipe-step" onclick="openModal('github')">
-            <span class="pipe-label">GitHub</span>
-            <span class="pipe-sub">Code Push / PR</span>
-          </div>
-          <span class="pipe-arrow">→</span>
           <div class="pipe-step" onclick="openModal('ghactions')">
             <span class="pipe-label">GH Actions</span>
-            <span class="pipe-sub">Build Docker Image</span>
+            <span class="pipe-sub">Watch upstream image</span>
           </div>
           <span class="pipe-arrow">→</span>
           <div class="pipe-step danger" onclick="openModal('trivy')">
@@ -1008,75 +1024,59 @@ footer a:hover { text-decoration: underline; }
           </div>
           <span class="pipe-arrow">→</span>
           <div class="pipe-step" onclick="openModal('ghcr')">
-            <span class="pipe-label">ghcr.io</span>
-            <span class="pipe-sub">Push Image</span>
+            <span class="pipe-label">crane</span>
+            <span class="pipe-sub">Promote image tag</span>
           </div>
           <span class="pipe-arrow">→</span>
           <div class="pipe-step" onclick="openModal('helmupdate')">
             <span class="pipe-label">Helm Update</span>
-            <span class="pipe-sub">Tag → Git commit</span>
+            <span class="pipe-sub">Tag → main branch commit</span>
           </div>
           <span class="pipe-arrow">→</span>
           <div class="pipe-step" onclick="openModal('argocd-sync')">
             <span class="pipe-label">ArgoCD</span>
-            <span class="pipe-sub">Sync to Cluster</span>
+            <span class="pipe-sub">Sync → staging ns</span>
           </div>
         </div>
+
+        <div class="pipe-flow-label production">↓ Production · Manual Gate</div>
+        <div class="pipeline-row">
+          <div class="pipe-step prod">
+            <span class="pipe-label">Validate Staging</span>
+            <span class="pipe-sub">Human decision point</span>
+          </div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step prod" onclick="openModal('github')">
+            <span class="pipe-label">Git Tag</span>
+            <span class="pipe-sub">e.g. v1.2.0 on main</span>
+          </div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step prod" onclick="openModal('helmupdate')">
+            <span class="pipe-label">Helm Update</span>
+            <span class="pipe-sub">production-values.yaml</span>
+          </div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step prod" onclick="openModal('argocd-sync')">
+            <span class="pipe-label">ArgoCD</span>
+            <span class="pipe-sub">Sync → production ns</span>
+          </div>
+        </div>
+
         <div class="pipe-note">
-          Branch Promotion: main → staging namespace · Git tag → production namespace &nbsp;|&nbsp;
-          Self-hosted GH Actions runner deployed as Pod inside cluster (ARC v0.14.0)
+          Staging deploys automatically on every clean image promotion to <code>main</code> &nbsp;|&nbsp;
+          Production requires a deliberate Git tag — no automatic rollout to production &nbsp;|&nbsp;
+          ARC v0.14.0 self-hosted runner runs as a Pod inside the cluster
         </div>
       </div>
     </div>
 
     <div class="flow-connector"><div class="flow-dot"></div></div>
 
-    <!-- 9 · FUTURE -->
-    <div class="layer l-future" id="l9">
-      <div class="layer-header" onclick="toggleLayer('l9')">
-        <div class="layer-title-group">
-          <div class="layer-dot" style="background:var(--future);opacity:0.5"></div>
-          <span class="layer-name" style="opacity:0.6">Future Phases</span>
-          <span class="layer-phase">Post-CKA · Second Beelink SER5 Pro · Multi-node storage replication</span>
-        </div>
-        <span class="layer-toggle">▾</span>
-      </div>
-      <div class="layer-body">
-        <div class="cards cards-5">
-          <div class="card" onclick="openModal('advanced-net')">
-            <div class="card-name">Advanced Networking</div>
-            <div class="card-desc">Cilium · Hubble · eBPF<br>kube-proxy replacement</div>
-            <span class="card-tag">planned</span>
-          </div>
-          <div class="card" onclick="openModal('tracing')">
-            <div class="card-name">Distributed Tracing</div>
-            <div class="card-desc">Grafana Tempo<br>OpenTelemetry · SLOs</div>
-            <span class="card-tag">planned</span>
-          </div>
-          <div class="card" onclick="openModal('microservices')">
-            <div class="card-name">Microservices</div>
-            <div class="card-desc">Online Boutique (11 svc)<br>Istio · mTLS · Canary</div>
-            <span class="card-tag">planned</span>
-          </div>
-          <div class="card" onclick="openModal('reliability')">
-            <div class="card-name">Reliability Eng.</div>
-            <div class="card-desc">HPA · VPA · PDBs<br>Resource optimization</div>
-            <span class="card-tag">planned</span>
-          </div>
-          <div class="card" onclick="openModal('chaos')">
-            <div class="card-name">Chaos Engineering</div>
-            <div class="card-desc">Failure Injection<br>Runbooks · DR Testing</div>
-            <span class="card-tag">planned</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div><!-- /diagram -->
 
   <!-- PHASE TIMELINE -->
   <div class="phase-timeline">
-    <div class="pt-title">// Phase Progression</div>
+    <div class="pt-title">// Phase Progression · Current Project</div>
     <div class="pt-row">
       <div class="pt-phase done"><span class="pt-num">Ph.0</span><span class="pt-label">Planning</span></div>
       <div class="pt-phase done"><span class="pt-num">Ph.1</span><span class="pt-label">DevEnv</span></div>
@@ -1092,6 +1092,121 @@ footer a:hover { text-decoration: underline; }
       <div class="pt-phase done"><span class="pt-num">Ph.11</span><span class="pt-label">AI / LLM</span></div>
     </div>
   </div>
+
+  <div class="diagram" style="margin-top:24px">
+
+    <!-- NEXT PROJECT -->
+    <div class="layer l-future" id="l9">
+      <div class="layer-header" onclick="toggleLayer('l9')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--future);opacity:0.5"></div>
+          <span class="layer-name" style="opacity:0.6">Next Project · Multi-Cluster Platform · Talos + vCluster + Cilium</span>
+          <span class="layer-phase">Physical Talos cluster · Management plane + 2 vClusters · Cilium CNI + Cluster Mesh</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+
+        <div class="pipe-flow-label" style="color:var(--virt);border-color:var(--virt);background:rgba(26,107,181,0.06);margin-top:0">Management Plane · runs on host Talos cluster</div>
+        <div class="cards cards-4" style="margin-top:6px">
+          <div class="card" onclick="openModal('next-argocd')">
+            <div class="card-name">ArgoCD Hub</div>
+            <div class="card-desc">Manages all 3 clusters<br>App-of-Apps across host + vClusters</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-cilium')">
+            <div class="card-name">Cilium + Cluster Mesh</div>
+            <div class="card-desc">CNI · eBPF · kube-proxy replacement<br>Hubble observability · Cluster Mesh hub</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-vault')">
+            <div class="card-name">Vault + ESO</div>
+            <div class="card-desc">Single secrets source of truth<br>ESO distributes to child clusters</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-keycloak')">
+            <div class="card-name">Keycloak</div>
+            <div class="card-desc">Single identity provider<br>SSO across all clusters</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-storage')">
+            <div class="card-name">Longhorn + MinIO</div>
+            <div class="card-desc">Shared block storage · Object storage<br>Synced to vClusters · Velero backend</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-obs')">
+            <div class="card-name">Prometheus · Loki · Grafana</div>
+            <div class="card-desc">Aggregated observability<br>Metrics + logs across all clusters</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-velero')">
+            <div class="card-name">Velero</div>
+            <div class="card-desc">Backs up all clusters<br>MinIO S3 backend</div>
+            <span class="card-tag">planned</span>
+          </div>
+        </div>
+
+        <div class="pipe-flow-label" style="color:var(--gitops);border-color:var(--gitops);background:rgba(26,122,74,0.06);margin-top:14px">vCluster: production · namespace: vcluster-production</div>
+        <div class="cards cards-3" style="margin-top:6px">
+          <div class="card" onclick="openModal('next-nextcloud-prod')">
+            <div class="card-name">Nextcloud</div>
+            <div class="card-desc">Production workload<br>Keycloak SSO · DSGVO/Schrems II</div>
+            <span class="card-tag">production</span>
+          </div>
+          <div class="card" onclick="openModal('next-cnpg-prod')">
+            <div class="card-name">CNPG</div>
+            <div class="card-desc">Production PostgreSQL cluster<br>WAL archiving · PITR · MinIO</div>
+            <span class="card-tag">production</span>
+          </div>
+          <div class="card" onclick="openModal('next-homepage-prod')">
+            <div class="card-name">Homepage</div>
+            <div class="card-desc">Production service dashboard<br>Single pane of glass</div>
+            <span class="card-tag">production</span>
+          </div>
+        </div>
+
+        <div class="pipe-flow-label" style="color:var(--obs);border-color:var(--obs);background:rgba(160,96,0,0.06);margin-top:14px">vCluster: staging · namespace: vcluster-staging</div>
+        <div class="cards cards-2" style="margin-top:6px">
+          <div class="card" onclick="openModal('next-nextcloud-staging')">
+            <div class="card-name">Nextcloud</div>
+            <div class="card-desc">Staging workload<br>Validates image promotions before production</div>
+            <span class="card-tag">staging</span>
+          </div>
+          <div class="card" onclick="openModal('next-cnpg-staging')">
+            <div class="card-name">CNPG</div>
+            <div class="card-desc">Staging PostgreSQL cluster<br>Isolated from production DB</div>
+            <span class="card-tag">staging</span>
+          </div>
+        </div>
+
+        <div class="pipe-flow-label" style="color:var(--sec);border-color:var(--sec);background:rgba(192,40,74,0.06);margin-top:14px">Security · host cluster + vClusters</div>
+        <div class="cards cards-4" style="margin-top:6px">
+          <div class="card" onclick="openModal('next-falco')">
+            <div class="card-name">Falco</div>
+            <div class="card-desc">Runtime threat detection<br>Watches host + all vCluster pods</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-netpol')">
+            <div class="card-name">CiliumNetworkPolicy</div>
+            <div class="card-desc">Default-deny · eBPF enforcement<br>Replaces Calico NetworkPolicy</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-certmanager')">
+            <div class="card-name">cert-manager</div>
+            <div class="card-desc">Webhook TLS for CNPG · ESO<br>Same role as current cluster</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('next-cloudflare')">
+            <div class="card-name">Cloudflare Tunnel</div>
+            <div class="card-desc">Edge TLS termination · Zero Trust<br>Cloudflare Access for unauthenticated UIs</div>
+            <span class="card-tag">planned</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /diagram (next project) -->
 
   <footer>
     <a href="https://github.com/mmrajput/kubernetes-homelab" target="_blank">github.com/mmrajput/kubernetes-homelab</a>
@@ -1208,9 +1323,9 @@ const modals = {
     layer: "Security Layer · Phase 7",
     title: "cert-manager",
     color: "var(--sec)",
-    desc: "Automated TLS certificate management. Issues Let's Encrypt certificates via DNS-01 challenge using the Cloudflare API. Certificates auto-renew before expiry.",
-    detail: "ClusterIssuer using DNS-01 via Cloudflare API token (stored in Vault, synced via ESO). Certificate CRDs reference the ClusterIssuer. cert-manager creates/renews K8s Secret containing TLS cert+key. Ingress resources reference the Secret.",
-    tags: ["Deployment (controller)", "ClusterIssuer CRD", "Certificate CRD", "Secret (tls)", "ClusterRole + RBAC"]
+    desc: "Manages TLS certificates for operator admission webhooks — specifically CNPG and ESO. Not used for external ingress TLS; external traffic is terminated at the Cloudflare edge.",
+    detail: "cert-manager issues and renews the TLS certificates required by the CNPG and ESO admission webhooks. Without valid webhook certs, both operators fail to start. The Cloudflare Tunnel handles all external TLS termination, so cert-manager has no role in Let's Encrypt or Ingress certificate management in this cluster.",
+    tags: ["Deployment (controller)", "Certificate CRD (webhook TLS)", "ClusterRole + RBAC", "CNPG webhook", "ESO webhook"]
   },
   netpol: {
     layer: "Security Layer · Phase 7",
@@ -1302,7 +1417,7 @@ const modals = {
   },
   "argocd-sso": {
     layer: "Identity & Database Layer · Phase 9",
-    title: "ArgoCD SSO",
+    title: "ArgoCD + SSO",
     color: "var(--id)",
     desc: "ArgoCD integrated with Keycloak via OIDC. Groups in Keycloak map to ArgoCD roles (admin, read-only). No separate ArgoCD user management needed.",
     detail: "OIDC client registered in Keycloak with redirect URI pointing to ArgoCD callback. Group membership mapper provides groups claim. ArgoCD RBAC policy maps Keycloak groups to ArgoCD roles via <code>argocd-rbac-cm</code> ConfigMap. ArgoCD caches OIDC provider metadata — restart <code>argocd-server</code> after Keycloak config changes.",
@@ -1326,7 +1441,7 @@ const modals = {
   },
   "grafana-sso": {
     layer: "Identity & Database Layer · Phase 9",
-    title: "Grafana SSO",
+    title: "Grafana + SSO",
     color: "var(--id)",
     desc: "Grafana integrated with Keycloak via OIDC. Groups in Keycloak control Grafana roles (Admin, Editor, Viewer).",
     detail: "Same OIDC pattern as ArgoCD. Group membership mapper at realm level provides the groups claim. Grafana <code>auth.generic_oauth</code> configuration in values.yaml. Client secret stored in Vault → ESO → K8s Secret referenced by Grafana Helm values.",
@@ -1344,7 +1459,7 @@ const modals = {
     layer: "Application Layer · Phase 10",
     title: "Wiki.js",
     color: "var(--app)",
-    desc: "Knowledge management platform. Runs as a production workload on the hardened platform. Full stack: Deployment + CNPG PostgreSQL + Longhorn PVC + Keycloak SSO + nginx-ingress + Let's Encrypt TLS.",
+    desc: "Knowledge management platform. Tested and validated on the cluster — full stack deployed and verified. Not currently running as an active workload. Full stack: Deployment + CNPG PostgreSQL + Longhorn PVC + Keycloak SSO + nginx-ingress + Cloudflare TLS.",
     detail: "Deployed via ArgoCD with GitOps pipeline. CI/CD pipeline: code push → GitHub Actions build → Trivy scan → ghcr.io push → ArgoCD sync. OIDC auth via Keycloak. PostgreSQL database on dedicated CNPG cluster with WAL archiving to MinIO.",
     tags: ["Deployment", "CNPG Cluster (Postgres)", "PVC (Longhorn)", "Ingress (nginx)", "Secret (DB + OIDC via ESO)"]
   },
@@ -1360,7 +1475,7 @@ const modals = {
     layer: "Application Layer · Phase 11",
     title: "Ollama + LLMs",
     color: "var(--app)",
-    desc: "CPU-only LLM serving on Kubernetes. Runs open-source language models (Llama, Mistral, Phi) without GPU. Exposes OpenAI-compatible REST API for internal consumers.",
+    desc: "CPU-only LLM serving on Kubernetes. Tested and validated — runs open-source language models (Llama, Mistral, Phi) without GPU. Not currently active in the cluster. Exposes OpenAI-compatible REST API for internal consumers.",
     detail: "Deployment with Longhorn PVC for model storage. ClusterIP Service on port 11434. K8sGPT and HolmesGPT call it via <code>http://ollama.apps.svc:11434</code>. CPU-only operation on AMD Ryzen 5 5500U — inference is slow but functional. Direct differentiator for private cloud AI compliance (BSI IT-Grundschutz, DSGVO/Schrems II — no data leaves the cluster).",
     tags: ["Deployment", "PVC (Longhorn — models)", "Service (ClusterIP :11434)", "NetworkPolicy", "namespace: apps"]
   },
@@ -1368,7 +1483,7 @@ const modals = {
     layer: "Application Layer · Phase 11",
     title: "K8sGPT + HolmesGPT",
     color: "var(--app)",
-    desc: "AI-powered cluster analysis. K8sGPT scans for cluster issues (pending pods, failed deployments, resource problems) and explains them via LLM. HolmesGPT investigates incidents. Both use Ollama as LLM backend.",
+    desc: "AI-powered cluster analysis. Tested and validated — K8sGPT scans for cluster issues (pending pods, failed deployments, resource problems) and explains them via LLM. HolmesGPT investigates incidents. Not currently active in the cluster. Both use Ollama as LLM backend.",
     detail: "K8sGPT Operator with Result CRDs. Ollama backend configured via ClusterSecretStore (API endpoint). Results surfaced in Grafana dashboards. Differentiator for job applications: AI observability pipeline running on private cloud Kubernetes with local LLM backend = no data exfiltration to cloud AI APIs.",
     tags: ["K8sGPT Operator", "Result CRD", "ClusterRole (read cluster)", "Ollama (LLM backend)", "Grafana integration"]
   },
@@ -1376,24 +1491,24 @@ const modals = {
     layer: "Application Layer · Phase 10",
     title: "Homepage Dashboard",
     color: "var(--app)",
-    desc: "Service overview dashboard showing status of all homelab services. Deployed via jameswynn Helm chart. Provides a single pane of glass for the homelab.",
+    desc: "Service overview dashboard showing status of all homelab services. Deployed via jameswynn Helm chart. Provides a single pane of glass for the homelab. Live at <a href=\"https://homepage.mmrajputhomelab.org/\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--app)\">homepage.mmrajputhomelab.org</a>.",
     detail: "Deployed via ArgoCD. ConfigMap-driven service definitions. Connects to Prometheus, Grafana, and other services via their ClusterIP Services. Exposed via nginx-ingress behind Cloudflare Access.",
-    tags: ["Deployment", "ConfigMap (services config)", "Ingress (nginx)", "Service (ClusterIP)"]
+    tags: ["Deployment", "ConfigMap (services config)", "Ingress (nginx)", "Service (ClusterIP)", "Cloudflare Access"]
   },
   github: {
     layer: "CI/CD Layer · Phase 10",
     title: "GitHub",
     color: "var(--cicd)",
-    desc: "Source of truth for all code, configuration, and infrastructure. Every change starts as a commit. Branch protection rules enforce PR review before merging to main.",
-    detail: "Repository: github.com/mmrajput/kubernetes-homelab. Conventional commits. One-line git commit messages preferred. GitOps principle: all changes committed and pushed before applying. <code>.gitignore</code> requires explicit negation rules for files containing 'secret' in the name.",
-    tags: ["Git repository", "Branch protection", "Conventional commits", "PR-based workflow"]
+    desc: "Source of truth for all configuration and infrastructure. Helm values files define the desired image tags for each workload. The promotion pipeline commits updated tags back here, which ArgoCD then detects.",
+    detail: "Repository: github.com/mmrajput/kubernetes-homelab. GitOps principle: the repo is the source of truth — no image is deployed without its tag being committed to Git first. Conventional commits. Branch protection rules enforce PR review before merging to main. <code>.gitignore</code> requires explicit negation rules for files containing 'secret' in the name.",
+    tags: ["Git repository", "Helm values files", "Branch protection", "Conventional commits", "PR-based workflow"]
   },
   ghactions: {
     layer: "CI/CD Layer · Phase 10",
     title: "GitHub Actions",
     color: "var(--cicd)",
-    desc: "CI pipeline triggered on code push. Builds Docker images, runs Trivy security scans, pushes to ghcr.io, updates Helm chart values. Self-hosted runner runs as a Pod inside the cluster.",
-    detail: "ARC (Actions Runner Controller) v0.14.0. Runner Pods use <code>local-path</code> StorageClass (Longhorn volumes incompatible with restricted PSS due to root ownership conflicts). <code>trivy-action</code> incompatible with ARC kubernetes containerMode — use Trivy binary directly. <code>sudo</code> unavailable under <code>allowPrivilegeEscalation: false</code> — install tools to <code>~/.local/bin</code> with PATH via <code>$GITHUB_PATH</code>.",
+    desc: "Runs the image promotion pipeline. Watches for new upstream image versions, triggers Trivy scan on the new image, and if the scan passes, uses crane to promote the tag and commits the updated values file to Git.",
+    detail: "ARC (Actions Runner Controller) v0.14.0. Self-hosted runner runs as a Pod inside the cluster. Runner Pods use <code>local-path</code> StorageClass (Longhorn incompatible with restricted PSS due to root ownership conflicts). <code>trivy-action</code> incompatible with ARC kubernetes containerMode — Trivy binary used directly. <code>sudo</code> unavailable under <code>allowPrivilegeEscalation: false</code> — tools installed to <code>~/.local/bin</code> with PATH via <code>$GITHUB_PATH</code>.",
     tags: ["ARC v0.14.0 (runner)", "RunnerDeployment CRD", "Pod (per job)", "local-path PVC (work volume)", "ServiceAccount + RBAC"]
   },
   trivy: {
@@ -1406,67 +1521,155 @@ const modals = {
   },
   ghcr: {
     layer: "CI/CD Layer · Phase 10",
-    title: "ghcr.io",
+    title: "crane · Image Promotion",
     color: "var(--cicd)",
-    desc: "GitHub Container Registry. Images pushed here after passing Trivy scan. ArgoCD pulls images from ghcr.io when syncing workloads to the cluster.",
-    detail: "Registry: <code>ghcr.io/mmrajput/</code>. Images tagged with Git SHA and semantic version. crane (google/go-containerregistry) used for image promotion between staging and production tags. ImagePullSecret in application namespaces authenticates to ghcr.io.",
-    tags: ["ghcr.io registry", "ImagePullSecret", "crane (promotion)", "Semantic versioning", "SHA-tagged images"]
+    desc: "crane (google/go-containerregistry) promotes upstream images by retagging them in ghcr.io. No build step — the upstream image is scanned as-is, and if clean, crane copies it to the target tag in the registry.",
+    detail: "Registry: <code>ghcr.io/mmrajput/</code>. crane retags the upstream image to a versioned tag without rebuilding or repushing layers — only the manifest is updated. ImagePullSecret in application namespaces authenticates to ghcr.io. This is the promotion step: scan passes → crane promotes → values.yaml updated → ArgoCD deploys.",
+    tags: ["crane (google/go-containerregistry)", "ghcr.io registry", "ImagePullSecret", "Tag promotion (no rebuild)", "Semantic versioning"]
   },
   helmupdate: {
     layer: "CI/CD Layer · Phase 10",
-    title: "Helm Chart Update",
+    title: "Helm Values Update",
     color: "var(--cicd)",
-    desc: "After image push, CI updates the image tag in the Helm values file and commits back to Git. ArgoCD detects the Git change and syncs the cluster.",
-    detail: "CI workflow uses <code>git commit</code> with a conventional commit message (<code>chore: bump image tag to v1.2.3</code>). The commit triggers ArgoCD's Git polling. Branch promotion: <code>main</code> branch → staging namespace; Git tag → production namespace. This is the full GitOps image promotion pattern.",
-    tags: ["Helm values.yaml", "Git commit (CI)", "Conventional commit", "Branch → namespace mapping", "Tag → production"]
+    desc: "After crane promotes the image tag, the pipeline commits the updated image tag in the Helm values file back to Git. This Git commit is the trigger for ArgoCD to detect drift and sync.",
+    detail: "CI workflow uses <code>git commit</code> with a conventional commit message (<code>chore: bump image tag to v1.2.3</code>). The commit triggers ArgoCD's Git polling. The values file is the single source of truth for what version is deployed — no image runs in the cluster without its tag being recorded in Git first.",
+    tags: ["Helm values.yaml", "Git commit (CI)", "Conventional commit", "Single source of truth", "ArgoCD trigger"]
   },
   "argocd-sync": {
     layer: "CI/CD Layer · Phase 10",
     title: "ArgoCD Sync",
     color: "var(--cicd)",
-    desc: "ArgoCD detects the new Git commit, diffs current cluster state vs desired state in Git, and applies the changes. The cluster converges to the new image tag automatically.",
-    detail: "ArgoCD polls Git every 3 minutes or receives a webhook trigger for immediate sync. <code>kubectl annotate application &lt;name&gt; -n platform argocd.argoproj.io/refresh=hard --overwrite</code> forces immediate sync. selfHeal: true means ArgoCD reverts manual changes. selfHeal deadlock pattern: when selfHeal reverts manual fixes before ArgoCD can sync — solution: disable selfHeal → apply manually → re-enable.",
-    tags: ["Application CRD (sync)", "Git polling / webhook", "selfHeal reconciliation", "kubectl annotate (force sync)"]
+    desc: "ArgoCD detects the Git change, diffs desired state vs cluster state, and applies. Two separate ArgoCD Applications — one watching <code>main</code> for staging, one watching the Git tag for production. Each syncs its own namespace independently.",
+    detail: "ArgoCD polls Git every 3 minutes or receives a webhook for immediate sync. <code>kubectl annotate application &lt;name&gt; -n platform argocd.argoproj.io/refresh=hard --overwrite</code> forces immediate sync. selfHeal: true means ArgoCD reverts manual changes. selfHeal deadlock pattern: when selfHeal reverts manual fixes before ArgoCD can sync — solution: disable selfHeal → apply manually → re-enable.",
+    tags: ["Application CRD (staging)", "Application CRD (production)", "Git polling / webhook", "selfHeal reconciliation", "kubectl annotate (force sync)"]
   },
-  "advanced-net": {
-    layer: "Future Phases",
-    title: "Advanced Networking",
+  "next-argocd": {
+    layer: "Next Project · Management Plane",
+    title: "ArgoCD Hub",
     color: "var(--future)",
-    desc: "Replace Calico CNI and kube-proxy with Cilium + eBPF. Hubble provides network observability. eBPF enables kernel-level packet processing for better performance and observability.",
-    detail: "Planned for post-CKA with second Beelink SER5 Pro hardware. Cilium in kube-proxy replacement mode. Hubble UI for network flow visualization. eBPF-based network policies more expressive than standard NetworkPolicy API.",
-    tags: ["Cilium (planned)", "Hubble (planned)", "eBPF (planned)", "kube-proxy replacement"]
+    desc: "Single ArgoCD instance on the host Talos cluster managing all three clusters — the host itself plus the two vClusters. App-of-Apps pattern extended across cluster boundaries.",
+    detail: "ArgoCD registers the vCluster kubeconfigs as external cluster targets. Each vCluster gets its own ArgoCD Application set. GitOps principle unchanged — all changes via Git, ArgoCD syncs. Builds on the App-of-Apps pattern already proven in the current homelab.",
+    tags: ["ArgoCD Hub (host cluster)", "Multi-cluster target registration", "App-of-Apps", "vCluster kubeconfig sync"]
   },
-  tracing: {
-    layer: "Future Phases",
-    title: "Distributed Tracing",
+  "next-cilium": {
+    layer: "Next Project · Management Plane",
+    title: "Cilium + Cluster Mesh",
     color: "var(--future)",
-    desc: "Add distributed tracing to the observability stack. Grafana Tempo as the trace backend. OpenTelemetry for instrumentation. SLOs defined for application services.",
-    detail: "Grafana Tempo integrates with existing Grafana instance. OpenTelemetry Collector as a DaemonSet. Applications instrumented with OTel SDK. Traces correlated with Loki logs and Prometheus metrics via exemplars.",
-    tags: ["Grafana Tempo (planned)", "OpenTelemetry Collector", "SLOs", "Trace-log correlation"]
+    desc: "Replaces Calico as CNI. Cilium runs in kube-proxy replacement mode with eBPF-based networking. Cluster Mesh connects the host cluster and vClusters for shared service discovery and network policies.",
+    detail: "Hubble provides deep network flow observability replacing what Calico offered. eBPF-based NetworkPolicies are more expressive than the standard Kubernetes NetworkPolicy API. Cluster Mesh enables cross-cluster service discovery — management plane services (Vault, Keycloak) are reachable from within vClusters without NodePort or external load balancers.",
+    tags: ["Cilium CNI", "eBPF (kube-proxy replacement)", "Hubble (observability)", "Cluster Mesh", "CiliumNetworkPolicy CRD"]
   },
-  microservices: {
-    layer: "Future Phases",
-    title: "Microservices",
+  "next-vault": {
+    layer: "Next Project · Management Plane",
+    title: "Vault + ESO",
     color: "var(--future)",
-    desc: "Deploy Google's Online Boutique (11-service e-commerce demo) to demonstrate service mesh, mTLS, and canary deployments at production scale.",
-    detail: "Online Boutique provides a realistic multi-service workload. Istio service mesh provides mTLS between services. Canary deployments via Istio traffic management. Demonstrates SRE concepts: circuit breaking, retries, timeouts.",
-    tags: ["Online Boutique (11 services)", "Istio (planned)", "mTLS", "Canary deployments", "VirtualService CRD"]
+    desc: "Single Vault instance on the management plane as the source of truth for all secrets. ESO distributes secrets to both vClusters via ClusterSecretStore — vClusters do not manage their own secrets.",
+    detail: "Same Vault KV v2 pattern as the current homelab. ESO ClusterSecretStore on each vCluster points back to the management plane Vault. Secrets never live in Git. Keycloak client secrets, CNPG credentials, and MinIO access keys all flow through this path.",
+    tags: ["Vault KV v2 (host cluster)", "ESO ClusterSecretStore (per vCluster)", "Cross-cluster secret distribution", "No secrets in Git"]
   },
-  reliability: {
-    layer: "Future Phases",
-    title: "Reliability Engineering",
+  "next-keycloak": {
+    layer: "Next Project · Management Plane",
+    title: "Keycloak",
     color: "var(--future)",
-    desc: "Implement HPA, VPA, and PodDisruptionBudgets for production workload resilience. Resource optimization based on VPA recommendations.",
-    detail: "HPA (HorizontalPodAutoscaler) scales Nextcloud and Wiki.js based on CPU/memory. VPA (VerticalPodAutoscaler) in recommendation mode provides right-sizing data. PDBs ensure zero-downtime during node drains.",
-    tags: ["HPA CRD", "VPA CRD (recommendation)", "PodDisruptionBudget", "Resource quotas"]
+    desc: "Single Keycloak instance on the management plane acts as the identity provider for all clusters. All workloads in both vClusters authenticate via this central Keycloak — no per-cluster identity setup.",
+    detail: "Same Keycloak 26.x setup as the current homelab, extended to cover vCluster workloads. OIDC clients registered for Nextcloud (production and staging), ArgoCD Hub, Grafana. Group membership mapper pattern unchanged. Reachable from vClusters via Cilium Cluster Mesh service discovery.",
+    tags: ["Keycloak 26.x (host cluster)", "OIDC clients (all workloads)", "Group membership mapper", "Cluster Mesh reachability"]
   },
-  chaos: {
-    layer: "Future Phases",
-    title: "Chaos Engineering",
+  "next-storage": {
+    layer: "Next Project · Management Plane",
+    title: "Longhorn + MinIO",
     color: "var(--future)",
-    desc: "Controlled failure injection to validate resilience assumptions. Runbooks document recovery procedures. DR testing validates backup/restore procedures end-to-end.",
-    detail: "Tools: Chaos Mesh or LitmusChaos. Scenarios: node drain, pod deletion, network partition, disk pressure. Runbooks in Wiki.js. DR drills: restore CNPG from WAL backup, restore Nextcloud from Velero, restore cluster from scratch.",
-    tags: ["Chaos Mesh (planned)", "Failure injection", "Runbooks (Wiki.js)", "DR drill procedures"]
+    desc: "Longhorn provides shared block storage on the host cluster, synced into vClusters via vCluster's persistent volume sync. MinIO provides shared object storage for CNPG WAL archiving and Velero backups across all clusters.",
+    detail: "vCluster PV sync allows vCluster workloads to consume Longhorn volumes provisioned on the host cluster without running a separate storage controller inside the vCluster. MinIO buckets namespaced per environment — production and staging CNPG clusters write to separate buckets to avoid WAL conflicts.",
+    tags: ["Longhorn (host cluster)", "vCluster PV sync", "MinIO (shared object store)", "Per-environment CNPG buckets", "Velero backend"]
+  },
+  "next-obs": {
+    layer: "Next Project · Management Plane",
+    title: "Prometheus · Loki · Grafana",
+    color: "var(--future)",
+    desc: "Aggregated observability stack on the management plane. Scrapes metrics and collects logs from the host cluster and both vClusters into a single Grafana instance.",
+    detail: "Prometheus federation or remote-write from vCluster-level agents to the central Mimir/Prometheus on the management plane. Loki aggregates logs via Promtail DaemonSets on the host (vCluster pods run on host nodes, so host-level Promtail captures all logs). Single Grafana with dashboards covering all three cluster environments.",
+    tags: ["kube-prometheus-stack (host)", "Remote-write / federation", "Loki + Promtail (host DaemonSet)", "Mimir (long-term storage)", "Unified Grafana dashboards"]
+  },
+  "next-velero": {
+    layer: "Next Project · Management Plane",
+    title: "Velero",
+    color: "var(--future)",
+    desc: "Single Velero instance on the management plane backs up all clusters. vCluster resources and PVCs backed up to MinIO. CNPG native backup (WAL + base backups) remains the primary DB backup method.",
+    detail: "Velero on the host cluster can reach vCluster namespaces directly since vClusters run as Pods in host namespaces. BackupStorageLocation points to MinIO. CNPG PVCs excluded from Velero via annotation — CNPG handles its own WAL archiving to MinIO as in the current homelab.",
+    tags: ["Velero (host cluster)", "BackupStorageLocation (MinIO)", "vCluster namespace backup", "CNPG WAL (complementary)", "Schedule CRD"]
+  },
+  "next-nextcloud-prod": {
+    layer: "Next Project · vCluster Production",
+    title: "Nextcloud (Production)",
+    color: "var(--gitops)",
+    desc: "Production Nextcloud instance running inside the production vCluster. Keycloak SSO via the management plane identity provider. All data stays within the homelab — DSGVO/Schrems II compliant.",
+    detail: "Same stack as the current homelab Nextcloud: CNPG PostgreSQL, Redis (mandatory for distributed locking), Longhorn RWX PVC via vCluster PV sync, nginx-ingress, Cloudflare Tunnel for external TLS. ESO pulls secrets from management plane Vault. Promoted to production via manual Git tag gate.",
+    tags: ["Deployment (vcluster-production)", "CNPG Cluster (production DB)", "Redis (mandatory)", "PVC (Longhorn RWX via PV sync)", "Keycloak SSO (management plane)"]
+  },
+  "next-cnpg-prod": {
+    layer: "Next Project · vCluster Production",
+    title: "CNPG (Production)",
+    color: "var(--gitops)",
+    desc: "Dedicated CloudNativePG cluster for production workloads inside the production vCluster. WAL archiving to a dedicated production MinIO bucket on the management plane.",
+    detail: "CNPG operator deployed inside the production vCluster. WAL archiving and base backups to the management plane MinIO — production bucket isolated from staging to prevent WAL stream conflicts. PITR capability maintained. Credentials via ESO from management plane Vault.",
+    tags: ["CNPG Cluster (production vCluster)", "WAL archiving (MinIO prod bucket)", "PITR", "ESO secrets (management plane Vault)"]
+  },
+  "next-homepage-prod": {
+    layer: "Next Project · vCluster Production",
+    title: "Homepage (Production)",
+    color: "var(--gitops)",
+    desc: "Homepage dashboard deployed in the production vCluster. Shows status of production services. Same jameswynn Helm chart pattern as the current homelab.",
+    detail: "ConfigMap-driven service definitions pointing to production Nextcloud, CNPG, and management plane observability stack. Exposed via nginx-ingress and Cloudflare Tunnel. Connects to Prometheus on the management plane for service health data.",
+    tags: ["Deployment (vcluster-production)", "ConfigMap (services config)", "Ingress (nginx)", "Cloudflare Tunnel"]
+  },
+  "next-nextcloud-staging": {
+    layer: "Next Project · vCluster Staging",
+    title: "Nextcloud (Staging)",
+    color: "var(--obs)",
+    desc: "Staging Nextcloud instance inside the staging vCluster. Receives image promotions automatically. Validates new versions before the manual Git tag gate promotes them to production.",
+    detail: "Identical stack to production Nextcloud but in the staging vCluster namespace. GH Actions promotes new upstream images here first — staging is the automated target of the image promotion pipeline. Production only gets the image after staging validation passes and a Git tag is cut.",
+    tags: ["Deployment (vcluster-staging)", "CNPG Cluster (staging DB)", "Redis", "PVC (Longhorn RWX via PV sync)", "Automated image promotion target"]
+  },
+  "next-cnpg-staging": {
+    layer: "Next Project · vCluster Staging",
+    title: "CNPG (Staging)",
+    color: "var(--obs)",
+    desc: "Dedicated CloudNativePG cluster for staging workloads inside the staging vCluster. Isolated from the production DB — separate MinIO bucket for WAL archiving.",
+    detail: "CNPG operator deployed inside the staging vCluster. WAL archiving to a staging-specific MinIO bucket on the management plane. No shared state with the production CNPG cluster. Credentials via ESO from management plane Vault — same Vault, different KV paths.",
+    tags: ["CNPG Cluster (staging vCluster)", "WAL archiving (MinIO staging bucket)", "Isolated from production DB", "ESO secrets (management plane Vault)"]
+  },
+  "next-falco": {
+    layer: "Next Project · Security",
+    title: "Falco",
+    color: "var(--sec)",
+    desc: "Runtime threat detection on the host Talos cluster. Because vCluster workloads run as Pods on the host, a single Falco DaemonSet on the host nodes monitors syscall activity across all vCluster environments simultaneously.",
+    detail: "Same Falco deployment pattern as the current homelab. Multi-cluster topology actually strengthens the value here — one Falco instance covers production and staging vCluster pods without needing a separate Falco per vCluster. Rules scoped to detect container escapes, unexpected privilege escalation, and anomalous network activity.",
+    tags: ["Falco DaemonSet (host cluster)", "Syscall monitoring (all vCluster pods)", "FalcoRules CRD", "Runtime threat detection"]
+  },
+  "next-netpol": {
+    layer: "Next Project · Security",
+    title: "CiliumNetworkPolicy",
+    color: "var(--sec)",
+    desc: "Replaces Calico NetworkPolicy with Cilium's native CiliumNetworkPolicy CRD. eBPF-based enforcement at the kernel level. More expressive than the standard Kubernetes NetworkPolicy API — supports L7 rules, DNS-based policies, and cluster-wide policies.",
+    detail: "Default-deny posture carried over from the current homelab. CiliumNetworkPolicy allows cross-cluster rules via Cluster Mesh — management plane services (Vault, Keycloak) can be explicitly allowed as egress targets from vCluster workloads without opening broad CIDR ranges. Hubble provides visibility into what traffic is being allowed or dropped.",
+    tags: ["CiliumNetworkPolicy CRD", "Default-deny posture", "L7 / DNS-based rules", "Cluster Mesh egress control", "Hubble (policy visibility)"]
+  },
+  "next-certmanager": {
+    layer: "Next Project · Security",
+    title: "cert-manager",
+    color: "var(--sec)",
+    desc: "Same role as in the current cluster — manages TLS certificates for operator admission webhooks (CNPG, ESO). External TLS continues to be terminated at the Cloudflare edge. No role in Ingress certificate management.",
+    detail: "cert-manager deployed on the host Talos cluster. Webhook certs needed by CNPG and ESO operators on both the host and inside vClusters — vCluster-level operators may need their own cert-manager instances depending on vCluster isolation configuration.",
+    tags: ["cert-manager (host cluster)", "Certificate CRD (webhook TLS)", "CNPG webhook", "ESO webhook", "vCluster operator TLS"]
+  },
+  "next-cloudflare": {
+    layer: "Next Project · Security",
+    title: "Cloudflare Tunnel",
+    color: "var(--sec)",
+    desc: "Same Cloudflare Tunnel + Access pattern as the current homelab. Terminates external TLS at the Cloudflare edge and proxies to the host cluster's nginx-ingress. Cloudflare Access protects unauthenticated UIs. No inbound ports opened on the home network.",
+    detail: "Cloudflare Tunnel runs as a Deployment on the host cluster pointing at nginx-ingress NodePort. Production and staging vCluster workloads are exposed through the same tunnel via hostname-based routing — separate subdomains per environment. Cloudflare Access rules protect any service not behind Keycloak SSO.",
+    tags: ["cloudflared Deployment (host)", "Cloudflare Access (Zero Trust)", "nginx-ingress (host)", "Hostname-based routing (prod/staging)", "No inbound ports"]
   }
 };
 
