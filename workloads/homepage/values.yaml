@@ -90,10 +90,15 @@ config:
       Storage:
 
   bookmarks:
+    - Projects:
+        - Foundational Kubernetes Homelab:
+            - abbr: K8S
+              href: https://mmrajput.github.io/kubernetes-homelab/
+              description: Live
     - External:
         - GitHub:
             - abbr: GH
-              href: https://github.com/mmrajput/kubernetes-homelab
+              href: https://github.com/mmrajput
         - Cloudflare:
             - abbr: CF
               href: https://dash.cloudflare.com
