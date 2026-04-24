@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kubernetes Homelab · Platform Engineering Architecture</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap');
+
+:root {
+  --bg: #080b12;
+  --surface: #0d1118;
+  --surface2: #111720;
+  --border: #1c2333;
+  --text: #cdd6f4;
+  --muted: #6c7086;
+  --dim: #313244;
+
+  --virt: #89b4fa;
+  --gitops: #a6e3a1;
+  --obs: #f9e2af;
+  --sec: #f38ba8;
+  --stor: #94e2d5;
+  --id: #cba6f7;
+  --app: #89dceb;
+  --cicd: #fab387;
+  --future: #b4befe;
+
+  --virt-bg: rgba(137,180,250,0.06);
+  --gitops-bg: rgba(166,227,161,0.06);
+  --obs-bg: rgba(249,226,175,0.06);
+  --sec-bg: rgba(243,139,168,0.06);
+  --stor-bg: rgba(148,226,213,0.06);
+  --id-bg: rgba(203,166,247,0.06);
+  --app-bg: rgba(137,220,235,0.06);
+  --cicd-bg: rgba(250,179,135,0.06);
+  --future-bg: rgba(180,190,254,0.04);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Exo 2', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(137,180,250,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(137,180,250,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glow orbs */
+body::after {
+  content: '';
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(137,180,250,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  margin-bottom: 56px;
+  animation: fadeDown 0.8s ease both;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 5px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.header-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gitops);
+  animation: pulse 2s ease infinite;
+}
+
+h1 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff 30%, var(--virt) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.hw-bar {
+  display: inline-flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.hw-chip {
+  padding: 5px 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  letter-spacing: 0.05em;
+}
+.hw-chip:last-child { border-right: none; }
+.hw-chip span { color: var(--virt); }
+
+/* ── LAYERS ── */
+.diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.layer {
+  position: relative;
+  border: 1px solid var(--border);
+  margin-bottom: 0;
+  animation: fadeUp 0.6s ease both;
+}
+
+.layer:nth-child(1)  { animation-delay: 0.1s; border-color: rgba(137,180,250,0.35); }
+.layer:nth-child(2)  { animation-delay: 0.15s; border-color: rgba(166,227,161,0.35); }
+.layer:nth-child(3)  { animation-delay: 0.2s; border-color: rgba(249,226,175,0.35); }
+.layer:nth-child(4)  { animation-delay: 0.25s; border-color: rgba(243,139,168,0.35); }
+.layer:nth-child(5)  { animation-delay: 0.3s; border-color: rgba(148,226,213,0.35); }
+.layer:nth-child(6)  { animation-delay: 0.35s; border-color: rgba(203,166,247,0.35); }
+.layer:nth-child(7)  { animation-delay: 0.4s; border-color: rgba(137,220,235,0.35); }
+.layer:nth-child(8)  { animation-delay: 0.45s; border-color: rgba(250,179,135,0.35); }
+.layer:nth-child(9)  { animation-delay: 0.5s; border-color: rgba(180,190,254,0.25); }
+
+.layer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.layer-header:hover { background: rgba(255,255,255,0.02); }
+
+.layer-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.layer-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.layer-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.layer-phase {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.layer-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  color: var(--muted);
+  transition: transform 0.3s;
+}
+
+.layer.collapsed .layer-toggle { transform: rotate(-90deg); }
+
+.layer-body {
+  padding: 16px 18px 18px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.layer.collapsed .layer-body {
+  padding-top: 0;
+  padding-bottom: 0;
+  max-height: 0 !important;
+}
+
+/* Cards grid */
+.cards {
+  display: grid;
+  gap: 8px;
+}
+
+.cards-3 { grid-template-columns: repeat(3, 1fr); }
+.cards-4 { grid-template-columns: repeat(4, 1fr); }
+.cards-2 { grid-template-columns: repeat(2, 1fr); }
+.cards-5 { grid-template-columns: repeat(5, 1fr); }
+
+@media (max-width: 700px) {
+  .cards-3, .cards-4, .cards-5 { grid-template-columns: repeat(2, 1fr); }
+  .cards-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .cards-3, .cards-4, .cards-5, .cards-2 { grid-template-columns: 1fr; }
+}
+
+.card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.card-desc {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.5;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.card-tag {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+  font-family: 'Share Tech Mono', monospace;
+  opacity: 0.6;
+}
+
+/* Layer-colored accents */
+.l-virt  .card::before { background: var(--virt); }
+.l-virt  .card:hover   { border-color: rgba(137,180,250,0.4); box-shadow: 0 6px 24px rgba(137,180,250,0.1); }
+.l-virt  .card-name    { color: var(--virt); }
+.l-virt  .card-tag     { border-color: rgba(137,180,250,0.3); color: var(--virt); }
+
+.l-gitops .card::before { background: var(--gitops); }
+.l-gitops .card:hover   { border-color: rgba(166,227,161,0.4); box-shadow: 0 6px 24px rgba(166,227,161,0.1); }
+.l-gitops .card-name    { color: var(--gitops); }
+.l-gitops .card-tag     { border-color: rgba(166,227,161,0.3); color: var(--gitops); }
+
+.l-obs .card::before { background: var(--obs); }
+.l-obs .card:hover   { border-color: rgba(249,226,175,0.4); box-shadow: 0 6px 24px rgba(249,226,175,0.1); }
+.l-obs .card-name    { color: var(--obs); }
+.l-obs .card-tag     { border-color: rgba(249,226,175,0.3); color: var(--obs); }
+
+.l-sec .card::before { background: var(--sec); }
+.l-sec .card:hover   { border-color: rgba(243,139,168,0.4); box-shadow: 0 6px 24px rgba(243,139,168,0.1); }
+.l-sec .card-name    { color: var(--sec); }
+.l-sec .card-tag     { border-color: rgba(243,139,168,0.3); color: var(--sec); }
+
+.l-stor .card::before { background: var(--stor); }
+.l-stor .card:hover   { border-color: rgba(148,226,213,0.4); box-shadow: 0 6px 24px rgba(148,226,213,0.1); }
+.l-stor .card-name    { color: var(--stor); }
+.l-stor .card-tag     { border-color: rgba(148,226,213,0.3); color: var(--stor); }
+
+.l-id .card::before { background: var(--id); }
+.l-id .card:hover   { border-color: rgba(203,166,247,0.4); box-shadow: 0 6px 24px rgba(203,166,247,0.1); }
+.l-id .card-name    { color: var(--id); }
+.l-id .card-tag     { border-color: rgba(203,166,247,0.3); color: var(--id); }
+
+.l-app .card::before { background: var(--app); }
+.l-app .card:hover   { border-color: rgba(137,220,235,0.4); box-shadow: 0 6px 24px rgba(137,220,235,0.1); }
+.l-app .card-name    { color: var(--app); }
+.l-app .card-tag     { border-color: rgba(137,220,235,0.3); color: var(--app); }
+
+.l-cicd .card::before { background: var(--cicd); }
+.l-cicd .card:hover   { border-color: rgba(250,179,135,0.4); box-shadow: 0 6px 24px rgba(250,179,135,0.1); }
+.l-cicd .card-name    { color: var(--cicd); }
+.l-cicd .card-tag     { border-color: rgba(250,179,135,0.3); color: var(--cicd); }
+
+.l-future .card::before { background: var(--future); }
+.l-future .card:hover   { border-color: rgba(180,190,254,0.3); box-shadow: 0 6px 24px rgba(180,190,254,0.08); }
+.l-future .card-name    { color: var(--future); }
+.l-future .card-tag     { border-color: rgba(180,190,254,0.2); color: var(--future); }
+.l-future .card          { opacity: 0.7; border-style: dashed; }
+
+/* CI/CD pipeline row */
+.pipeline-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.pipe-step {
+  flex: 1;
+  min-width: 100px;
+  border: 1px solid rgba(250,179,135,0.3);
+  background: var(--surface);
+  padding: 8px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.pipe-step:hover {
+  background: rgba(250,179,135,0.08);
+  border-color: rgba(250,179,135,0.6);
+}
+
+.pipe-step.danger { border-color: rgba(243,139,168,0.5); background: rgba(243,139,168,0.04); }
+.pipe-step.danger:hover { background: rgba(243,139,168,0.1); }
+
+.pipe-arrow {
+  color: var(--muted);
+  font-size: 14px;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.pipe-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cicd);
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+.pipe-label.danger-label { color: var(--sec); }
+
+.pipe-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: var(--muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.pipe-note {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+}
+
+/* Flow connector between layers */
+.flow-connector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 28px;
+  position: relative;
+}
+
+.flow-connector::before {
+  content: '';
+  position: absolute;
+  width: 1px;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  background: linear-gradient(to bottom, var(--border), transparent);
+}
+
+.flow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dim);
+  position: relative;
+  z-index: 1;
+  animation: flowPulse 2s ease infinite;
+}
+
+/* ── MODAL ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  backdrop-filter: blur(4px);
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -48%) scale(0.96);
+  width: min(560px, 94vw);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  z-index: 201;
+  padding: 32px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Share Tech Mono', monospace;
+  transition: all 0.2s;
+}
+
+.modal-close:hover { border-color: var(--sec); color: var(--sec); }
+
+.modal-layer-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.modal-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.modal-section {
+  margin-bottom: 16px;
+}
+
+.modal-section-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-text {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #9399b2;
+}
+
+.modal-text code {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  padding: 1px 5px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.m-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* Phase timeline footer */
+.phase-timeline {
+  margin-top: 40px;
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  animation: fadeUp 0.6s ease 0.6s both;
+}
+
+.pt-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.pt-row {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.pt-phase {
+  flex: 1;
+  min-width: 70px;
+  text-align: center;
+  padding: 6px 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: default;
+  transition: all 0.2s;
+}
+
+.pt-phase:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); }
+
+.pt-num {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  display: block;
+}
+
+.pt-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  display: block;
+  line-height: 1.4;
+}
+
+.pt-phase.done .pt-num { color: var(--gitops); }
+.pt-phase.future .pt-num { color: var(--future); opacity: 0.5; }
+.pt-phase.future { border-style: dashed; opacity: 0.6; }
+
+/* Footer */
+footer {
+  margin-top: 32px;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  animation: fadeUp 0.6s ease 0.7s both;
+}
+
+footer a { color: var(--virt); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* Animations */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes flowPulse {
+  0%, 100% { background: var(--dim); transform: scale(1); }
+  50% { background: var(--virt); transform: scale(1.4); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--dim); }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-badge">github.com/mmrajput/kubernetes-homelab</div>
+    <h1>Kubernetes Homelab</h1>
+    <p class="subtitle">Platform Engineering · Logical Architecture · All Phases Complete</p>
+    <div class="hw-bar">
+      <div class="hw-chip">Beelink SER5 Pro · <span>AMD Ryzen 5 5500U</span></div>
+      <div class="hw-chip"><span>32GB</span> RAM · <span>500GB</span> NVMe</div>
+      <div class="hw-chip">Proxmox VE 8.x · <span>Kubernetes v1.31</span></div>
+      <div class="hw-chip">kubeadm · <span>Calico CNI</span></div>
+    </div>
+  </header>
+
+  <div class="diagram">
+
+    <!-- 1 · VIRTUALIZATION -->
+    <div class="layer l-virt" id="l1">
+      <div class="layer-header" onclick="toggleLayer('l1')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--virt)"></div>
+          <span class="layer-name">Virtualization Layer</span>
+          <span class="layer-phase">Phase 2 · Proxmox VE 8.x · LVM-thin · vmbr0</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="cards cards-3">
+          <div class="card" onclick="openModal('cp1')">
+            <div class="card-name">control-plane-1</div>
+            <div class="card-desc">6GB RAM · 4 vCPU · Ubuntu 24.04<br>kube-apiserver · etcd · scheduler<br>controller-manager · cloud-init</div>
+            <span class="card-tag">192.168.178.34</span>
+          </div>
+          <div class="card" onclick="openModal('worker1')">
+            <div class="card-name">worker-1</div>
+            <div class="card-desc">7GB RAM · 4 vCPU · Ubuntu 24.04<br>kubelet · kube-proxy · containerd<br>Calico CNI · local-path-provisioner</div>
+            <span class="card-tag">192.168.178.35</span>
+          </div>
+          <div class="card" onclick="openModal('worker2')">
+            <div class="card-name">worker-2</div>
+            <div class="card-desc">7GB RAM · 4 vCPU · Ubuntu 24.04<br>kubelet · kube-proxy · containerd<br>Calico CNI · local-path-provisioner</div>
+            <span class="card-tag">192.168.178.36</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-dot"></div></div>
+
+    <!-- 2 · GITOPS -->
+    <div class="layer l-gitops" id="l2">
+      <div class="layer-header" onclick="toggleLayer('l2')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--gitops)"></div>
+          <span class="layer-name">GitOps Layer</span>
+          <span class="layer-phase">Phase 5 · namespace: platform · All changes via Git</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="cards cards-3">
+          <div class="card" onclick="openModal('argocd')">
+            <div class="card-name">ArgoCD</div>
+            <div class="card-desc">App-of-Apps Pattern · Self-Managed<br>GitOps Engine · Zero manual kubectl apply</div>
+            <span class="card-tag">v3.2.3</span>
+          </div>
+          <div class="card" onclick="openModal('nginx')">
+            <div class="card-name">nginx-ingress</div>
+            <div class="card-desc">NodePort 30080 / 30443<br>Hostname-based routing</div>
+            <span class="card-tag">IngressClass</span>
+          </div>
+          <div class="card" onclick="openModal('ansible')">
+            <div class="card-name">Ansible + GitHub</div>
+            <div class="card-desc">Infrastructure as Code · Phase 3–4<br>Idempotent playbooks · cloud-init</div>
+            <span class="card-tag">IaC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-dot"></div></div>
+
+    <!-- 3 · OBSERVABILITY -->
+    <div class="layer l-obs" id="l3">
+      <div class="layer-header" onclick="toggleLayer('l3')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--obs)"></div>
+          <span class="layer-name">Observability Layer</span>
+          <span class="layer-phase">Phase 6 · namespace: observability · Established before workload deployment</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="cards cards-4">
+          <div class="card" onclick="openModal('prometheus')">
+            <div class="card-name">Prometheus</div>
+            <div class="card-desc">Metrics · ServiceMonitor CRDs<br>kube-prometheus-stack</div>
+            <span class="card-tag">scrape</span>
+          </div>
+          <div class="card" onclick="openModal('grafana')">
+            <div class="card-name">Grafana</div>
+            <div class="card-desc">Dashboards · Kubernetes Panels<br>Pre-built + custom dashboards</div>
+            <span class="card-tag">OIDC SSO</span>
+          </div>
+          <div class="card" onclick="openModal('loki')">
+            <div class="card-name">Loki + Promtail</div>
+            <div class="card-desc">Log Aggregation<br>Node-level collectors</div>
+            <span class="card-tag">DaemonSet</span>
+          </div>
+          <div class="card" onclick="openModal('alertmanager')">
+            <div class="card-name">Alertmanager</div>
+            <div class="card-desc">Alert Routing<br>Notification integration</div>
+            <span class="card-tag">rules</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-dot"></div></div>
+
+    <!-- 4 · SECURITY -->
+    <div class="layer l-sec" id="l4">
+      <div class="layer-header" onclick="toggleLayer('l4')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--sec)"></div>
+          <span class="layer-name">Security Layer</span>
+          <span class="layer-phase">Phase 7 · Security baseline before stateful workloads · Default-deny posture</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="cards cards-4">
+          <div class="card" onclick="openModal('certmanager')">
+            <div class="card-name">cert-manager</div>
+            <div class="card-desc">TLS · Cloudflare DNS-01<br>Let's Encrypt</div>
+            <span class="card-tag">ACME</span>
+          </div>
+          <div class="card" onclick="openModal('netpol')">
+            <div class="card-name">NetworkPolicies</div>
+            <div class="card-desc">Default-Deny · Explicit Allow Rules<br>Calico enforcement</div>
+            <span class="card-tag">pre-DNAT</span>
+          </div>
+          <div class="card" onclick="openModal('rbac')">
+            <div class="card-name">RBAC Hardening</div>
+            <div class="card-desc">Least-Privilege Service Accounts<br>Per-workload roles</div>
+            <span class="card-tag">ClusterRole</span>
+          </div>
+          <div class="card" onclick="openModal('pss')">
+            <div class="card-name">Pod Security Standards</div>
+            <div class="card-desc">Audit → Enforce · Per Namespace<br>restricted / baseline profiles</div>
+            <span class="card-tag">PSS</span>
+          </div>
+          <div class="card" onclick="openModal('eso')">
+            <div class="card-name">External Secrets Op.</div>
+            <div class="card-desc">Secrets Backend Integration<br>Vault KV v2 → K8s Secrets</div>
+            <span class="card-tag">ESO v2.1.0</span>
+          </div>
+          <div class="card" onclick="openModal('falco')">
+            <div class="card-name">Falco</div>
+            <div class="card-desc">Runtime Anomaly Detection<br>Syscall monitoring</div>
+            <span class="card-tag">DaemonSet</span>
+          </div>
+          <div class="card" onclick="openModal('kubebench')">
+            <div class="card-name">kube-bench</div>
+            <div class="card-desc">CIS Benchmark · Remediation Report<br>K8s hardening validation</div>
+            <span class="card-tag">CIS</span>
+          </div>
+          <div class="card" onclick="openModal('cloudflare')">
+            <div class="card-name">☁ Cloudflare</div>
+            <div class="card-desc">Tunnel · Access · WAF · DNS-01<br>Zero Trust edge</div>
+            <span class="card-tag">Tunnel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-dot"></div></div>
+
+    <!-- 5 · STORAGE -->
+    <div class="layer l-stor" id="l5">
+      <div class="layer-header" onclick="toggleLayer('l5')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--stor)"></div>
+          <span class="layer-name">Storage Layer</span>
+          <span class="layer-phase">Phase 8 · Validated before stateful workloads are deployed</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="cards cards-3">
+          <div class="card" onclick="openModal('longhorn')">
+            <div class="card-name">Longhorn</div>
+            <div class="card-desc">Distributed · Replication Factor 2<br>Production PVs across worker nodes</div>
+            <span class="card-tag">Default SC</span>
+          </div>
+          <div class="card" onclick="openModal('minio')">
+            <div class="card-name">MinIO</div>
+            <div class="card-desc">S3-Compatible Object Storage<br>Loki long-term storage · Velero backup target</div>
+            <span class="card-tag">local-path</span>
+          </div>
+          <div class="card" onclick="openModal('localpath')">
+            <div class="card-name">local-path-provisioner</div>
+            <div class="card-desc">Dev / Cache workloads<br>Phase 4 · Fast local storage</div>
+            <span class="card-tag">SC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-dot"></div></div>
+
+    <!-- 6 · IDENTITY & DATABASE -->
+    <div class="layer l-id" id="l6">
+      <div class="layer-header" onclick="toggleLayer('l6')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--id)"></div>
+          <span class="layer-name">Identity &amp; Database Layer</span>
+          <span class="layer-phase">Phase 9 · namespace: identity, databases · OIDC SSO across all platform services</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="cards cards-3">
+          <div class="card" onclick="openModal('keycloak')">
+            <div class="card-name">Keycloak</div>
+            <div class="card-desc">Central OIDC Identity Provider<br>TLS · Resource Limits · Longhorn Storage<br>MFA · SSO · User Federation</div>
+            <span class="card-tag">v26.x</span>
+          </div>
+          <div class="card" onclick="openModal('argocd-sso')">
+            <div class="card-name">ArgoCD SSO</div>
+            <div class="card-desc">OIDC Login via Keycloak<br>Group-based RBAC</div>
+            <span class="card-tag">OIDC client</span>
+          </div>
+          <div class="card" onclick="openModal('cnpg')">
+            <div class="card-name">CloudNativePG</div>
+            <div class="card-desc">PostgreSQL Lifecycle Management<br>Keycloak DB · TLS<br>Automated Failover · Longhorn PVs · Backups</div>
+            <span class="card-tag">WAL + PITR</span>
+          </div>
+          <div class="card" onclick="openModal('vault')">
+            <div class="card-name">HashiCorp Vault</div>
+            <div class="card-desc">KV v2 secrets backend<br>Longhorn PVC · Standalone mode<br>ESO ClusterSecretStore</div>
+            <span class="card-tag">Vault KV v2</span>
+          </div>
+          <div class="card" onclick="openModal('grafana-sso')">
+            <div class="card-name">Grafana SSO</div>
+            <div class="card-desc">OIDC Login via Keycloak<br>Group membership mapper</div>
+            <span class="card-tag">OIDC client</span>
+          </div>
+          <div class="card" onclick="openModal('velero')">
+            <div class="card-name">Velero</div>
+            <div class="card-desc">Cluster backup & restore<br>MinIO S3 backend · Schedule CRDs</div>
+            <span class="card-tag">Backup</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-dot"></div></div>
+
+    <!-- 7 · APPLICATION -->
+    <div class="layer l-app" id="l7">
+      <div class="layer-header" onclick="toggleLayer('l7')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--app)"></div>
+          <span class="layer-name">Application Layer</span>
+          <span class="layer-phase">Phase 10 · namespace: apps · Production workloads on hardened platform</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="cards cards-2">
+          <div class="card" onclick="openModal('wikijs')">
+            <div class="card-name">Wiki.js</div>
+            <div class="card-desc">Knowledge Management Platform<br>PostgreSQL via CloudNativePG · TLS<br>Keycloak SSO · Longhorn · Full CI/CD pipeline</div>
+            <span class="card-tag">Production</span>
+          </div>
+          <div class="card" onclick="openModal('nextcloud')">
+            <div class="card-name">Nextcloud</div>
+            <div class="card-desc">Data Sovereignty Platform<br>PostgreSQL via CloudNativePG · TLS<br>Keycloak SSO · Longhorn · Velero backups</div>
+            <span class="card-tag">DSGVO</span>
+          </div>
+        </div>
+        <div class="cards cards-3" style="margin-top:8px">
+          <div class="card" onclick="openModal('ollama')">
+            <div class="card-name">Ollama + LLMs</div>
+            <div class="card-desc">CPU-only LLM serving<br>Deployment + Longhorn PVC</div>
+            <span class="card-tag">Phase 11</span>
+          </div>
+          <div class="card" onclick="openModal('k8sgpt')">
+            <div class="card-name">K8sGPT + HolmesGPT</div>
+            <div class="card-desc">AI-powered cluster analysis<br>Ollama backend integration</div>
+            <span class="card-tag">Phase 11</span>
+          </div>
+          <div class="card" onclick="openModal('homepage')">
+            <div class="card-name">Homepage Dashboard</div>
+            <div class="card-desc">Service overview dashboard<br>jameswynn Helm chart</div>
+            <span class="card-tag">apps ns</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-dot"></div></div>
+
+    <!-- 8 · CI/CD -->
+    <div class="layer l-cicd" id="l8">
+      <div class="layer-header" onclick="toggleLayer('l8')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--cicd)"></div>
+          <span class="layer-name">CI/CD Layer</span>
+          <span class="layer-phase">Phase 10 · GitHub Actions → ghcr.io → ArgoCD · Full GitOps promotion pipeline</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="pipeline-row">
+          <div class="pipe-step" onclick="openModal('github')">
+            <span class="pipe-label">GitHub</span>
+            <span class="pipe-sub">Code Push / PR</span>
+          </div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step" onclick="openModal('ghactions')">
+            <span class="pipe-label">GH Actions</span>
+            <span class="pipe-sub">Build Docker Image</span>
+          </div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step danger" onclick="openModal('trivy')">
+            <span class="pipe-label danger-label">Trivy Scan</span>
+            <span class="pipe-sub">Block HIGH/CRITICAL</span>
+          </div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step" onclick="openModal('ghcr')">
+            <span class="pipe-label">ghcr.io</span>
+            <span class="pipe-sub">Push Image</span>
+          </div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step" onclick="openModal('helmupdate')">
+            <span class="pipe-label">Helm Update</span>
+            <span class="pipe-sub">Tag → Git commit</span>
+          </div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step" onclick="openModal('argocd-sync')">
+            <span class="pipe-label">ArgoCD</span>
+            <span class="pipe-sub">Sync to Cluster</span>
+          </div>
+        </div>
+        <div class="pipe-note">
+          Branch Promotion: main → staging namespace · Git tag → production namespace &nbsp;|&nbsp;
+          Self-hosted GH Actions runner deployed as Pod inside cluster (ARC v0.14.0)
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-dot"></div></div>
+
+    <!-- 9 · FUTURE -->
+    <div class="layer l-future" id="l9">
+      <div class="layer-header" onclick="toggleLayer('l9')">
+        <div class="layer-title-group">
+          <div class="layer-dot" style="background:var(--future);opacity:0.5"></div>
+          <span class="layer-name" style="opacity:0.6">Future Phases</span>
+          <span class="layer-phase">Post-CKA · Second Beelink SER5 Pro · Multi-node storage replication</span>
+        </div>
+        <span class="layer-toggle">▾</span>
+      </div>
+      <div class="layer-body">
+        <div class="cards cards-5">
+          <div class="card" onclick="openModal('advanced-net')">
+            <div class="card-name">Advanced Networking</div>
+            <div class="card-desc">Cilium · Hubble · eBPF<br>kube-proxy replacement</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('tracing')">
+            <div class="card-name">Distributed Tracing</div>
+            <div class="card-desc">Grafana Tempo<br>OpenTelemetry · SLOs</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('microservices')">
+            <div class="card-name">Microservices</div>
+            <div class="card-desc">Online Boutique (11 svc)<br>Istio · mTLS · Canary</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('reliability')">
+            <div class="card-name">Reliability Eng.</div>
+            <div class="card-desc">HPA · VPA · PDBs<br>Resource optimization</div>
+            <span class="card-tag">planned</span>
+          </div>
+          <div class="card" onclick="openModal('chaos')">
+            <div class="card-name">Chaos Engineering</div>
+            <div class="card-desc">Failure Injection<br>Runbooks · DR Testing</div>
+            <span class="card-tag">planned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /diagram -->
+
+  <!-- PHASE TIMELINE -->
+  <div class="phase-timeline">
+    <div class="pt-title">// Phase Progression</div>
+    <div class="pt-row">
+      <div class="pt-phase done"><span class="pt-num">Ph.0</span><span class="pt-label">Planning</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.1</span><span class="pt-label">DevEnv</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.2</span><span class="pt-label">Proxmox</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.3</span><span class="pt-label">VMs</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.4</span><span class="pt-label">Kubernetes</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.5</span><span class="pt-label">GitOps</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.6</span><span class="pt-label">Observability</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.7</span><span class="pt-label">Security</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.8</span><span class="pt-label">Storage</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.9</span><span class="pt-label">Identity</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.10</span><span class="pt-label">Apps + CI/CD</span></div>
+      <div class="pt-phase done"><span class="pt-num">Ph.11</span><span class="pt-label">AI / LLM</span></div>
+    </div>
+  </div>
+
+  <footer>
+    <a href="https://github.com/mmrajput/kubernetes-homelab" target="_blank">github.com/mmrajput/kubernetes-homelab</a>
+    &nbsp;·&nbsp; mmrajputhomelab.org &nbsp;·&nbsp; Beelink SER5 Pro · Proxmox VE · kubeadm v1.31 · Calico CNI
+  </footer>
+
+</div><!-- /page -->
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeModal()"></div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <div class="modal-layer-tag" id="m-layer"></div>
+  <div class="modal-title" id="m-title"></div>
+  <div class="modal-section">
+    <div class="modal-section-title">Overview</div>
+    <div class="modal-text" id="m-desc"></div>
+  </div>
+  <div class="modal-section" id="m-detail-section">
+    <div class="modal-section-title">Implementation Detail</div>
+    <div class="modal-text" id="m-detail"></div>
+  </div>
+  <div class="modal-section">
+    <div class="modal-section-title">K8s Objects</div>
+    <div class="tag-row" id="m-tags"></div>
+  </div>
+</div>
+
+<script>
+const modals = {
+  cp1: {
+    layer: "Virtualization Layer · Phase 2",
+    title: "control-plane-1",
+    color: "var(--virt)",
+    desc: "The Kubernetes control plane VM running on Proxmox. Hosts kube-apiserver, etcd (single-node), kube-scheduler, and kube-controller-manager. Tainted to prevent workload scheduling.",
+    detail: "IP: <code>192.168.178.34</code>. Provisioned via cloud-init with Ansible idempotent playbooks. kubeadm initialized the cluster on this node. etcd data on LVM-thin volume. The API server is the target for all <code>kubectl</code> operations and ArgoCD reconciliation loops.",
+    tags: ["kube-apiserver :6443", "etcd :2379", "kube-scheduler", "controller-manager", "6GB RAM / 4 vCPU", "Ubuntu 24.04", "LVM-thin PV"]
+  },
+  worker1: {
+    layer: "Virtualization Layer · Phase 2",
+    title: "worker-1",
+    color: "var(--virt)",
+    desc: "Primary worker node. Runs the bulk of application workloads. Joined to cluster via kubeadm. Runs Longhorn storage replica for RF=2.",
+    detail: "IP: <code>192.168.178.35</code>. containerd as CRI. Calico CNI assigns pod CIDRs. local-path-provisioner available for fast ephemeral storage. Longhorn disk manager runs as a DaemonSet pod on this node.",
+    tags: ["kubelet", "kube-proxy", "containerd", "Calico CNI", "local-path-provisioner", "Longhorn replica", "7GB RAM / 4 vCPU"]
+  },
+  worker2: {
+    layer: "Virtualization Layer · Phase 2",
+    title: "worker-2",
+    color: "var(--virt)",
+    desc: "Secondary worker node. Provides redundancy for stateful workloads via Longhorn RF=2 replication across both workers.",
+    detail: "IP: <code>192.168.178.36</code>. Identical configuration to worker-1. Longhorn ensures every PVC has a replica on each worker node. CNPG standby replica runs here for automatic failover.",
+    tags: ["kubelet", "kube-proxy", "containerd", "Calico CNI", "local-path-provisioner", "Longhorn replica", "7GB RAM / 4 vCPU"]
+  },
+  argocd: {
+    layer: "GitOps Layer · Phase 5",
+    title: "ArgoCD",
+    color: "var(--gitops)",
+    desc: "The GitOps engine managing all cluster state. Uses the App-of-Apps pattern: a root Application watches a directory of other Application manifests. Zero manual kubectl apply — everything is committed to Git first.",
+    detail: "Version v3.2.3. Self-managed (ArgoCD manages its own Application). Multi-source Applications combine upstream Helm charts with a <code>$values/</code> path in Git. <code>ServerSideApply=true</code> for CRD-heavy operators. <code>CreateNamespace=false</code> — namespaces pre-created with PSS labels. ESO secrets require label <code>app.kubernetes.io/part-of: argocd</code> or ArgoCD silently ignores them.",
+    tags: ["Deployment (argocd-server)", "Deployment (repo-server)", "StatefulSet (redis)", "Application CRD", "AppProject CRD", "RBAC", "namespace: platform"]
+  },
+  nginx: {
+    layer: "GitOps Layer · Phase 5",
+    title: "nginx-ingress",
+    color: "var(--gitops)",
+    desc: "Ingress controller handling all external HTTP/S traffic. Exposes NodePort 30080 (HTTP) and 30443 (HTTPS). Cloudflare Tunnel terminates TLS at the edge; traffic arrives at nginx over HTTP internally.",
+    detail: "IngressClass: <code>nginx</code>. All Ingress resources specify <code>ingressClassName: nginx</code>. TLS termination at Cloudflare edge — cert-manager handles Let's Encrypt certs for any direct access. Connects to Pod IPs directly, so NetworkPolicy egress rules must allow pod ports, not service ports.",
+    tags: ["DaemonSet / Deployment", "NodePort 30080/30443", "IngressClass", "NetworkPolicy (egress to pods)"]
+  },
+  ansible: {
+    layer: "GitOps Layer · Phase 3–4",
+    title: "Ansible + GitHub",
+    color: "var(--gitops)",
+    desc: "Infrastructure as Code layer for VM provisioning and K8s bootstrapping. Idempotent playbooks run via cloud-init on VM creation and via GitHub Actions for cluster configuration.",
+    detail: "Phases 3–4 used Ansible to configure all three VMs: install containerd, kubeadm, kubelet; configure kernel parameters; join nodes to cluster. All playbooks committed to Git. Infrastructure changes are PR-reviewed before execution.",
+    tags: ["Ansible playbooks", "cloud-init", "GitHub Actions (bootstrap)", "Idempotent"]
+  },
+  prometheus: {
+    layer: "Observability Layer · Phase 6",
+    title: "Prometheus",
+    color: "var(--obs)",
+    desc: "Metrics collection engine. Scrapes metrics from all cluster components and applications via ServiceMonitor CRDs. Deployed as part of kube-prometheus-stack Helm chart.",
+    detail: "ServiceMonitor CRDs define scrape targets declaratively — no static prometheus.yml edits. PrometheusRule CRDs define alerting rules. Long-term storage via Mimir (remote write to MinIO). Every application added to the cluster gets a corresponding ServiceMonitor.",
+    tags: ["StatefulSet", "ServiceMonitor CRD", "PrometheusRule CRD", "Service (ClusterIP)", "namespace: observability"]
+  },
+  grafana: {
+    layer: "Observability Layer · Phase 6",
+    title: "Grafana",
+    color: "var(--obs)",
+    desc: "Visualization platform. Pre-built Kubernetes dashboards from kube-prometheus-stack plus custom dashboards for each workload. Integrated with Keycloak via OIDC for SSO.",
+    detail: "Datasources: Prometheus (metrics), Loki (logs), Mimir (long-term). Keycloak OIDC integration uses group membership mapper — group membership controls dashboard access. The group mapper is configured at realm level (By configuration), not the predefined groups mapper which maps roles not groups.",
+    tags: ["Deployment", "Service", "Ingress (nginx)", "ConfigMap (datasources)", "Secret (OIDC client via ESO)", "namespace: observability"]
+  },
+  loki: {
+    layer: "Observability Layer · Phase 6",
+    title: "Loki + Promtail",
+    color: "var(--obs)",
+    desc: "Log aggregation stack. Promtail runs as a DaemonSet on every node, tailing container logs and forwarding to Loki. Logs are queryable in Grafana via LogQL.",
+    detail: "Promtail DaemonSet mounts <code>/var/log/pods</code> on each node. Loki stores logs in MinIO (S3-compatible). Long-term retention via Mimir for metrics. Structured logs from applications are indexed by Loki labels.",
+    tags: ["DaemonSet (Promtail)", "StatefulSet (Loki)", "MinIO (backend)", "namespace: observability"]
+  },
+  alertmanager: {
+    layer: "Observability Layer · Phase 6",
+    title: "Alertmanager",
+    color: "var(--obs)",
+    desc: "Alert routing and notification. Receives alerts fired by Prometheus rules and routes them to configured receivers. Part of kube-prometheus-stack.",
+    detail: "Configured with PrometheusRule CRDs defining alert conditions. Routes alerts to notification channels (email, webhook). Silences and inhibition rules prevent alert storms during planned maintenance.",
+    tags: ["StatefulSet", "Service", "ConfigMap (routing)", "namespace: observability"]
+  },
+  certmanager: {
+    layer: "Security Layer · Phase 7",
+    title: "cert-manager",
+    color: "var(--sec)",
+    desc: "Automated TLS certificate management. Issues Let's Encrypt certificates via DNS-01 challenge using the Cloudflare API. Certificates auto-renew before expiry.",
+    detail: "ClusterIssuer using DNS-01 via Cloudflare API token (stored in Vault, synced via ESO). Certificate CRDs reference the ClusterIssuer. cert-manager creates/renews K8s Secret containing TLS cert+key. Ingress resources reference the Secret.",
+    tags: ["Deployment (controller)", "ClusterIssuer CRD", "Certificate CRD", "Secret (tls)", "ClusterRole + RBAC"]
+  },
+  netpol: {
+    layer: "Security Layer · Phase 7",
+    title: "NetworkPolicies",
+    color: "var(--sec)",
+    desc: "Default-deny posture with explicit allow rules. Every namespace has a default-deny-all ingress+egress policy. Workloads get per-rule allow policies for required communication paths only.",
+    detail: "Critical insight: Calico evaluates NetworkPolicy BEFORE kube-proxy applies DNAT. Egress rules for the Kubernetes API must allow BOTH the ClusterIP (<code>10.96.0.1/32</code>) AND the control plane node IP (<code>192.168.178.34/32</code>) on ports 443 and 6443. nginx-ingress connects to Pod IPs directly — egress rules need pod ports, not service ports. Longhorn was removed as a documented exception due to CSI provisioner's internal gRPC-to-HTTP path incompatibility with default-deny.",
+    tags: ["NetworkPolicy (default-deny)", "NetworkPolicy (per-workload allow)", "Calico CNI enforcement", "pre-DNAT evaluation"]
+  },
+  rbac: {
+    layer: "Security Layer · Phase 7",
+    title: "RBAC Hardening",
+    color: "var(--sec)",
+    desc: "Least-privilege service accounts for every workload. No workload uses the default service account. ServiceAccounts have only the permissions required for their specific function.",
+    detail: "Each workload gets a dedicated ServiceAccount with a Role (namespace-scoped) or ClusterRole (cluster-scoped) bound via RoleBinding. No ClusterAdmin bindings for application workloads. Audited regularly. ARC runners require special RBAC to create Job Pods.",
+    tags: ["ServiceAccount (per workload)", "Role / ClusterRole", "RoleBinding / ClusterRoleBinding", "No default SA usage"]
+  },
+  pss: {
+    layer: "Security Layer · Phase 7",
+    title: "Pod Security Standards",
+    color: "var(--sec)",
+    desc: "Kubernetes-native workload security enforcement. Namespaces are labeled to enforce security profiles. Platform namespaces use baseline; application namespaces use restricted.",
+    detail: "Namespace labels: <code>pod-security.kubernetes.io/enforce: restricted</code>. All application containers must run as non-root, drop all capabilities, disallow privilege escalation. Critical: <code>sudo</code> is unavailable under <code>allowPrivilegeEscalation: false</code> — tools must be installed to <code>~/.local/bin</code> with PATH via <code>$GITHUB_PATH</code>.",
+    tags: ["Namespace labels (PSS)", "restricted profile", "baseline profile", "audit mode (transition)"]
+  },
+  eso: {
+    layer: "Security Layer · Phase 7",
+    title: "External Secrets Operator",
+    color: "var(--sec)",
+    desc: "Bridges HashiCorp Vault with Kubernetes Secrets. ExternalSecret CRDs declare which Vault path to sync. ESO creates/updates K8s Secrets automatically. Pods consume Secrets normally.",
+    detail: "API version: <code>v1</code>. ClusterSecretStore points to Vault KV v2. ExternalSecret CRD specifies: secretStoreRef, remoteRef.key (with <code>secret/data/</code> prefix for API path), and data field mappings. Vault CLI uses logical paths WITHOUT <code>/data/</code> — ESO remoteRef uses API paths WITH <code>/data/</code>. Secrets organized in <code>platform/external-secrets/stores/databases/</code>, <code>platform/</code>, <code>workloads/</code> subdirectories.",
+    tags: ["ESO v2.1.0", "ClusterSecretStore CRD", "ExternalSecret CRD", "SecretStore CRD", "Deployment (ESO controller)"]
+  },
+  falco: {
+    layer: "Security Layer · Phase 7",
+    title: "Falco",
+    color: "var(--sec)",
+    desc: "Runtime security monitoring via syscall inspection. Detects anomalous container behavior: unexpected process execution, file access outside expected paths, unexpected network connections.",
+    detail: "DaemonSet — one Pod per node. Kernel module or eBPF probe intercepts syscalls. Rules defined in ConfigMap. Alerts forwarded to Loki for correlation with other observability data. BSI IT-Grundschutz framing: runtime anomaly detection fulfills monitoring requirements for cloud workloads.",
+    tags: ["DaemonSet", "ConfigMap (rules)", "ClusterRole", "kernel module / eBPF", "Loki (alert forwarding)"]
+  },
+  kubebench: {
+    layer: "Security Layer · Phase 7",
+    title: "kube-bench",
+    color: "var(--sec)",
+    desc: "CIS Kubernetes Benchmark scanner. Runs as a Job and produces a pass/fail report against the CIS K8s benchmark. Used to validate and document the security posture of the cluster.",
+    detail: "Runs as a K8s Job (not a persistent workload). Output saved as a report artifact. Findings drive remediation — failing checks are documented and addressed or accepted with justification. Part of the BSI IT-Grundschutz compliance documentation.",
+    tags: ["Job (one-time scan)", "ClusterRole (audit)", "CIS Benchmark v1.8", "Remediation report"]
+  },
+  cloudflare: {
+    layer: "Security Layer · Phase 7",
+    title: "Cloudflare",
+    color: "var(--sec)",
+    desc: "Zero Trust edge: Cloudflare Tunnel terminates TLS externally and proxies to nginx-ingress. Cloudflare Access provides identity-based access control for services. WAF protects against web attacks. DNS-01 via API token for cert-manager.",
+    detail: "Cloudflare Tunnel runs as a Deployment with the cloudflared connector connecting to Cloudflare's edge. No inbound ports need to be opened on the home network. Cloudflare Access rules protect unauthenticated UIs (e.g., services not yet protected by Keycloak). DNS-01 API token stored in Vault, synced via ESO to cert-manager namespace.",
+    tags: ["cloudflared Deployment", "Cloudflare Tunnel", "Cloudflare Access (ZT)", "WAF", "DNS-01 challenge", "Secret (API token via ESO)"]
+  },
+  longhorn: {
+    layer: "Storage Layer · Phase 8",
+    title: "Longhorn",
+    color: "var(--stor)",
+    desc: "Distributed block storage. Default StorageClass. Every PVC with Longhorn gets RF=2 — one replica per worker node. Provides the persistent storage foundation for all stateful workloads.",
+    detail: "Replication Factor 2 across worker-1 and worker-2. Longhorn Manager DaemonSet + UI Deployment. Known issue: Longhorn NetworkPolicy is incompatible with default-deny due to CSI provisioner's internal gRPC-to-HTTP path and webhook topology — removed from NetworkPolicy enforcement as a documented exception. CNPG PVCs excluded from Velero via <code>backup.velero.io/backup-volumes-excludes: pgdata</code> annotation.",
+    tags: ["DaemonSet (Longhorn Manager)", "Deployment (UI)", "StorageClass (default)", "PV + PVC (per workload)", "VolumeAttachment CRD"]
+  },
+  minio: {
+    layer: "Storage Layer · Phase 8",
+    title: "MinIO",
+    color: "var(--stor)",
+    desc: "S3-compatible object storage running inside the cluster. Serves as the backend for Loki (log storage), Velero (backup target), and CNPG WAL archiving. Accessed via S3 API from every consumer.",
+    detail: "Runs on local-path StorageClass (not Longhorn) for performance. Buckets: <code>cnpg-backups</code> (WAL + base backups) and <code>velero</code> (cluster backups). Endpoint: <code>http://minio.storage.svc:9000</code> inside cluster. Credentials in Vault → ESO → K8s Secret. Extends trivially as a lakehouse foundation — just add more buckets.",
+    tags: ["StatefulSet", "PVC (local-path)", "Service :9000 (S3 API)", "Service :9001 (console)", "Ingress (console)", "Secret (credentials via ESO)"]
+  },
+  localpath: {
+    layer: "Storage Layer · Phase 8",
+    title: "local-path-provisioner",
+    color: "var(--stor)",
+    desc: "Simple StorageClass for dev/cache workloads. Provisions PVs from the node's local disk. No replication — data is lost if the node fails. Used for MinIO and ARC runner work volumes.",
+    detail: "Installed in Phase 4. Used by MinIO (performance-sensitive, replicated at application level) and ARC runner work volumes (Longhorn incompatible with restricted PSS due to root ownership conflicts). Not suitable for production stateful workloads that require durability.",
+    tags: ["StorageClass (local-path)", "Deployment (provisioner)", "No replication", "Node-local PVs"]
+  },
+  keycloak: {
+    layer: "Identity & Database Layer · Phase 9",
+    title: "Keycloak",
+    color: "var(--id)",
+    desc: "Central OIDC identity provider. Every platform service (Grafana, ArgoCD, Nextcloud, Wiki.js) uses Keycloak for SSO. Single login, group-based access control across all services.",
+    detail: "Chart: codecentric/keycloakx. Version 26.x. PostgreSQL backend via CNPG. Critical lesson: <code>KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true</code> causes Keycloak to advertise <code>https://hostname:80</code> in the OIDC discovery document, silently hanging all backchannel token exchanges — use explicit <code>KC_HOSTNAME_BACKCHANNEL</code> instead. Group mapper: use realm-level Group Membership mapper (By configuration), not the predefined groups mapper which maps realm roles.",
+    tags: ["Deployment (keycloakx)", "CNPG (Postgres backend)", "Ingress (nginx)", "Secret (DB + admin via ESO)", "OIDC clients per app", "Longhorn PVC"]
+  },
+  "argocd-sso": {
+    layer: "Identity & Database Layer · Phase 9",
+    title: "ArgoCD SSO",
+    color: "var(--id)",
+    desc: "ArgoCD integrated with Keycloak via OIDC. Groups in Keycloak map to ArgoCD roles (admin, read-only). No separate ArgoCD user management needed.",
+    detail: "OIDC client registered in Keycloak with redirect URI pointing to ArgoCD callback. Group membership mapper provides groups claim. ArgoCD RBAC policy maps Keycloak groups to ArgoCD roles via <code>argocd-rbac-cm</code> ConfigMap. ArgoCD caches OIDC provider metadata — restart <code>argocd-server</code> after Keycloak config changes.",
+    tags: ["OIDC client (Keycloak)", "ConfigMap (argocd-rbac-cm)", "ConfigMap (argocd-cm)", "Secret (client secret via ESO)"]
+  },
+  cnpg: {
+    layer: "Identity & Database Layer · Phase 9",
+    title: "CloudNativePG",
+    color: "var(--id)",
+    desc: "Kubernetes-native PostgreSQL operator. Manages the full lifecycle: provisioning, configuration, TLS, backup, failover. All application databases (Keycloak, Wiki.js, Nextcloud) run on CNPG clusters.",
+    detail: "WAL archiving to MinIO via barman-cloud-wal-archive. PITR (Point-In-Time Recovery) supported. Automated failover promotes standby on primary failure. Critical: <code>initdb</code> requires secret keys named exactly <code>username</code> and <code>password</code> — not configurable. CNPG PVCs excluded from Velero (CNPG native backup is authoritative). CNPG webhook runs on port 9501 — both webhooks have <code>failurePolicy: Fail</code>, making a blocked webhook call cause total CRD failure cluster-wide.",
+    tags: ["Cluster CRD (CNPG)", "StatefulSet (managed)", "Service (rw + ro)", "PVC (Longhorn)", "ScheduledBackup CRD", "Secret (username/password via ESO)"]
+  },
+  vault: {
+    layer: "Identity & Database Layer · Phase 9",
+    title: "HashiCorp Vault",
+    color: "var(--id)",
+    desc: "Secrets backend. All application credentials, API tokens, and certificates stored here. ESO (External Secrets Operator) syncs secrets from Vault to K8s Secrets in the appropriate namespaces.",
+    detail: "Standalone mode. KV v2 secrets engine. Longhorn PVC for data durability. Path convention: Vault CLI uses logical paths <code>secret/myapp/config</code>; ESO <code>remoteRef.key</code> uses API paths <code>secret/data/myapp/config</code>. Secrets organized into databases/, platform/, workloads/ subdirectories. <code>.gitignore</code> requires explicit negation rules for files containing 'secret' in the name.",
+    tags: ["Deployment (vault)", "PVC (Longhorn)", "Service :8200", "Ingress (UI)", "Secret (unseal key — not in Git)", "ClusterSecretStore (ESO)"]
+  },
+  "grafana-sso": {
+    layer: "Identity & Database Layer · Phase 9",
+    title: "Grafana SSO",
+    color: "var(--id)",
+    desc: "Grafana integrated with Keycloak via OIDC. Groups in Keycloak control Grafana roles (Admin, Editor, Viewer).",
+    detail: "Same OIDC pattern as ArgoCD. Group membership mapper at realm level provides the groups claim. Grafana <code>auth.generic_oauth</code> configuration in values.yaml. Client secret stored in Vault → ESO → K8s Secret referenced by Grafana Helm values.",
+    tags: ["OIDC client (Keycloak)", "ConfigMap (grafana.ini)", "Secret (client secret via ESO)"]
+  },
+  velero: {
+    layer: "Identity & Database Layer · Phase 9",
+    title: "Velero",
+    color: "var(--id)",
+    desc: "Cluster backup and disaster recovery. Backs up K8s object definitions and PVC data to MinIO. Complementary to CNPG native backup — Velero handles non-database workloads.",
+    detail: "MinIO <code>velero</code> bucket as backend. ScheduledBackup CRDs define backup frequency. CNPG PVCs excluded via <code>backup.velero.io/backup-volumes-excludes: pgdata</code> — CNPG native WAL backup is authoritative for database recovery. Nextcloud: <code>oc_filecache</code> (Postgres) and filesystem (Longhorn RWX PVC) must be restored in a time-aligned manner — misalignment requires <code>occ files:scan --all</code>.",
+    tags: ["Deployment (velero)", "BackupStorageLocation CRD", "Schedule CRD", "Backup CRD", "MinIO (S3 backend)", "Secret (MinIO creds via ESO)"]
+  },
+  wikijs: {
+    layer: "Application Layer · Phase 10",
+    title: "Wiki.js",
+    color: "var(--app)",
+    desc: "Knowledge management platform. Runs as a production workload on the hardened platform. Full stack: Deployment + CNPG PostgreSQL + Longhorn PVC + Keycloak SSO + nginx-ingress + Let's Encrypt TLS.",
+    detail: "Deployed via ArgoCD with GitOps pipeline. CI/CD pipeline: code push → GitHub Actions build → Trivy scan → ghcr.io push → ArgoCD sync. OIDC auth via Keycloak. PostgreSQL database on dedicated CNPG cluster with WAL archiving to MinIO.",
+    tags: ["Deployment", "CNPG Cluster (Postgres)", "PVC (Longhorn)", "Ingress (nginx)", "Secret (DB + OIDC via ESO)"]
+  },
+  nextcloud: {
+    layer: "Application Layer · Phase 10",
+    title: "Nextcloud",
+    color: "var(--app)",
+    desc: "Data sovereignty platform. Self-hosted cloud storage, calendar, contacts. DSGVO/Schrems II compliant — all data stays in the homelab. Full integration with Keycloak SSO.",
+    detail: "Redis is architecturally mandatory for multi-replica Nextcloud (distributed locking), not optional. PostgreSQL via CNPG. Keycloak SSO via <code>user_oidc</code> app. Longhorn RWX PVC for file storage. Velero backup covers both the PVC and triggers CNPG backup for DB alignment. Coturn TURN server for Nextcloud Talk video conferencing.",
+    tags: ["Deployment", "CNPG Cluster (Postgres)", "Redis (mandatory)", "PVC (Longhorn RWX)", "Ingress (nginx)", "Secret (via ESO)", "user_oidc app (Keycloak)"]
+  },
+  ollama: {
+    layer: "Application Layer · Phase 11",
+    title: "Ollama + LLMs",
+    color: "var(--app)",
+    desc: "CPU-only LLM serving on Kubernetes. Runs open-source language models (Llama, Mistral, Phi) without GPU. Exposes OpenAI-compatible REST API for internal consumers.",
+    detail: "Deployment with Longhorn PVC for model storage. ClusterIP Service on port 11434. K8sGPT and HolmesGPT call it via <code>http://ollama.apps.svc:11434</code>. CPU-only operation on AMD Ryzen 5 5500U — inference is slow but functional. Direct differentiator for private cloud AI compliance (BSI IT-Grundschutz, DSGVO/Schrems II — no data leaves the cluster).",
+    tags: ["Deployment", "PVC (Longhorn — models)", "Service (ClusterIP :11434)", "NetworkPolicy", "namespace: apps"]
+  },
+  k8sgpt: {
+    layer: "Application Layer · Phase 11",
+    title: "K8sGPT + HolmesGPT",
+    color: "var(--app)",
+    desc: "AI-powered cluster analysis. K8sGPT scans for cluster issues (pending pods, failed deployments, resource problems) and explains them via LLM. HolmesGPT investigates incidents. Both use Ollama as LLM backend.",
+    detail: "K8sGPT Operator with Result CRDs. Ollama backend configured via ClusterSecretStore (API endpoint). Results surfaced in Grafana dashboards. Differentiator for job applications: AI observability pipeline running on private cloud Kubernetes with local LLM backend = no data exfiltration to cloud AI APIs.",
+    tags: ["K8sGPT Operator", "Result CRD", "ClusterRole (read cluster)", "Ollama (LLM backend)", "Grafana integration"]
+  },
+  homepage: {
+    layer: "Application Layer · Phase 10",
+    title: "Homepage Dashboard",
+    color: "var(--app)",
+    desc: "Service overview dashboard showing status of all homelab services. Deployed via jameswynn Helm chart. Provides a single pane of glass for the homelab.",
+    detail: "Deployed via ArgoCD. ConfigMap-driven service definitions. Connects to Prometheus, Grafana, and other services via their ClusterIP Services. Exposed via nginx-ingress behind Cloudflare Access.",
+    tags: ["Deployment", "ConfigMap (services config)", "Ingress (nginx)", "Service (ClusterIP)"]
+  },
+  github: {
+    layer: "CI/CD Layer · Phase 10",
+    title: "GitHub",
+    color: "var(--cicd)",
+    desc: "Source of truth for all code, configuration, and infrastructure. Every change starts as a commit. Branch protection rules enforce PR review before merging to main.",
+    detail: "Repository: github.com/mmrajput/kubernetes-homelab. Conventional commits. One-line git commit messages preferred. GitOps principle: all changes committed and pushed before applying. <code>.gitignore</code> requires explicit negation rules for files containing 'secret' in the name.",
+    tags: ["Git repository", "Branch protection", "Conventional commits", "PR-based workflow"]
+  },
+  ghactions: {
+    layer: "CI/CD Layer · Phase 10",
+    title: "GitHub Actions",
+    color: "var(--cicd)",
+    desc: "CI pipeline triggered on code push. Builds Docker images, runs Trivy security scans, pushes to ghcr.io, updates Helm chart values. Self-hosted runner runs as a Pod inside the cluster.",
+    detail: "ARC (Actions Runner Controller) v0.14.0. Runner Pods use <code>local-path</code> StorageClass (Longhorn volumes incompatible with restricted PSS due to root ownership conflicts). <code>trivy-action</code> incompatible with ARC kubernetes containerMode — use Trivy binary directly. <code>sudo</code> unavailable under <code>allowPrivilegeEscalation: false</code> — install tools to <code>~/.local/bin</code> with PATH via <code>$GITHUB_PATH</code>.",
+    tags: ["ARC v0.14.0 (runner)", "RunnerDeployment CRD", "Pod (per job)", "local-path PVC (work volume)", "ServiceAccount + RBAC"]
+  },
+  trivy: {
+    layer: "CI/CD Layer · Phase 10",
+    title: "Trivy Scan",
+    color: "var(--sec)",
+    desc: "Container image security scanning. Blocks pipeline on HIGH or CRITICAL vulnerabilities. Runs as a step in the GitHub Actions workflow on every PR and push to main.",
+    detail: "Trivy v0.69.3 binary (not trivy-action — incompatible with ARC kubernetes containerMode). Scans built image before push to ghcr.io. Configured to block on HIGH/CRITICAL CVEs. Output uploaded as workflow artifact for audit trail. Part of the supply-chain security posture.",
+    tags: ["Trivy v0.69.3 binary", "GitHub Actions step", "SARIF output", "Blocks on HIGH/CRITICAL", "Image scan (not action)"]
+  },
+  ghcr: {
+    layer: "CI/CD Layer · Phase 10",
+    title: "ghcr.io",
+    color: "var(--cicd)",
+    desc: "GitHub Container Registry. Images pushed here after passing Trivy scan. ArgoCD pulls images from ghcr.io when syncing workloads to the cluster.",
+    detail: "Registry: <code>ghcr.io/mmrajput/</code>. Images tagged with Git SHA and semantic version. crane (google/go-containerregistry) used for image promotion between staging and production tags. ImagePullSecret in application namespaces authenticates to ghcr.io.",
+    tags: ["ghcr.io registry", "ImagePullSecret", "crane (promotion)", "Semantic versioning", "SHA-tagged images"]
+  },
+  helmupdate: {
+    layer: "CI/CD Layer · Phase 10",
+    title: "Helm Chart Update",
+    color: "var(--cicd)",
+    desc: "After image push, CI updates the image tag in the Helm values file and commits back to Git. ArgoCD detects the Git change and syncs the cluster.",
+    detail: "CI workflow uses <code>git commit</code> with a conventional commit message (<code>chore: bump image tag to v1.2.3</code>). The commit triggers ArgoCD's Git polling. Branch promotion: <code>main</code> branch → staging namespace; Git tag → production namespace. This is the full GitOps image promotion pattern.",
+    tags: ["Helm values.yaml", "Git commit (CI)", "Conventional commit", "Branch → namespace mapping", "Tag → production"]
+  },
+  "argocd-sync": {
+    layer: "CI/CD Layer · Phase 10",
+    title: "ArgoCD Sync",
+    color: "var(--cicd)",
+    desc: "ArgoCD detects the new Git commit, diffs current cluster state vs desired state in Git, and applies the changes. The cluster converges to the new image tag automatically.",
+    detail: "ArgoCD polls Git every 3 minutes or receives a webhook trigger for immediate sync. <code>kubectl annotate application &lt;name&gt; -n platform argocd.argoproj.io/refresh=hard --overwrite</code> forces immediate sync. selfHeal: true means ArgoCD reverts manual changes. selfHeal deadlock pattern: when selfHeal reverts manual fixes before ArgoCD can sync — solution: disable selfHeal → apply manually → re-enable.",
+    tags: ["Application CRD (sync)", "Git polling / webhook", "selfHeal reconciliation", "kubectl annotate (force sync)"]
+  },
+  "advanced-net": {
+    layer: "Future Phases",
+    title: "Advanced Networking",
+    color: "var(--future)",
+    desc: "Replace Calico CNI and kube-proxy with Cilium + eBPF. Hubble provides network observability. eBPF enables kernel-level packet processing for better performance and observability.",
+    detail: "Planned for post-CKA with second Beelink SER5 Pro hardware. Cilium in kube-proxy replacement mode. Hubble UI for network flow visualization. eBPF-based network policies more expressive than standard NetworkPolicy API.",
+    tags: ["Cilium (planned)", "Hubble (planned)", "eBPF (planned)", "kube-proxy replacement"]
+  },
+  tracing: {
+    layer: "Future Phases",
+    title: "Distributed Tracing",
+    color: "var(--future)",
+    desc: "Add distributed tracing to the observability stack. Grafana Tempo as the trace backend. OpenTelemetry for instrumentation. SLOs defined for application services.",
+    detail: "Grafana Tempo integrates with existing Grafana instance. OpenTelemetry Collector as a DaemonSet. Applications instrumented with OTel SDK. Traces correlated with Loki logs and Prometheus metrics via exemplars.",
+    tags: ["Grafana Tempo (planned)", "OpenTelemetry Collector", "SLOs", "Trace-log correlation"]
+  },
+  microservices: {
+    layer: "Future Phases",
+    title: "Microservices",
+    color: "var(--future)",
+    desc: "Deploy Google's Online Boutique (11-service e-commerce demo) to demonstrate service mesh, mTLS, and canary deployments at production scale.",
+    detail: "Online Boutique provides a realistic multi-service workload. Istio service mesh provides mTLS between services. Canary deployments via Istio traffic management. Demonstrates SRE concepts: circuit breaking, retries, timeouts.",
+    tags: ["Online Boutique (11 services)", "Istio (planned)", "mTLS", "Canary deployments", "VirtualService CRD"]
+  },
+  reliability: {
+    layer: "Future Phases",
+    title: "Reliability Engineering",
+    color: "var(--future)",
+    desc: "Implement HPA, VPA, and PodDisruptionBudgets for production workload resilience. Resource optimization based on VPA recommendations.",
+    detail: "HPA (HorizontalPodAutoscaler) scales Nextcloud and Wiki.js based on CPU/memory. VPA (VerticalPodAutoscaler) in recommendation mode provides right-sizing data. PDBs ensure zero-downtime during node drains.",
+    tags: ["HPA CRD", "VPA CRD (recommendation)", "PodDisruptionBudget", "Resource quotas"]
+  },
+  chaos: {
+    layer: "Future Phases",
+    title: "Chaos Engineering",
+    color: "var(--future)",
+    desc: "Controlled failure injection to validate resilience assumptions. Runbooks document recovery procedures. DR testing validates backup/restore procedures end-to-end.",
+    detail: "Tools: Chaos Mesh or LitmusChaos. Scenarios: node drain, pod deletion, network partition, disk pressure. Runbooks in Wiki.js. DR drills: restore CNPG from WAL backup, restore Nextcloud from Velero, restore cluster from scratch.",
+    tags: ["Chaos Mesh (planned)", "Failure injection", "Runbooks (Wiki.js)", "DR drill procedures"]
+  }
+};
+
+function toggleLayer(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('collapsed');
+}
+
+function openModal(id) {
+  const d = modals[id];
+  if (!d) return;
+  document.getElementById('m-layer').textContent = d.layer;
+  document.getElementById('m-layer').style.color = d.color;
+  document.getElementById('m-title').textContent = d.title;
+  document.getElementById('m-title').style.color = d.color;
+  document.getElementById('m-desc').innerHTML = d.desc;
+  document.getElementById('m-detail').innerHTML = d.detail;
+  const tags = document.getElementById('m-tags');
+  tags.innerHTML = d.tags.map(t => `<span class="m-tag">${t}</span>`).join('');
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
