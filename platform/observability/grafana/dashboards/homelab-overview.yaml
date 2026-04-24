@@ -374,7 +374,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\",unit=\"core\"}) / sum(kube_node_status_allocatable{resource=\"cpu\"})",
+              "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\",unit=\"core\"} unless on(node) kube_node_role{role=\"control-plane\"}) / sum(kube_node_status_allocatable{resource=\"cpu\"} unless on(node) kube_node_role{role=\"control-plane\"})",
               "legendFormat": "CPU requests",
               "refId": "A"
             }
@@ -409,7 +409,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\",unit=\"byte\"}) / sum(kube_node_status_allocatable{resource=\"memory\"})",
+              "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\",unit=\"byte\"} unless on(node) kube_node_role{role=\"control-plane\"}) / sum(kube_node_status_allocatable{resource=\"memory\"} unless on(node) kube_node_role{role=\"control-plane\"})",
               "legendFormat": "Memory requests",
               "refId": "A"
             }
