@@ -15,6 +15,13 @@ image:
 podSecurityContext:
   fsGroup: 33
 
+# -- Node placement
+# Pin to worker-01: worker-02 runs at ~80% memory and Nextcloud's 2Gi limit risks OOM.
+# Cron job uses podAffinity so it follows automatically.
+# RWO PVC: Longhorn detaches from worker-02 and reattaches to worker-01 on reschedule.
+nodeSelector:
+  kubernetes.io/hostname: k8s-worker-01
+
 # -- Pod annotations
 # Velero file-system backup: include nextcloud-main volume (contains html, config, data, apps)
 podAnnotations:
