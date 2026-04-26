@@ -33,7 +33,7 @@ data:
       "uid": "homelab-overview",
       "editable": false,
       "schemaVersion": 38,
-      "version": 3,
+      "version": 4,
       "refresh": "30s",
       "time": { "from": "now-24h", "to": "now" },
       "timezone": "browser",
@@ -1506,10 +1506,6 @@ data:
           },
           "transformations": [
             {
-              "id": "labelsToFields",
-              "options": { "mode": "columns" }
-            },
-            {
               "id": "organize",
               "options": {
                 "renameByName": {
@@ -1544,6 +1540,7 @@ data:
             {
               "expr": "argocd_app_info",
               "instant": true,
+              "format": "table",
               "legendFormat": "__auto",
               "refId": "A"
             }
