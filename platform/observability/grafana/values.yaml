@@ -67,6 +67,7 @@ datasources:
           timeInterval: 30s
       - name: Loki
         type: loki
+        uid: P8E80F9AEF21F6940
         url: http://loki:3100
         access: proxy
         jsonData:

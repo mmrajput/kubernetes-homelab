@@ -16,17 +16,24 @@ data:
           "label": "Prometheus",
           "type": "datasource",
           "pluginId": "prometheus"
+        },
+        {
+          "name": "DS_LOKI",
+          "label": "Loki",
+          "type": "datasource",
+          "pluginId": "loki"
         }
       ],
       "__requires": [
         { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
-        { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" }
+        { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" },
+        { "type": "datasource", "id": "loki", "name": "Loki", "version": "1.0.0" }
       ],
       "title": "Homelab Kubernetes Cluster",
       "uid": "homelab-overview",
       "editable": false,
       "schemaVersion": 38,
-      "version": 2,
+      "version": 3,
       "refresh": "30s",
       "time": { "from": "now-24h", "to": "now" },
       "timezone": "browser",
@@ -1347,6 +1354,293 @@ data:
             {
               "expr": "count(kube_networkpolicy_created)",
               "legendFormat": "NetworkPolicies",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 50,
+          "title": "Resource Trends",
+          "description": "CPU and memory utilisation over time per node — useful for spotting gradual leaks or sudden spikes.",
+          "type": "row",
+          "gridPos": { "x": 0, "y": 45, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "id": 51,
+          "title": "CPU utilisation over time",
+          "description": "Per-node CPU % over the dashboard time range.",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 46, "w": 12, "h": 7 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "spanNulls": false,
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "red", "value": 90 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "label_replace((100 - (avg by(instance)(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)) * on(instance) group_left(node) label_replace(kube_node_info, \"instance\", \"$1:9100\", \"internal_ip\", \"(.+)\"), \"instance\", \"$1\", \"node\", \"(.+)\")",
+              "legendFormat": "{{instance}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 52,
+          "title": "Memory utilisation over time",
+          "description": "Per-node memory % over the dashboard time range.",
+          "type": "timeseries",
+          "gridPos": { "x": 12, "y": 46, "w": 12, "h": 7 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "spanNulls": false,
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 0.70 },
+                  { "color": "red", "value": 0.90 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "label_replace((1 - (avg by(instance)(node_memory_MemAvailable_bytes) / avg by(instance)(node_memory_MemTotal_bytes))) * on(instance) group_left(node) label_replace(kube_node_info, \"instance\", \"$1:9100\", \"internal_ip\", \"(.+)\"), \"instance\", \"$1\", \"node\", \"(.+)\")",
+              "legendFormat": "{{instance}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 53,
+          "title": "GitOps Health",
+          "description": "ArgoCD application sync and health status, and TLS certificate expiry countdown.",
+          "type": "row",
+          "gridPos": { "x": 0, "y": 53, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "id": 54,
+          "title": "ArgoCD applications",
+          "description": "All ArgoCD-managed applications with current sync and health status.",
+          "type": "table",
+          "gridPos": { "x": 0, "y": 54, "w": 14, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "footer": { "show": false },
+            "sortBy": [{ "displayName": "Application", "desc": false }]
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": { "align": "left", "displayMode": "auto", "filterable": false }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Sync" },
+                "properties": [
+                  { "id": "custom.displayMode", "value": "color-text" },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      { "type": "value", "options": { "Synced": { "color": "green", "index": 0 }, "OutOfSync": { "color": "red", "index": 1 } } }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Health" },
+                "properties": [
+                  { "id": "custom.displayMode", "value": "color-text" },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      { "type": "value", "options": { "Healthy": { "color": "green", "index": 0 }, "Degraded": { "color": "red", "index": 1 }, "Progressing": { "color": "yellow", "index": 2 }, "Suspended": { "color": "blue", "index": 3 }, "Missing": { "color": "orange", "index": 4 } } }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "labelsToFields",
+              "options": { "mode": "columns" }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "renameByName": {
+                  "name": "Application",
+                  "sync_status": "Sync",
+                  "health_status": "Health",
+                  "dest_namespace": "Namespace",
+                  "project": "Project"
+                },
+                "indexByName": {
+                  "Application": 0,
+                  "Health": 1,
+                  "Sync": 2,
+                  "Namespace": 3,
+                  "Project": 4
+                },
+                "excludeByName": {
+                  "Time": true, "Value": true,
+                  "app_namespace": true, "dest_server": true,
+                  "namespace": true, "operation": true, "repo": true
+                }
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": { "names": ["Application", "Health", "Sync", "Namespace", "Project"] }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "expr": "argocd_app_info",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 55,
+          "title": "TLS certificate expiry",
+          "description": "Days remaining until each cert-manager certificate expires. Red < 7 days, yellow < 30 days. Note: public-facing TLS (*.mmrajputhomelab.org) is managed by Cloudflare at the edge — these entries are cluster-internal certificates issued by cert-manager for operator webhooks (CNPG, ESO, ARC) and any internal ingress routes.",
+          "type": "bargauge",
+          "gridPos": { "x": 14, "y": 54, "w": 10, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "horizontal",
+            "displayMode": "gradient",
+            "showUnfilled": true,
+            "minVizWidth": 8,
+            "namePlacement": "auto"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 7 },
+                  { "color": "green", "value": 30 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "(certmanager_certificate_expiration_timestamp_seconds - time()) / 86400",
+              "legendFormat": "{{name}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 56,
+          "title": "Live Logs",
+          "description": "Real-time log streams from key services and ingress traffic.",
+          "type": "row",
+          "gridPos": { "x": 0, "y": 62, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "id": 57,
+          "title": "Platform error logs",
+          "description": "Live error and exception stream across key namespaces. Excludes health probe noise.",
+          "type": "logs",
+          "gridPos": { "x": 0, "y": 63, "w": 12, "h": 10 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
+          },
+          "targets": [
+            {
+              "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+              "expr": "{namespace=~\"nextcloud-production|keycloak|vault|argocd|external-secrets|ingress-nginx\"} |~ \"(?i)(error|exception|failed|panic|critical)\" != \"/healthz\" != \"/readyz\" != \"/metrics\" != \"probe\"",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 58,
+          "title": "Ingress — 4xx / 5xx access log",
+          "description": "Live stream of HTTP client and server errors reaching nginx-ingress. Shows real traffic anomalies.",
+          "type": "logs",
+          "gridPos": { "x": 12, "y": 63, "w": 12, "h": 10 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
+          },
+          "targets": [
+            {
+              "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+              "expr": "{namespace=\"ingress-nginx\"} |~ \" (4[0-9]{2}|5[0-9]{2}) \"",
+              "legendFormat": "",
               "refId": "A"
             }
           ]
