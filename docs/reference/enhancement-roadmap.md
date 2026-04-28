@@ -3,7 +3,6 @@
 Ideas ordered roughly by value vs. effort.
 
 ## Security hardening
-- **Falco** — runtime threat detection (syscall-level); integrates with Grafana/Loki
 - **Trivy Operator** — continuous in-cluster vulnerability scanning; Grafana dashboard exists
 - **OPA Gatekeeper or Kyverno** — admission policies: enforce labels, deny latest tags, require resource limits
 - **SOPS / age-encrypted secrets in Git** — replace plain ExternalSecret YAML with encrypted versions
