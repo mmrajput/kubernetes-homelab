@@ -35,6 +35,7 @@ All apps: `namespace: argocd`, multi-source pattern, `CreateNamespace=false`, `s
 | external-secrets-config | Git raw manifests | HEAD | external-secrets |
 | external-secrets-stores | Git raw manifests | HEAD | (multi-NS) |
 | keycloak | keycloakx | 7.1.9 | keycloak |
+| falco | falco | 4.11.0 | falco |
 | cloudnativepg | cloudnative-pg | 0.27.1 | cnpg-system |
 | cnpg-clusters | Git raw manifests | HEAD | databases |
 | longhorn | longhorn | 1.7.2 | longhorn-system |

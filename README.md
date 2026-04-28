@@ -78,6 +78,7 @@ The diagram above illustrates the full platform architecture of the Kubernetes H
 - **HashiCorp Vault** (KV v2) is the secrets backend, storing all platform secrets under component-namespaced paths
 - **External Secrets Operator (ESO)** synchronises secrets from Vault into workloads, databases, and platform services as native Kubernetes Secret objects — no application reads from Vault directly
 - **Keycloak 26** provides centralised OIDC identity for the platform, with SSO integrated across ArgoCD and Grafana via the homelab realm
+- **Falco** provides runtime threat detection via eBPF syscall inspection (`modern_ebpf` driver), forwarding alerts to Loki through Falcosidekick — surfaced in the public Grafana dashboard alongside Prometheus metrics
 
 ### Observability · GitOps managed
 - **Prometheus & Alertmanager** scrape metrics from all platform components and manage alerting rules
@@ -110,7 +111,7 @@ The diagram above illustrates the full platform architecture of the Kubernetes H
 | Phase 4 | Kubernetes Cluster (kubeadm + Calico) | ✅ Complete |
 | Phase 5 | GitOps & Platform Services (ArgoCD) | ✅ Complete |
 | Phase 6 | Observability Stack (Prometheus + Loki + Grafana) | ✅ Complete |
-| Phase 7 | Security Hardening (cert-manager + NetworkPolicies + Vault + ESO) | ✅ Complete |
+| Phase 7 | Security Hardening (cert-manager + NetworkPolicies + Vault + ESO + Falco) | ✅ Complete |
 | Phase 8 | Storage & Backup (Longhorn + MinIO + Velero) | ✅ Complete |
 | Phase 9 | Identity & Stateful Workloads (Keycloak + CloudNativePG + Nextcloud) | ✅ Complete |
 | Phase 10 | CI/CD Pipeline (ARC + GitHub Actions) | ✅ Complete |

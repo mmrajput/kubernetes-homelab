@@ -16,6 +16,7 @@ Security hardening is not a single control — it is a set of independent layers
 | Pod Security Standards (PSS) | What a container can do on the node | Container escape to the underlying host |
 | RBAC | What identities can do via the Kubernetes API | Compromised pod using its ServiceAccount token to exfiltrate or modify cluster resources |
 | TLS / Certificate Management | Encryption in transit | Traffic interception between services and at the edge |
+| Runtime Security (Falco) | Syscall-level behaviour on every node | Detects attacks that have already bypassed the layers above — shell spawned inside a container, unexpected file writes, privilege escalation attempts |
 
 A concrete attack scenario to illustrate why all layers matter:
 
@@ -159,7 +160,8 @@ labels:
 
 | Namespace | Enforcement | Reason |
 |-----------|------------|--------|
-| `monitoring` | `baseline` | node-exporter requires hostPID and hostNetwork; Promtail requires hostPath mounts and runs as root |
+| `monitoring` | `privileged` | node-exporter requires hostPID and hostNetwork; Promtail requires hostPath mounts and runs as root |
+| `falco` | `privileged` | Falco loads the `modern_ebpf` driver and inspects host syscalls — incompatible with baseline or restricted |
 | `platform` | `restricted` | ArgoCD components all meet restricted requirements |
 | `ingress-nginx` | `restricted` | nginx-ingress meets restricted requirements |
 | `cloudflare` | `restricted` | cloudflared meets restricted requirements |
@@ -213,6 +215,88 @@ Promtail is intentionally left at `baseline` enforcement. It requires:
 - Running as root (UID 0) to access protected log paths
 
 This is a known, accepted constraint. Promtail's node log access is its core function — restricting it would break log collection. Document this explicitly so it is not treated as an oversight.
+
+---
+
+## Layer 5: Runtime Security (Falco)
+
+### Mental Model
+
+The four layers above are **preventive** — they reduce the attack surface. Falco is **detective** — it watches what actually happens on the node and raises an alert when behaviour deviates from what is expected. A process that bypasses all four preventive layers (zero-day, misconfigured PSS, over-permissioned RBAC) will still generate a Falco event the moment it does something anomalous.
+
+Falco instruments the Linux kernel via the `modern_ebpf` driver, inspecting every syscall on every node without requiring a kernel module. Events are forwarded to Falcosidekick, which fans them out to Loki (queryable in Grafana) and Prometheus (metrics for dashboards and alerting).
+
+### Architecture
+
+```
+Falco DaemonSet (one pod per node)
+  └── modern_ebpf driver → syscall stream
+        └── HTTP → Falcosidekick (Deployment)
+                      ├── Loki :3100  → Grafana log panel
+                      └── Prometheus :2802 → ServiceMonitor → Grafana metrics
+```
+
+### Driver: modern_ebpf
+
+`modern_ebpf` runs entirely in kernel space via BPF programs — no kernel module compilation, no DKMS, compatible with Ubuntu 24.04 LTS and kernel 6.x out of the box.
+
+```yaml
+driver:
+  kind: modern_ebpf
+```
+
+Do not use `ebpf` (legacy) or `kmod` on this cluster — both require kernel headers or module compilation that is not present on the kubeadm node images.
+
+### Custom Suppress Rules
+
+Default Falco rules generate significant noise from known platform workloads (ArgoCD, Prometheus, Longhorn, Promtail all trigger `Write below etc`, `Read sensitive file`, and `Launch Privileged Container` by design). Suppress with a macro rather than disabling rules entirely:
+
+```yaml
+customRules:
+  suppress-homelab.yaml: |-
+    - macro: trusted_homelab_containers
+      condition: >
+        (container.image.repository startswith "quay.io/argoproj/argocd" or
+         container.image.repository startswith "grafana/grafana" or
+         container.image.repository startswith "longhornio" or
+         container.image.repository startswith "quay.io/prometheus" or
+         container.image.repository startswith "grafana/promtail" or
+         container.image.repository startswith "rancher/")
+
+    - rule: Write below etc
+      append: true
+      condition: and not trusted_homelab_containers
+```
+
+Appending `and not trusted_homelab_containers` to a rule narrows it rather than disabling it — unexpected containers still trigger the rule.
+
+### NetworkPolicy for Falco
+
+Falco requires `privileged` PSS and a split NetworkPolicy (falco pods and falcosidekick pods have different traffic profiles):
+
+| Traffic | Direction | Port |
+|---------|-----------|------|
+| Falco → Falcosidekick | egress (intra-namespace) | 2801 |
+| Falcosidekick → Loki | egress to `monitoring` | 3100 |
+| Prometheus → Falcosidekick | ingress from `monitoring` | 2802 |
+| Falcosidekick → external | egress (Slack webhooks) | 443 |
+
+Falco itself does **not** need Kubernetes API egress unless k8s audit log enrichment is enabled (it is not enabled in this cluster).
+
+### Verifying Falco is Working
+
+```bash
+# All Falco pods running (one per node)
+kubectl get pods -n falco -o wide
+
+# Falcosidekick is forwarding to Loki
+kubectl logs -n falco -l app.kubernetes.io/name=falcosidekick | grep -i loki
+
+# Trigger a test event (generates a Falco alert)
+kubectl run falco-test --image=alpine --rm -it --restart=Never -- \
+  sh -c 'cat /etc/shadow'
+# Then query Grafana: {namespace="falco", container="falcosidekick"}
+```
 
 ---
 
