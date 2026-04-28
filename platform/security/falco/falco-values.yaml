@@ -1,0 +1,61 @@
+driver:
+  kind: modern_ebpf
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+falco:
+  json_output: true
+  log_level: info
+
+falcosidekick:
+  enabled: true
+  config:
+    loki:
+      hostport: http://loki.monitoring.svc.cluster.local:3100
+      minimumpriority: warning
+      customlabels: "cluster=homelab"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  webui:
+    enabled: false
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus
+
+# Suppress noisy false-positives from known platform workloads.
+# ArgoCD, Prometheus, Longhorn, and Promtail all trigger default rules
+# (writing to /etc, reading sensitive files, running privileged) by design.
+customRules:
+  suppress-homelab.yaml: |-
+    - macro: trusted_homelab_containers
+      condition: >
+        (container.image.repository startswith "quay.io/argoproj/argocd" or
+         container.image.repository startswith "grafana/grafana" or
+         container.image.repository startswith "longhornio" or
+         container.image.repository startswith "quay.io/prometheus" or
+         container.image.repository startswith "grafana/promtail" or
+         container.image.repository startswith "rancher/")
+
+    - rule: Write below etc
+      append: true
+      condition: and not trusted_homelab_containers
+
+    - rule: Read sensitive file trusted after startup
+      append: true
+      condition: and not trusted_homelab_containers
+
+    - rule: Launch Privileged Container
+      append: true
+      condition: and not trusted_homelab_containers

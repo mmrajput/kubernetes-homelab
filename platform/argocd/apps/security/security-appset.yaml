@@ -32,6 +32,14 @@ spec:
             namespace: keycloak
             valuesFile: platform/security/keycloak/values.yaml
 
+          # Falco: runtime security monitoring via eBPF syscall inspection
+          - name: falco
+            chart: falco
+            helmRepoURL: https://falcosecurity.github.io/charts
+            chartVersion: 4.11.0
+            namespace: falco
+            valuesFile: platform/security/falco/falco-values.yaml
+
   template:
     metadata:
       name: "{{ .name }}"

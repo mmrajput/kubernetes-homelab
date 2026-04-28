@@ -157,4 +157,12 @@ spec:
               kubernetes.io/metadata.name: velero
       ports:
         - port: 8085  # velero metrics
-          protocol: TCP   
+          protocol: TCP
+    # Allow Prometheus to scrape falcosidekick metrics
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: falco
+      ports:
+        - port: 2802  # falcosidekick metrics
+          protocol: TCP
