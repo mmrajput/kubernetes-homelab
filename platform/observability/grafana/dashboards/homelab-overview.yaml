@@ -33,7 +33,7 @@ data:
       "uid": "homelab-overview",
       "editable": false,
       "schemaVersion": 38,
-      "version": 3,
+      "version": 4,
       "refresh": "30s",
       "time": { "from": "now-24h", "to": "now" },
       "timezone": "browser",
@@ -1359,6 +1359,117 @@ data:
           ]
         },
         {
+          "id": 60,
+          "title": "Falco — events (24h)",
+          "description": "Total Falco security events forwarded by Falcosidekick in the last 24 hours.",
+          "type": "stat",
+          "gridPos": { "x": 6, "y": 41, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "area"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 10 }
+                ]
+              },
+              "mappings": [
+                { "type": "value", "options": { "0": { "text": "None", "color": "green" } } }
+              ]
+            }
+          },
+          "targets": [
+            {
+              "expr": "sum(increase(falcosidekick_events_total[24h])) or vector(0)",
+              "legendFormat": "Events",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 61,
+          "title": "Falco — critical / error (24h)",
+          "description": "High-severity Falco events (Critical or Error priority) in the last 24 hours. Requires immediate investigation.",
+          "type": "stat",
+          "gridPos": { "x": 12, "y": 41, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "red", "value": 1 }
+                ]
+              },
+              "mappings": [
+                { "type": "value", "options": { "0": { "text": "None", "color": "green" } } }
+              ]
+            }
+          },
+          "targets": [
+            {
+              "expr": "sum(increase(falcosidekick_events_total{priority=~\"Critical|Error\"}[24h])) or vector(0)",
+              "legendFormat": "High severity",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 62,
+          "title": "Falco — events by priority (24h)",
+          "description": "Breakdown of security events by priority level over the last 24 hours.",
+          "type": "bargauge",
+          "gridPos": { "x": 18, "y": 41, "w": 6, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "orientation": "horizontal",
+            "displayMode": "gradient",
+            "showUnfilled": true,
+            "minVizWidth": 8,
+            "namePlacement": "auto"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 5 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "sum by (priority) (increase(falcosidekick_events_total[24h])) > 0",
+              "legendFormat": "{{priority}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
           "id": 50,
           "title": "Resource Trends",
           "description": "CPU and memory utilisation over time per node — useful for spotting gradual leaks or sudden spikes.",
@@ -1640,6 +1751,73 @@ data:
             {
               "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
               "expr": "{namespace=\"ingress-nginx\"} |~ \" (4[0-9]{2}|5[0-9]{2}) \"",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 63,
+          "title": "Falco Security Events",
+          "description": "Runtime security event trend and live alert stream from Falco via Falcosidekick.",
+          "type": "row",
+          "gridPos": { "x": 0, "y": 73, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "id": 64,
+          "title": "Falco events rate by priority",
+          "description": "Rate of security events over time grouped by priority. Sustained spikes indicate active rule hits or noisy suppress-list gaps.",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 74, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "spanNulls": false,
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never"
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "sum by (priority) (rate(falcosidekick_events_total[5m]))",
+              "legendFormat": "{{priority}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 65,
+          "title": "Falco live security alerts",
+          "description": "Live stream of Falco security alerts collected by Promtail from the Falcosidekick pod. Each line is a JSON-formatted rule match.",
+          "type": "logs",
+          "gridPos": { "x": 12, "y": 74, "w": 12, "h": 8 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": true,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
+          },
+          "targets": [
+            {
+              "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+              "expr": "{namespace=\"falco\", container=\"falcosidekick\"}",
               "legendFormat": "",
               "refId": "A"
             }
