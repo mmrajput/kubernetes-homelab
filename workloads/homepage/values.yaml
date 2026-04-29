@@ -91,10 +91,14 @@ config:
 
   bookmarks:
     - Projects:
-        - Kubernetes Homelab Single Cluster:
+        - Kubernetes Single-cluster Platform:
             - abbr: K8S
               href: https://mmrajput.github.io/kubernetes-single-cluster/
               description: Active
+        - Kubernetes Multi-cluster Platform:
+            - abbr: K8S
+              href: https://mmrajput.github.io/kubernetes-multi-cluster/
+              description: Planned    
     - External:
         - GitHub:
             - abbr: GH
