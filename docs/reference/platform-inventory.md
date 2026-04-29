@@ -74,7 +74,7 @@ spec:
       helm:
         valueFiles:
           - $values/workloads/<app>/staging-values.yaml
-    - repoURL: https://github.com/mmrajput/kubernetes-homelab
+    - repoURL: https://github.com/mmrajput/kubernetes-single-cluster
       targetRevision: HEAD
       ref: values
   destination:

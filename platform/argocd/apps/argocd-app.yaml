@@ -16,7 +16,7 @@ spec:
         valueFiles:
           - $values/platform/argocd/values.yaml
     
-    - repoURL: https://github.com/mmrajput/kubernetes-homelab
+    - repoURL: https://github.com/mmrajput/kubernetes-single-cluster
       targetRevision: HEAD
       ref: values
   

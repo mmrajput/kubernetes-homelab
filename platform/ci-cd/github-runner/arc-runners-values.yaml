@@ -1,4 +1,4 @@
-githubConfigUrl: https://github.com/mmrajput/kubernetes-homelab
+githubConfigUrl: https://github.com/mmrajput/kubernetes-single-cluster
 
 githubConfigSecret: arc-github-app-secret
 
