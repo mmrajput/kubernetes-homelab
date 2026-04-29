@@ -95,7 +95,7 @@ sources:
     helm:
       valueFiles:
         - $values/platform/observability/prometheus/values.yaml
-  - repoURL: https://github.com/mmrajput/kubernetes-homelab
+  - repoURL: https://github.com/mmrajput/kubernetes-single-cluster
     targetRevision: HEAD
     ref: values
 ```

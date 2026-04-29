@@ -25,7 +25,7 @@ platform/    → Everything managed by ArgoCD (GitOps)
 
 - Proxmox VE access on Beelink SER5 Pro
 - SSH access to all nodes
-- GitHub repository access: `https://github.com/mmrajput/kubernetes-homelab`
+- GitHub repository access: `https://github.com/mmrajput/kubernetes-single-cluster`
 - Cloudflare API token (stored securely, never committed to Git)
 - Devcontainer running (`homelab-devcontainer`)
 

@@ -53,7 +53,7 @@ spec:
           helm:
             valueFiles:
               - "$values/{{ .valuesFile }}"
-        - repoURL: https://github.com/mmrajput/kubernetes-homelab
+        - repoURL: https://github.com/mmrajput/kubernetes-single-cluster
           targetRevision: HEAD
           ref: values
       destination:
@@ -99,7 +99,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/mmrajput/kubernetes-homelab
+        repoURL: https://github.com/mmrajput/kubernetes-single-cluster
         targetRevision: HEAD
         path: "{{ .path }}"
         directory:

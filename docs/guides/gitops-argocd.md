@@ -210,7 +210,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/mmrajput/kubernetes-homelab.git
+    repoURL: https://github.com/mmrajput/kubernetes-single-cluster.git
     targetRevision: main
     path: platform/nginx-ingress
     helm:

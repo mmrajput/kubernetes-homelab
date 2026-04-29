@@ -93,7 +93,7 @@ config:
     - Projects:
         - Kubernetes Homelab Single Cluster:
             - abbr: K8S
-              href: https://mmrajput.github.io/kubernetes-homelab/
+              href: https://mmrajput.github.io/kubernetes-single-cluster/
               description: Active
     - External:
         - GitHub:
