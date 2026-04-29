@@ -1,4 +1,4 @@
-# Kubernetes Homelab — Platform Engineering Foundations
+# Kubernetes Single-Cluster Platform
 
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.31-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![Proxmox](https://img.shields.io/badge/Proxmox-VE_8.x-E57000?logo=proxmox&logoColor=white)](https://www.proxmox.com/)
@@ -9,13 +9,13 @@
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-Tunnel_·_Access-F38020?logo=cloudflare&logoColor=white)](https://www.cloudflare.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-> A 3-node Kubernetes homelab on Proxmox VE — kubeadm, Calico, ArgoCD, full observability, secrets management, identity, and stateful workloads.
+> A 3-node Kubernetes cluster on Proxmox VE — kubeadm, Calico, ArgoCD, full observability, secrets management, identity, and stateful workloads.
 
 ---
 
 ## What's Next
 
-This repo is the **foundation**. The next iteration — [**kubernetes-platform-engineering**](https://github.com/mmrajput/kubernetes-platform-engineering) — rebuilds the platform with enterprise-grade tooling:
+This repo is the **foundation**. The next iteration — [**kubernetes-multi-cluster-platform**](https://github.com/mmrajput/kubernetes-multi-cluster) — rebuilds the platform with enterprise-grade tooling:
 
 - **Talos Linux** (immutable OS, no SSH)
 - **Cilium** with eBPF, kube-proxy replacement, and Gateway API
@@ -39,7 +39,7 @@ This repo is the **foundation**. The next iteration — [**kubernetes-platform-e
 - Green solid               Dashboard query flows (Grafana → Prometheus / Loki)
 ---
 
-The diagram above illustrates the full platform architecture of the Kubernetes Homelab, deployed on a three-node kubeadm v1.31 cluster with Calico CNI. The platform is organised into six functional concern groups, all managed declaratively via GitOps.
+The diagram above illustrates the full platform architecture, deployed on a three-node kubeadm v1.31 cluster with Calico CNI. The platform is organised into six functional concern groups, all managed declaratively via GitOps.
 
 ### External Layer
 - The platform engineer interacts with the cluster exclusively through Git — all changes are commits, never direct `kubectl apply`
